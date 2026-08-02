@@ -90,7 +90,7 @@ export function HeroBanner() {
 
         <div
           className="animate-fade-in-up flex flex-wrap gap-4"
-          style={{ animationDelay: "0.8s" }}
+          style={{ animationDelay: "0.8s", marginTop: "2.5rem" }}
         >
           <a href="/contacto">
             <Button variant="accent" size="md">
@@ -116,8 +116,8 @@ export function HeroBanner() {
         />
 
         <div
-          className="animate-fade-in-up grid grid-cols-3 gap-8 w-full max-w-xl mt-4"
-          style={{ animationDelay: "1.0s" }}
+          className="animate-fade-in-up grid grid-cols-3 gap-8 w-full max-w-xl"
+          style={{ animationDelay: "1.0s", marginTop: "3rem" }}
         >
           {STATS.map((s) => (
             <div key={s.label} className="flex flex-col gap-1">
