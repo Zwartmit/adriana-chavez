@@ -35,8 +35,11 @@ export function HeroBanner() {
       <div
         className="relative z-10 mx-auto flex flex-col items-start gap-6 w-full"
         style={{
-          maxWidth: "var(--container-max)",
-          padding: "0 var(--container-padding)",
+          maxWidth: "1200px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
         <span
@@ -87,7 +90,7 @@ export function HeroBanner() {
 
         <div
           className="animate-fade-in-up flex flex-wrap gap-4"
-          style={{ animationDelay: "0.8s" }}
+          style={{ animationDelay: "0.8s", marginTop: "2.5rem" }}
         >
           <a href="/contacto">
             <Button variant="accent" size="md">
@@ -113,8 +116,8 @@ export function HeroBanner() {
         />
 
         <div
-          className="animate-fade-in-up grid grid-cols-3 gap-8 w-full max-w-xl mt-4"
-          style={{ animationDelay: "1.0s" }}
+          className="animate-fade-in-up grid grid-cols-3 gap-8 w-full max-w-xl"
+          style={{ animationDelay: "1.0s", marginTop: "3rem" }}
         >
           {STATS.map((s) => (
             <div key={s.label} className="flex flex-col gap-1">

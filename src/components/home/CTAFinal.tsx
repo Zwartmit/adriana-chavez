@@ -8,7 +8,8 @@ export function CTAFinal() {
       style={{
         backgroundColor: "var(--color-primary)",
         color: "var(--color-text-inverse)",
-        padding: "var(--space-24) 0",
+        paddingTop: "6rem",
+        paddingBottom: "6rem",
       }}
     >
       <img
@@ -26,8 +27,11 @@ export function CTAFinal() {
       <div
         className="relative z-10 mx-auto flex flex-col items-center text-center gap-6"
         style={{
-          maxWidth: "var(--container-max)",
-          padding: "0 var(--container-padding)",
+          maxWidth: "1200px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
         <span

@@ -28,14 +28,18 @@ export function PropuestaValor() {
     <section
       style={{
         backgroundColor: "var(--color-bg)",
-        padding: "var(--section-padding-y) 0",
+        paddingTop: "6rem",
+        paddingBottom: "6rem",
       }}
     >
       <div
         className="mx-auto"
         style={{
-          maxWidth: "var(--container-max)",
-          padding: "0 var(--container-padding)",
+          maxWidth: "1200px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 items-center">
@@ -43,6 +47,7 @@ export function PropuestaValor() {
             <SectionHeader
               eyebrow="Nuestra historia"
               title="Más de una década transformando belleza"
+              titleSize="clamp(2rem, 4vw, 3rem)"
             />
             <p
               style={{
@@ -120,7 +125,7 @@ export function PropuestaValor() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 mt-20" style={{ gap: "2rem" }}>
           {VALORES.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
@@ -129,9 +134,9 @@ export function PropuestaValor() {
                 backgroundColor: "var(--color-surface)",
                 borderRadius: "var(--radius-xl)",
                 padding: "2rem",
-                borderTop: "2px solid transparent",
+                borderTop: "3px solid transparent",
                 boxShadow: "var(--shadow-card)",
-                transition: "all var(--transition-slow)",
+                transition: "all 300ms ease",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderTopColor = "var(--color-accent)";

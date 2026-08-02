@@ -36,20 +36,25 @@ export function FAQ() {
     <section
       style={{
         backgroundColor: "var(--color-bg-alt)",
-        padding: "var(--section-padding-y) 0",
+        paddingTop: "6rem",
+        paddingBottom: "6rem",
       }}
     >
       <div
         className="mx-auto"
         style={{
           maxWidth: "720px",
-          padding: "0 var(--container-padding)",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
         <SectionHeader
           eyebrow="Preguntas frecuentes"
           title="Todo lo que necesitas saber"
           align="center"
+          titleSize="clamp(1.75rem, 3vw, 2.5rem)"
           className="mx-auto mb-12"
         />
 
