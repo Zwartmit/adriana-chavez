@@ -35,8 +35,11 @@ export function HeroBanner() {
       <div
         className="relative z-10 mx-auto flex flex-col items-start gap-6 w-full"
         style={{
-          maxWidth: "var(--container-max)",
-          padding: "0 var(--container-padding)",
+          maxWidth: "1200px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
         <span
