@@ -54,14 +54,18 @@ export function ServiciosDestacados() {
       style={{
         backgroundColor: "var(--color-primary)",
         color: "var(--color-text-inverse)",
-        padding: "var(--section-padding-y) 0",
+        paddingTop: "6rem",
+        paddingBottom: "6rem",
       }}
     >
       <div
         className="mx-auto"
         style={{
-          maxWidth: "var(--container-max)",
-          padding: "0 var(--container-padding)",
+          maxWidth: "1200px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
         <div className="flex flex-col items-center text-center gap-4 mb-16">
@@ -79,8 +83,9 @@ export function ServiciosDestacados() {
           <h2
             style={{
               fontFamily: "var(--font-display)",
+              fontStyle: "italic",
               fontWeight: 600,
-              fontSize: "var(--text-5xl)",
+              fontSize: "clamp(2rem, 4vw, 3rem)",
               lineHeight: "var(--leading-tight)",
             }}
           >
