@@ -2,6 +2,7 @@
 @source "../src";
 @import "tw-animate-css";
 
+
 @custom-variant dark (&:is(.dark *));
 
 /*
@@ -146,11 +147,12 @@
 }
 
 html {
+  font-family: 'Inter', system-ui, sans-serif;
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: var(--font-body);
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   color: var(--color-text-primary);
