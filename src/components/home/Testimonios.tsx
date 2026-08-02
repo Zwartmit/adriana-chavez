@@ -82,20 +82,25 @@ export function Testimonios() {
     <section
       style={{
         backgroundColor: "var(--color-surface)",
-        padding: "var(--section-padding-y) 0",
+        paddingTop: "6rem",
+        paddingBottom: "6rem",
       }}
     >
       <div
         className="mx-auto"
         style={{
-          maxWidth: "var(--container-max)",
-          padding: "0 var(--container-padding)",
+          maxWidth: "1200px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
         <SectionHeader
           eyebrow="Testimonios"
           title="Lo que dicen nuestras clientas"
           align="center"
+          titleSize="clamp(1.75rem, 3vw, 2.5rem)"
           className="mx-auto mb-12"
         />
 
