@@ -2,43 +2,13 @@ import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const GALERIA = [
-  {
-    id: "1",
-    src: "https://placehold.co/600x800/1C3D35/C8A96E?text=Antes+%26+Despu%C3%A9s",
-    alt: "Transformación 1",
-    style: { height: "500px", gridRow: "span 2" } as const,
-  },
-  {
-    id: "2",
-    src: "https://placehold.co/600x400/2A5C50/F7F5F0?text=Coloraci%C3%B3n",
-    alt: "Coloración",
-    style: { height: "240px" } as const,
-  },
-  {
-    id: "3",
-    src: "https://placehold.co/600x800/EFECE5/1C3D35?text=Corte",
-    alt: "Corte",
-    style: { height: "500px", gridRow: "span 2" } as const,
-  },
-  {
-    id: "4",
-    src: "https://placehold.co/600x400/C8A96E/1C3D35?text=Tratamiento",
-    alt: "Tratamiento",
-    style: { height: "240px" } as const,
-  },
-  {
-    id: "5",
-    src: "https://placehold.co/600x400/1C3D35/F7F5F0?text=Peinado",
-    alt: "Peinado",
-    style: { height: "240px" } as const,
-  },
-  {
-    id: "6",
-    src: "https://placehold.co/800x400/2A5C50/C8A96E?text=Manicure",
-    alt: "Manicure",
-    style: { height: "240px", gridColumn: "span 2" } as const,
-  },
-];
+  { id: "1", src: "https://placehold.co/600x800/1C3D35/C8A96E?text=Antes+%26+Despu%C3%A9s", alt: "Transformación 1", gridRow: "span 2", gridColumn: undefined },
+  { id: "2", src: "https://placehold.co/600x400/2A5C50/F7F5F0?text=Coloraci%C3%B3n", alt: "Coloración", gridRow: undefined, gridColumn: undefined },
+  { id: "3", src: "https://placehold.co/600x800/EFECE5/1C3D35?text=Corte", alt: "Corte", gridRow: "span 2", gridColumn: undefined },
+  { id: "4", src: "https://placehold.co/600x400/C8A96E/1C3D35?text=Tratamiento", alt: "Tratamiento", gridRow: undefined, gridColumn: undefined },
+  { id: "5", src: "https://placehold.co/600x400/1C3D35/F7F5F0?text=Peinado", alt: "Peinado", gridRow: undefined, gridColumn: undefined },
+  { id: "6", src: "https://placehold.co/800x400/2A5C50/C8A96E?text=Manicure", alt: "Manicure", gridRow: undefined, gridColumn: "span 2" },
+]
 
 export function GaleriaHome() {
   return (
