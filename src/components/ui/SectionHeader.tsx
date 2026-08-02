@@ -6,6 +6,8 @@ interface SectionHeaderProps {
   description?: string;
   align?: "left" | "center";
   className?: string;
+  /** CSS font-size for the title. Defaults to clamp(1.75rem, 3vw, 2.5rem). */
+  titleSize?: string;
 }
 
 export function SectionHeader({
@@ -14,6 +16,7 @@ export function SectionHeader({
   description,
   align = "left",
   className,
+  titleSize = "clamp(1.75rem, 3vw, 2.5rem)",
 }: SectionHeaderProps) {
   const isCenter = align === "center";
   return (
@@ -26,22 +29,38 @@ export function SectionHeader({
     >
       {eyebrow && (
         <span
-          className="font-[var(--font-mono)] text-[var(--text-xs)] uppercase text-[var(--color-accent)]"
-          style={{ letterSpacing: "var(--tracking-widest)" }}
+          className="uppercase"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--text-xs)",
+            color: "var(--color-accent)",
+            letterSpacing: "var(--tracking-widest)",
+          }}
         >
           {eyebrow}
         </span>
       )}
       <h2
-        className="font-[var(--font-display)] font-semibold text-[var(--color-text-primary)] text-[var(--text-4xl)] md:text-[var(--text-5xl)]"
-        style={{ lineHeight: "var(--leading-tight)" }}
+        style={{
+          fontFamily: "var(--font-display)",
+          fontStyle: "italic",
+          fontWeight: 600,
+          fontSize: titleSize,
+          lineHeight: "var(--leading-tight)",
+          color: "var(--color-text-primary)",
+        }}
       >
         {title}
       </h2>
       {description && (
         <p
-          className="font-[var(--font-body)] text-[var(--text-lg)] text-[var(--color-text-secondary)] max-w-[560px]"
-          style={{ lineHeight: "var(--leading-normal)" }}
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "var(--text-lg)",
+            color: "var(--color-text-secondary)",
+            maxWidth: "560px",
+            lineHeight: "var(--leading-normal)",
+          }}
         >
           {description}
         </p>
