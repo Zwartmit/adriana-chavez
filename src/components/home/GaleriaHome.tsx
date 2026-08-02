@@ -40,6 +40,7 @@ export function GaleriaHome() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateRows: "240px 240px 240px",
             gap: "1rem",
           }}
         >
@@ -52,7 +53,8 @@ export function GaleriaHome() {
                 position: "relative",
                 overflow: "hidden",
                 borderRadius: "var(--radius-xl)",
-                ...g.style,
+                gridRow: g.gridRow,
+                gridColumn: g.gridColumn,
               }}
             >
               <img
@@ -75,18 +77,11 @@ export function GaleriaHome() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "rgba(0, 0, 0, 0.6)",
+                  backgroundColor: "rgba(0,0,0,0.6)",
                   transition: "opacity 300ms ease",
                 }}
               >
-                <span
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontStyle: "italic",
-                    fontSize: "var(--text-2xl)",
-                    color: "var(--color-text-inverse)",
-                  }}
-                >
+                <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-2xl)", color: "white" }}>
                   Ver más →
                 </span>
               </div>
