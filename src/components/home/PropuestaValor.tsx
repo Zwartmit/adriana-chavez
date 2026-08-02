@@ -28,14 +28,18 @@ export function PropuestaValor() {
     <section
       style={{
         backgroundColor: "var(--color-bg)",
-        padding: "var(--section-padding-y) 0",
+        paddingTop: "6rem",
+        paddingBottom: "6rem",
       }}
     >
       <div
         className="mx-auto"
         style={{
-          maxWidth: "var(--container-max)",
-          padding: "0 var(--container-padding)",
+          maxWidth: "1200px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 items-center">
@@ -43,6 +47,7 @@ export function PropuestaValor() {
             <SectionHeader
               eyebrow="Nuestra historia"
               title="Más de una década transformando belleza"
+              titleSize="clamp(2rem, 4vw, 3rem)"
             />
             <p
               style={{
