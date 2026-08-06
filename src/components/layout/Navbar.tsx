@@ -34,12 +34,18 @@ export function Navbar() {
         }}
       >
         <div
-          className="mx-auto flex items-center justify-between"
+          className="flex items-center justify-between"
           style={{
-            maxWidth: "var(--container-max)",
-            padding: "1rem var(--container-padding)",
+            maxWidth: "1200px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            paddingLeft: "1.5rem",
+            paddingRight: "1.5rem",
+            paddingTop: "1rem",
+            paddingBottom: "1rem",
           }}
         >
+
           {/* Logo */}
           <a
             href="/"
@@ -82,16 +88,20 @@ export function Navbar() {
           {/* Desktop CTA */}
           <a
             href="/contacto"
-            className="hidden md:inline-flex items-center transition-colors"
+            className="hidden md:inline-flex items-center justify-center transition-colors"
             style={{
               backgroundColor: "var(--color-accent)",
               color: "var(--color-primary-dim)",
               fontFamily: "var(--font-body)",
               fontSize: "var(--text-sm)",
               fontWeight: 600,
-              padding: "10px 24px",
+              letterSpacing: "var(--tracking-wide)",
+              padding: "12px 32px",
+              minHeight: "44px",
+              whiteSpace: "nowrap",
               borderRadius: "var(--radius-full)",
             }}
+
             onMouseEnter={(e) =>
               (e.currentTarget.style.backgroundColor = "var(--color-accent-dim)")
             }
@@ -180,12 +190,16 @@ export function Navbar() {
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-base)",
                 fontWeight: 600,
-                padding: "14px 24px",
+                letterSpacing: "var(--tracking-wide)",
+                padding: "14px 32px",
+                minHeight: "48px",
+                whiteSpace: "nowrap",
                 borderRadius: "var(--radius-full)",
               }}
             >
               Reservar cita →
             </a>
+
           </div>
         </aside>
       </div>

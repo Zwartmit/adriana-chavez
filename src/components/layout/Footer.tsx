@@ -26,14 +26,14 @@ export function Footer() {
       }}
     >
       <div
-        className="mx-auto grid grid-cols-1 md:grid-cols-3 gap-12"
+        className="mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left"
         style={{
           maxWidth: "var(--container-max)",
           padding: "var(--section-padding-y-sm) var(--container-padding)",
         }}
       >
         {/* Col 1 — Marca */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 items-center md:items-start">
           <div
             style={{
               fontFamily: "var(--font-display)",
@@ -86,9 +86,10 @@ export function Footer() {
         </div>
 
         {/* Col 2 — Links */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 items-center md:items-start">
           <h3 style={headingStyle}>Navegación</h3>
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-3 items-center md:items-start">
+
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <a
@@ -113,9 +114,10 @@ export function Footer() {
         </div>
 
         {/* Col 3 — Contacto */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 items-center md:items-start">
           <h3 style={headingStyle}>Contacto</h3>
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-3 items-center md:items-start">
+
             <li className="flex items-start gap-2" style={linkStyle}>
               <MapPin size={16} className="mt-0.5 shrink-0" />
               {CONTACT_INFO.address}
@@ -131,7 +133,7 @@ export function Footer() {
           </ul>
 
           <h3 style={{ ...headingStyle, marginTop: "1rem" }}>Horarios</h3>
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-2 items-center md:items-start">
             <li style={linkStyle}>{CONTACT_INFO.schedule.weekdays}</li>
             <li style={linkStyle}>{CONTACT_INFO.schedule.saturday}</li>
             <li style={linkStyle}>{CONTACT_INFO.schedule.sunday}</li>
