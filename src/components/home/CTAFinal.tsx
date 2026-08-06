@@ -1,5 +1,5 @@
 import { MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+
 
 export function CTAFinal() {
   return (
@@ -79,23 +79,70 @@ export function CTAFinal() {
           }}
         />
 
-        <div className="flex flex-wrap gap-4 justify-center mt-2">
-          <a href="/contacto">
-            <Button variant="accent" size="lg">
-              Reservar mi cita →
-            </Button>
+        <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+          <a
+            href="/contacto"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "var(--color-accent)",
+              color: "var(--color-primary-dim)",
+              fontFamily: "var(--font-body)",
+              fontWeight: 600,
+              fontSize: "var(--text-base)",
+              letterSpacing: "var(--tracking-wide)",
+              padding: "14px 36px",
+              borderRadius: "var(--radius-full)",
+              minHeight: "52px",
+              whiteSpace: "nowrap",
+              transition: "background-color var(--transition-base)",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "var(--color-accent-dim)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "var(--color-accent)")
+            }
+          >
+            Reservar mi cita →
           </a>
           <a
             href="https://wa.me/573000000000"
             target="_blank"
             rel="noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              backgroundColor: "transparent",
+              color: "var(--color-text-inverse)",
+              fontFamily: "var(--font-body)",
+              fontWeight: 600,
+              fontSize: "var(--text-base)",
+              letterSpacing: "var(--tracking-wide)",
+              padding: "14px 36px",
+              borderRadius: "var(--radius-full)",
+              border: "1.5px solid rgba(247,245,240,0.4)",
+              minHeight: "52px",
+              whiteSpace: "nowrap",
+              transition: "all var(--transition-base)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(247,245,240,0.1)";
+              e.currentTarget.style.borderColor = "rgba(247,245,240,0.7)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.borderColor = "rgba(247,245,240,0.4)";
+            }}
           >
-            <Button variant="ghost" size="lg">
-              <MessageCircle size={18} className="mr-2" />
-              Hablar por WhatsApp
-            </Button>
+            <MessageCircle size={18} />
+            Hablar por WhatsApp
           </a>
         </div>
+
 
         <span
           className="uppercase mt-4"
