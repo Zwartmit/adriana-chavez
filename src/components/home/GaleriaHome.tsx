@@ -40,7 +40,7 @@ export function GaleriaHome() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
-            gridTemplateRows: "240px 240px 240px",
+            gridTemplateRows: "180px 180px 180px",
             gap: "1rem",
           }}
         >
@@ -89,11 +89,12 @@ export function GaleriaHome() {
           ))}
         </div>
 
-        <div className="flex justify-center mt-12">
+        <div className="flex justify-center mt-10">
           <a href="/galeria">
-            <Button variant="primary">Ver portafolio completo →</Button>
+            <Button variant="primary" size="md">Ver portafolio completo →</Button>
           </a>
         </div>
+
       </div>
     </section>
   );

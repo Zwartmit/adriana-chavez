@@ -47,7 +47,7 @@ export function ServiceCard({
         e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
       }}
     >
-      <div className="relative overflow-hidden" style={{ aspectRatio: "16/9" }}>
+      <div className="relative" style={{ height: "180px", overflow: "hidden" }}>
         <img
           src={image}
           alt={name}
@@ -55,7 +55,8 @@ export function ServiceCard({
         />
       </div>
 
-      <div className="flex flex-col gap-3 p-6 flex-1">
+      <div className="flex flex-col gap-3 p-5 flex-1">
+
         <Badge>{category}</Badge>
         <h3
           style={{
@@ -115,10 +116,14 @@ export function ServiceCard({
             fontFamily: "var(--font-body)",
             fontWeight: 600,
             fontSize: "var(--text-sm)",
-            padding: "10px 20px",
+            letterSpacing: "var(--tracking-wide)",
+            padding: "12px 28px",
+            minHeight: "44px",
+            whiteSpace: "nowrap",
             borderRadius: "var(--radius-full)",
             transition: "background-color var(--transition-base)",
           }}
+
           onMouseEnter={(e) =>
             (e.currentTarget.style.backgroundColor = "var(--color-accent-dim)")
           }

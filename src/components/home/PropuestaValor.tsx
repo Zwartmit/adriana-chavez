@@ -129,7 +129,7 @@ export function PropuestaValor() {
           {VALORES.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
-              className="group flex flex-col gap-3 hover:-translate-y-1"
+              className="group flex flex-col items-center text-center gap-3 hover:-translate-y-1"
               style={{
                 backgroundColor: "var(--color-surface)",
                 borderRadius: "var(--radius-xl)",

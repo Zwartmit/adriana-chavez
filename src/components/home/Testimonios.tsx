@@ -117,10 +117,18 @@ export function Testimonios() {
                     backgroundColor: "var(--color-bg)",
                     border: "1px solid var(--color-border)",
                     borderRadius: "var(--radius-2xl)",
-                    padding: "2rem",
-                    boxShadow: "var(--shadow-card)",
+                    padding: "2rem 2rem 1.5rem",
+                    boxShadow: "var(--shadow-sm)",
+                    transition: "box-shadow var(--transition-slow)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "var(--shadow-sm)";
                   }}
                 >
+
                   <div className="flex gap-1">
                     {Array.from({ length: t.rating }).map((_, i) => (
                       <Star
@@ -185,7 +193,7 @@ export function Testimonios() {
           </div>
         </div>
 
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="flex justify-center gap-2 mt-12">
           {snaps.map((_, i) => (
             <button
               key={i}
