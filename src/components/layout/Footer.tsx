@@ -4,7 +4,7 @@ import { NAV_LINKS, SOCIAL_LINKS, CONTACT_INFO } from "@/constants";
 const linkStyle: React.CSSProperties = {
   fontFamily: "var(--font-body)",
   fontSize: "var(--text-sm)",
-  color: "rgba(247, 245, 240, 0.6)",
+  color: "rgba(240,237,230,0.55)",
   transition: "color var(--transition-base)",
 };
 
@@ -21,15 +21,22 @@ export function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: "var(--color-primary-dim)",
+        backgroundColor: "var(--color-bg-alt)",
         color: "var(--color-text-inverse)",
+        borderTop: "0.5px solid var(--color-border)",
+        paddingTop: "4rem",
+        paddingBottom: "0",
       }}
     >
       <div
-        className="mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left"
+        className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left"
         style={{
           maxWidth: "var(--container-max)",
-          padding: "var(--section-padding-y-sm) var(--container-padding)",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "var(--container-padding)",
+          paddingRight: "var(--container-padding)",
+          paddingBottom: "var(--section-padding-y-sm)",
         }}
       >
         {/* Col 1 — Marca */}
@@ -39,7 +46,7 @@ export function Footer() {
               fontFamily: "var(--font-display)",
               fontSize: "var(--text-2xl)",
               fontWeight: 600,
-              color: "var(--color-accent)",
+              color: "var(--color-primary)",
             }}
           >
             Adriana Chávez
@@ -142,15 +149,21 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div style={{ borderTop: "1px solid rgba(224, 221, 213, 0.2)" }}>
+      <div style={{ borderTop: "0.5px solid var(--color-border)" }}>
         <div
-          className="mx-auto flex flex-col md:flex-row items-center justify-between gap-3"
+          className="flex flex-col md:flex-row items-center justify-between gap-3"
           style={{
             maxWidth: "var(--container-max)",
-            padding: "1.5rem var(--container-padding)",
+            marginLeft: "auto",
+            marginRight: "auto",
+            paddingTop: "1.5rem",
+            paddingBottom: "1.5rem",
+            paddingLeft: "var(--container-padding)",
+            paddingRight: "var(--container-padding)",
             fontFamily: "var(--font-mono)",
             fontSize: "var(--text-xs)",
             color: "var(--color-text-muted)",
+            letterSpacing: "var(--tracking-wide)",
           }}
         >
           <span>© 2024 Adriana Chávez · Todos los derechos reservados</span>

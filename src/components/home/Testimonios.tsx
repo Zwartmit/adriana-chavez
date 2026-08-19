@@ -82,7 +82,7 @@ export function Testimonios() {
     <section
       style={{
         backgroundColor: "var(--color-surface)",
-        paddingTop: "6rem",
+        paddingTop: "4rem",
         paddingBottom: "6rem",
       }}
     >
@@ -109,23 +109,25 @@ export function Testimonios() {
             {TESTIMONIOS.map((t) => (
               <div
                 key={t.id}
-                className="shrink-0 basis-full md:basis-1/2 lg:basis-1/3"
+                className="shrink-0 basis-full md:basis-1/2 lg:basis-1/3 self-stretch px-2"
               >
                 <article
-                  className="h-full flex flex-col gap-4"
+                  className="min-h-full flex flex-col gap-4"
                   style={{
-                    backgroundColor: "var(--color-bg)",
-                    border: "1px solid var(--color-border)",
+                    background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
+                    border: "0.5px solid rgba(255,255,255,0.08)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), var(--shadow-card)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
                     borderRadius: "var(--radius-2xl)",
                     padding: "2rem 2rem 1.5rem",
-                    boxShadow: "var(--shadow-sm)",
-                    transition: "box-shadow var(--transition-slow)",
+                    transition: "border-color var(--transition-slow), box-shadow var(--transition-slow)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                    e.currentTarget.style.borderColor = "rgba(232,201,122,0.35)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = "var(--shadow-sm)";
+                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
                   }}
                 >
 

@@ -12,6 +12,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
+import { CartProvider, useCart } from "../lib/cart/CartContext";
+import { CartDrawer } from "../components/tienda/CartDrawer";
 
 function NotFoundComponent() {
   return (
@@ -44,7 +46,7 @@ function NotFoundComponent() {
           className="mt-6 inline-flex items-center justify-center"
           style={{
             backgroundColor: "var(--color-accent)",
-            color: "var(--color-primary-dim)",
+            color: "var(--color-text-inverse)",
             padding: "10px 24px",
             borderRadius: "var(--radius-full)",
             fontWeight: 600,
@@ -168,9 +170,22 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <CartProvider>
+        <RootLayout />
+      </CartProvider>
+    </QueryClientProvider>
+  );
+}
+
+function RootLayout() {
+  const { isDrawerOpen, closeDrawer } = useCart();
+
+  return (
+    <>
       <Navbar />
       <Outlet />
       <Footer />
-    </QueryClientProvider>
+      <CartDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
+    </>
   );
 }

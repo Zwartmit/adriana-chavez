@@ -10,7 +10,7 @@ const SERVICIOS_DESTACADOS = [
       "Corte personalizado según tu tipo de rostro y estilo de vida, con blow dry incluido.",
     duration: 60,
     price: 85000,
-    image: "https://placehold.co/600x400/2A5C50/F7F5F0?text=Corte",
+    image: "https://placehold.co/600x400/131118/D4AF6B?text=Corte",
     href: "/servicios",
   },
   {
@@ -21,7 +21,7 @@ const SERVICIOS_DESTACADOS = [
       "Técnicas avanzadas de coloración: balayage, highlights, color completo y más.",
     duration: 150,
     price: 280000,
-    image: "https://placehold.co/600x400/1C3D35/C8A96E?text=Coloraci%C3%B3n",
+    image: "https://placehold.co/600x400/1A1820/D4AF6B?text=Coloraci%C3%B3n",
     href: "/servicios",
   },
   {
@@ -32,7 +32,7 @@ const SERVICIOS_DESTACADOS = [
       "Nutrición profunda y restauración para cabello dañado o debilitado.",
     duration: 90,
     price: 150000,
-    image: "https://placehold.co/600x400/2A5C50/F7F5F0?text=Tratamiento",
+    image: "https://placehold.co/600x400/131118/D4AF6B?text=Tratamiento",
     href: "/servicios",
   },
   {
@@ -43,7 +43,7 @@ const SERVICIOS_DESTACADOS = [
       "Cuidado completo de manos y pies con técnicas semipermanentes o acrílico.",
     duration: 75,
     price: 95000,
-    image: "https://placehold.co/600x400/1C3D35/C8A96E?text=Manicure",
+    image: "https://placehold.co/600x400/1A1820/D4AF6B?text=Manicure",
     href: "/servicios",
   },
 ];
@@ -51,9 +51,10 @@ const SERVICIOS_DESTACADOS = [
 export function ServiciosDestacados() {
   return (
     <section
+      className="section-glow-center"
       style={{
-        backgroundColor: "var(--color-primary)",
-        color: "var(--color-text-inverse)",
+        backgroundColor: "var(--color-bg-alt)",
+        color: "var(--color-text-primary)",
         paddingTop: "6rem",
         paddingBottom: "6rem",
       }}
@@ -99,9 +100,9 @@ export function ServiciosDestacados() {
           ))}
         </div>
 
-        <div className="flex justify-center mt-12">
-          <a href="/servicios">
-            <Button variant="ghost">Ver todos los servicios →</Button>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "2.5rem" }}>
+          <a href="/servicios" style={{ display: "inline-block" }}>
+            <Button variant="ghost" size="md">Ver todos los servicios →</Button>
           </a>
         </div>
       </div>

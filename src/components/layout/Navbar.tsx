@@ -1,7 +1,50 @@
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, ShoppingBag, X } from "lucide-react";
 import { NAV_LINKS } from "@/constants";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/lib/cart/CartContext";
+
+function CartIcon() {
+  const { totalItems, openDrawer } = useCart();
+  return (
+    <button
+      type="button"
+      onClick={openDrawer}
+      aria-label="Carrito"
+      style={{
+        position: "relative",
+        display: "inline-flex",
+        alignItems: "center",
+        color: "var(--color-text-primary)",
+        padding: "8px",
+      }}
+    >
+      <ShoppingBag size={22} />
+      {totalItems > 0 && (
+        <span
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            width: "18px",
+            height: "18px",
+            backgroundColor: "var(--color-accent)",
+            color: "var(--color-primary)",
+            borderRadius: "50%",
+            fontSize: "10px",
+            fontWeight: 700,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "var(--font-mono)",
+          }}
+        >
+          {totalItems > 9 ? "9+" : totalItems}
+        </span>
+      )}
+    </button>
+  );
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -28,9 +71,12 @@ export function Navbar() {
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease",
         )}
         style={{
-          backgroundColor: scrolled ? "var(--color-primary)" : "transparent",
-          boxShadow: scrolled ? "var(--shadow-md)" : "none",
-          color: "var(--color-text-inverse)",
+          backgroundColor: scrolled ? "var(--color-bg)" : "transparent",
+          borderBottom: scrolled ? "0.5px solid var(--color-border-gold)" : "none",
+          backdropFilter: scrolled ? "blur(20px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
+          boxShadow: scrolled ? "0 8px 32px rgba(0,0,0,0.5)" : "none",
+          color: "var(--color-text-primary)",
         }}
       >
         <div
@@ -52,8 +98,10 @@ export function Navbar() {
             className="font-semibold"
             style={{
               fontFamily: "var(--font-display)",
+              fontStyle: "italic",
               fontSize: "var(--text-xl)",
-              color: "var(--color-text-inverse)",
+              fontWeight: 600,
+              color: "var(--color-primary)",
             }}
           >
             Adriana Chávez
@@ -71,7 +119,7 @@ export function Navbar() {
                   fontSize: "var(--text-sm)",
                   fontWeight: 500,
                   letterSpacing: "var(--tracking-wide)",
-                  color: "var(--color-text-inverse)",
+                  color: "var(--color-text-primary)",
                 }}
               >
                 <span className="group-hover:text-[var(--color-accent)] transition-colors">
@@ -85,43 +133,47 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Desktop CTA */}
-          <a
-            href="/contacto"
-            className="hidden md:inline-flex items-center justify-center transition-colors"
-            style={{
-              backgroundColor: "var(--color-accent)",
-              color: "var(--color-primary-dim)",
-              fontFamily: "var(--font-body)",
-              fontSize: "var(--text-sm)",
-              fontWeight: 600,
-              letterSpacing: "var(--tracking-wide)",
-              padding: "12px 32px",
-              minHeight: "44px",
-              whiteSpace: "nowrap",
-              borderRadius: "var(--radius-full)",
-            }}
+          <div className="flex items-center gap-2">
+            {/* Desktop CTA */}
+            <a
+              href="/contacto"
+              className="hidden md:inline-flex items-center justify-center transition-colors"
+              style={{
+                backgroundColor: "var(--color-accent)",
+                color: "var(--color-text-inverse)",
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+                fontWeight: 600,
+                letterSpacing: "var(--tracking-wide)",
+                padding: "12px 32px",
+                minHeight: "44px",
+                whiteSpace: "nowrap",
+                borderRadius: "var(--radius-full)",
+              }}
 
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-accent-dim)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-accent)")
-            }
-          >
-            Reservar cita →
-          </a>
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--color-accent-dim)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--color-accent)")
+              }
+            >
+              Reservar cita →
+            </a>
 
-          {/* Mobile hamburger */}
-          <button
-            type="button"
-            aria-label="Abrir menú"
-            className="md:hidden p-2"
-            onClick={() => setOpen(true)}
-            style={{ color: "var(--color-text-inverse)" }}
-          >
-            <Menu size={24} />
-          </button>
+            <CartIcon />
+
+            {/* Mobile hamburger */}
+            <button
+              type="button"
+              aria-label="Abrir menú"
+              className="md:hidden p-2"
+              onClick={() => setOpen(true)}
+              style={{ color: "var(--color-text-primary)" }}
+            >
+              <Menu size={24} />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -186,7 +238,7 @@ export function Navbar() {
               className="inline-flex w-full items-center justify-center"
               style={{
                 backgroundColor: "var(--color-accent)",
-                color: "var(--color-primary-dim)",
+                color: "var(--color-text-inverse)",
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-base)",
                 fontWeight: 600,

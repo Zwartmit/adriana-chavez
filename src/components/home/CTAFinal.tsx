@@ -6,24 +6,16 @@ export function CTAFinal() {
     <section
       className="relative overflow-hidden"
       style={{
-        backgroundColor: "var(--color-primary)",
-        color: "var(--color-text-inverse)",
-        paddingTop: "6rem",
-        paddingBottom: "6rem",
+        background: `
+          radial-gradient(ellipse at 50% 0%, rgba(232,201,122,0.08) 0%, transparent 60%),
+          var(--color-bg)
+        `,
+        color: "var(--color-text-primary)",
+        paddingTop: "8rem",
+        paddingBottom: "8rem",
+        textAlign: "center",
       }}
     >
-      <img
-        src="https://placehold.co/1920x800/1C3D35/C8A96E?text=."
-        alt=""
-        aria-hidden
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ opacity: 0.15 }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: "rgba(15, 36, 32, 0.85)" }}
-      />
-
       <div
         className="relative z-10 mx-auto flex flex-col items-center text-center gap-6"
         style={{
@@ -87,7 +79,7 @@ export function CTAFinal() {
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "var(--color-accent)",
-              color: "var(--color-primary-dim)",
+              color: "var(--color-text-inverse)",
               fontFamily: "var(--font-body)",
               fontWeight: 600,
               fontSize: "var(--text-base)",
@@ -117,7 +109,7 @@ export function CTAFinal() {
               justifyContent: "center",
               gap: "0.5rem",
               backgroundColor: "transparent",
-              color: "var(--color-text-inverse)",
+              color: "var(--color-text-primary)",
               fontFamily: "var(--font-body)",
               fontWeight: 600,
               fontSize: "var(--text-base)",

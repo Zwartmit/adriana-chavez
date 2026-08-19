@@ -8,6 +8,8 @@ interface SectionHeaderProps {
   className?: string;
   /** CSS font-size for the title. Defaults to clamp(1.75rem, 3vw, 2.5rem). */
   titleSize?: string;
+  /** CSS color for the title. Defaults to var(--color-text-primary). */
+  titleColor?: string;
 }
 
 export function SectionHeader({
@@ -17,6 +19,7 @@ export function SectionHeader({
   align = "left",
   className,
   titleSize = "clamp(1.75rem, 3vw, 2.5rem)",
+  titleColor,
 }: SectionHeaderProps) {
   const isCenter = align === "center";
   return (
@@ -47,7 +50,7 @@ export function SectionHeader({
           fontWeight: 600,
           fontSize: titleSize,
           lineHeight: "var(--leading-tight)",
-          color: "var(--color-text-primary)",
+          color: titleColor || "var(--color-text-primary)",
         }}
       >
         {title}

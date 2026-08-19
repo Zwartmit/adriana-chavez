@@ -31,20 +31,25 @@ export function ServiceCard({
 }: ServiceCardProps) {
   return (
     <article
-      className="flex flex-col overflow-hidden group"
+      className="service-card-nc flex flex-col group"
       style={{
-        backgroundColor: "rgba(255,255,255,0.05)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
+        border: "0.5px solid rgba(255,255,255,0.08)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
         borderRadius: "var(--radius-xl)",
-        transition: "all var(--transition-base)",
+        overflow: "hidden",
+        transition: "border-color var(--transition-slow), box-shadow var(--transition-slow)",
+        position: "relative",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)";
-        e.currentTarget.style.borderColor = "rgba(200, 169, 110, 0.4)";
+        e.currentTarget.style.borderColor = "rgba(232,201,122,0.35)";
+        e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.5)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)";
         e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+        e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)";
       }}
     >
       <div className="relative" style={{ height: "180px", overflow: "hidden" }}>
@@ -63,7 +68,7 @@ export function ServiceCard({
             fontFamily: "var(--font-display)",
             fontWeight: 600,
             fontSize: "var(--text-2xl)",
-            color: "var(--color-text-inverse)",
+            color: "var(--color-text-primary)",
             lineHeight: "var(--leading-tight)",
           }}
         >
@@ -112,7 +117,7 @@ export function ServiceCard({
           className="inline-flex items-center justify-center mt-2"
           style={{
             backgroundColor: "var(--color-accent)",
-            color: "var(--color-primary-dim)",
+            color: "var(--color-text-inverse)",
             fontFamily: "var(--font-body)",
             fontWeight: 600,
             fontSize: "var(--text-sm)",

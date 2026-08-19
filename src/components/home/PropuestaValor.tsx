@@ -75,16 +75,16 @@ export function PropuestaValor() {
               expectativas, en un espacio diseñado para que te sientas
               completamente a gusto.
             </p>
-            <div>
-              <a href="/sobre-nosotros">
-                <Button variant="secondary">Conoce nuestra historia →</Button>
+            <div style={{ marginTop: "1.5rem" }}>
+              <a href="/sobre-nosotros" style={{ display: "inline-block" }}>
+                <Button variant="secondary" size="md">Conoce nuestra historia →</Button>
               </a>
             </div>
           </div>
 
           <div className="md:col-span-2 relative">
             <img
-              src="https://placehold.co/600x700/EFECE5/1C3D35?text=Foto+Sal%C3%B3n"
+              src="https://placehold.co/600x700/1A1820/D4AF6B?text=Foto+Sal%C3%B3n"
               alt="Salón Adriana Chávez"
               width={600}
               height={700}
@@ -95,9 +95,12 @@ export function PropuestaValor() {
               className="absolute"
               style={{
                 bottom: "1.5rem",
-                left: "-1rem",
-                backgroundColor: "var(--color-surface)",
-                boxShadow: "var(--shadow-lg)",
+                left: "-1.5rem",
+                background: "linear-gradient(135deg, rgba(232,201,122,0.12) 0%, rgba(232,201,122,0.05) 100%)",
+                border: "0.5px solid rgba(232,201,122,0.35)",
+                boxShadow: "inset 0 1px 0 rgba(232,201,122,0.2), 0 8px 32px rgba(0,0,0,0.5)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
                 borderRadius: "var(--radius-xl)",
                 padding: "16px 20px",
               }}
