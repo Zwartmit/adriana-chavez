@@ -51,7 +51,7 @@ function AdminPage() {
           color: "var(--color-primary)",
         }}
       >
-        Panel de Administración
+        Panel de Administración — Brandon
       </p>
       <p style={{ fontFamily: "var(--font-body)", color: "var(--color-text-secondary)", marginTop: "1rem" }}>
         El panel completo se construirá en Antigravity.
@@ -62,7 +62,7 @@ function AdminPage() {
           marginTop: "2rem",
           padding: "10px 24px",
           backgroundColor: "var(--color-primary)",
-          color: "white",
+          color: "var(--color-text-inverse)",
           border: "none",
           borderRadius: "var(--radius-full)",
           cursor: "pointer",

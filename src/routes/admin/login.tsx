@@ -36,17 +36,21 @@ function AdminLoginPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "var(--color-primary)",
+        backgroundColor: "var(--color-bg)",
+        padding: "1.5rem",
       }}
     >
       <div
         style={{
-          backgroundColor: "var(--color-surface)",
+          background: "linear-gradient(135deg, rgba(232,201,122,0.07) 0%, rgba(232,201,122,0.03) 100%)",
+          border: "0.5px solid rgba(232,201,122,0.32)",
+          boxShadow: "inset 0 1px 0 rgba(232,201,122,0.14), var(--shadow-lg)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
           borderRadius: "var(--radius-2xl)",
           padding: "2.5rem",
           width: "100%",
           maxWidth: "400px",
-          boxShadow: "var(--shadow-lg)",
         }}
       >
         {/* Logo */}
@@ -68,7 +72,7 @@ function AdminLoginPage() {
               fontSize: "var(--text-xs)",
               letterSpacing: "var(--tracking-widest)",
               textTransform: "uppercase",
-              color: "var(--color-accent)",
+              color: "var(--color-text-secondary)",
               marginTop: "0.25rem",
             }}
           >
@@ -99,13 +103,17 @@ function AdminLoginPage() {
               style={{
                 width: "100%",
                 padding: "12px 16px",
+                backgroundColor: "var(--color-surface)",
                 border: "1px solid var(--color-border)",
                 borderRadius: "var(--radius-lg)",
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-base)",
                 color: "var(--color-text-primary)",
                 outline: "none",
+                transition: "border-color var(--transition-base)",
               }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--color-primary)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
             />
           </div>
           <div>
@@ -129,13 +137,17 @@ function AdminLoginPage() {
               style={{
                 width: "100%",
                 padding: "12px 16px",
+                backgroundColor: "var(--color-surface)",
                 border: "1px solid var(--color-border)",
                 borderRadius: "var(--radius-lg)",
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-base)",
                 color: "var(--color-text-primary)",
                 outline: "none",
+                transition: "border-color var(--transition-base)",
               }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--color-primary)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
             />
           </div>
 
@@ -169,6 +181,7 @@ function AdminLoginPage() {
               fontSize: "var(--text-base)",
               letterSpacing: "var(--tracking-wide)",
               transition: "background-color var(--transition-base)",
+              boxShadow: loading ? "none" : "var(--shadow-gold)",
             }}
           >
             {loading ? "Iniciando sesión..." : "Iniciar sesión →"}
