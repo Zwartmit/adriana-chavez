@@ -21,6 +21,7 @@ import { Route as TiendaSlugRouteImport } from './routes/tienda/$slug'
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/index'
 import { Route as AdminClientesClienteIdRouteImport } from './routes/admin/clientes/$clienteId'
 import { Route as AdminInventarioIndexRouteImport } from './routes/admin/inventario/index'
+import { Route as AdminMensajesIndexRouteImport } from './routes/admin/mensajes/index'
 import { Route as AdminReportesIndexRouteImport } from './routes/admin/reportes/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,6 +84,11 @@ const AdminInventarioIndexRoute = AdminInventarioIndexRouteImport.update({
   path: '/admin/inventario/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminMensajesIndexRoute = AdminMensajesIndexRouteImport.update({
+  id: '/admin/mensajes/',
+  path: '/admin/mensajes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminReportesIndexRoute = AdminReportesIndexRouteImport.update({
   id: '/admin/reportes/',
   path: '/admin/reportes/',
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
+  '/admin/mensajes/': typeof AdminMensajesIndexRoute
   '/admin/reportes/': typeof AdminReportesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
   '/admin/inventario': typeof AdminInventarioIndexRoute
+  '/admin/mensajes': typeof AdminMensajesIndexRoute
   '/admin/reportes': typeof AdminReportesIndexRoute
 }
 export interface FileRoutesById {
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
+  '/admin/mensajes/': typeof AdminMensajesIndexRoute
   '/admin/reportes/': typeof AdminReportesIndexRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/admin/clientes/$clienteId'
     | '/admin/clientes/'
     | '/admin/inventario/'
+    | '/admin/mensajes/'
     | '/admin/reportes/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/admin/clientes/$clienteId'
     | '/admin/clientes'
     | '/admin/inventario'
+    | '/admin/mensajes'
     | '/admin/reportes'
   id:
     | '__root__'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/admin/clientes/$clienteId'
     | '/admin/clientes/'
     | '/admin/inventario/'
+    | '/admin/mensajes/'
     | '/admin/reportes/'
   fileRoutesById: FileRoutesById
 }
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   AdminClientesClienteIdRoute: typeof AdminClientesClienteIdRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
   AdminInventarioIndexRoute: typeof AdminInventarioIndexRoute
+  AdminMensajesIndexRoute: typeof AdminMensajesIndexRoute
   AdminReportesIndexRoute: typeof AdminReportesIndexRoute
 }
 
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminInventarioIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/mensajes/': {
+      id: '/admin/mensajes/'
+      path: '/admin/mensajes'
+      fullPath: '/admin/mensajes/'
+      preLoaderRoute: typeof AdminMensajesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/reportes/': {
       id: '/admin/reportes/'
       path: '/admin/reportes'
@@ -308,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClientesClienteIdRoute: AdminClientesClienteIdRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,
   AdminInventarioIndexRoute: AdminInventarioIndexRoute,
+  AdminMensajesIndexRoute: AdminMensajesIndexRoute,
   AdminReportesIndexRoute: AdminReportesIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -207,3 +207,18 @@ CREATE POLICY "Cliente ve sus items"
 CREATE POLICY "Admin ve reportes de caja"
   ON public.reportes_caja FOR ALL
   USING (public.es_admin());
+
+-- Mensajes de contacto — cualquiera envía, solo admin lee/actualiza
+ALTER TABLE public.mensajes_contacto ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Cualquiera puede enviar mensaje"
+  ON public.mensajes_contacto FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Solo admin lee mensajes"
+  ON public.mensajes_contacto FOR SELECT
+  USING (public.es_admin());
+
+CREATE POLICY "Solo admin actualiza mensajes"
+  ON public.mensajes_contacto FOR UPDATE
+  USING (public.es_admin());

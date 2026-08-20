@@ -14,9 +14,10 @@ export const SOCIAL_LINKS = {
 } as const;
 
 export const CONTACT_INFO = {
-  phone: "+57 300 000 0000",
+  phone: "+57 300 000 0000", // actualizar cuando Adriana confirme
   email: "hola@adrianachavez.com",
-  address: "Bogotá D.C., Colombia",
+  address: "Centro de Belleza Adriana Chávez, Bogotá D.C.",
+  mapUrl: "https://maps.google.com/?q=Centro+de+Belleza+Adriana+Chavez",
   schedule: {
     weekdays: "Lun – Vie: 9:00 am – 7:00 pm",
     saturday: "Sábado: 9:00 am – 5:00 pm",

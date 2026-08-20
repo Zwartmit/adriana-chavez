@@ -1,5 +1,5 @@
 import { useRouterState } from "@tanstack/react-router";
-import { useState, type ComponentType } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import {
   ArrowLeft,
   BarChart3,
@@ -7,15 +7,18 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  MessageSquare,
   Package,
   Users,
 } from "lucide-react";
 import { signOut } from "@/lib/supabase/auth";
+import { supabase } from "@/lib/supabase/client";
 
 const NAV_ITEMS = [
   { label: "Calendario", href: "/admin", icon: Calendar },
   { label: "Clientes", href: "/admin/clientes", icon: Users },
   { label: "Inventario", href: "/admin/inventario", icon: Package },
+  { label: "Mensajes", href: "/admin/mensajes", icon: MessageSquare },
   { label: "Reportes", href: "/admin/reportes", icon: BarChart3 },
 ];
 
@@ -36,10 +39,36 @@ interface SidebarLinkProps {
   isCollapsed: boolean;
   hovered: boolean;
   onHoverChange: (hovered: boolean) => void;
+  badge?: number;
 }
 
-function SidebarLink({ href, label, icon: Icon, active, isCollapsed, hovered, onHoverChange }: SidebarLinkProps) {
+function SidebarBadge({ count, style }: { count: number; style?: React.CSSProperties }) {
+  return (
+    <span
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: "18px",
+        height: "18px",
+        padding: "0 4px",
+        backgroundColor: "var(--color-accent)",
+        color: "var(--color-text-inverse)",
+        borderRadius: "50%",
+        fontSize: "10px",
+        fontWeight: 700,
+        fontFamily: "var(--font-mono)",
+        ...style,
+      }}
+    >
+      {count > 9 ? "9+" : count}
+    </span>
+  );
+}
+
+function SidebarLink({ href, label, icon: Icon, active, isCollapsed, hovered, onHoverChange, badge }: SidebarLinkProps) {
   const color = active ? COLOR_ACTIVE : hovered ? COLOR_HOVER : COLOR_INACTIVE;
+  const hasBadge = !!badge && badge > 0;
 
   return (
     <div style={{ position: "relative" }} onMouseEnter={() => onHoverChange(true)} onMouseLeave={() => onHoverChange(false)}>
@@ -60,6 +89,7 @@ function SidebarLink({ href, label, icon: Icon, active, isCollapsed, hovered, on
           color,
           textDecoration: "none",
           transition: "all 250ms ease",
+          position: "relative",
         }}
       >
         <Icon size={22} style={{ color, flexShrink: 0 }} />
@@ -74,6 +104,10 @@ function SidebarLink({ href, label, icon: Icon, active, isCollapsed, hovered, on
         >
           {label}
         </span>
+        {hasBadge && !isCollapsed && <SidebarBadge count={badge!} style={{ marginLeft: "auto" }} />}
+        {hasBadge && isCollapsed && (
+          <SidebarBadge count={badge!} style={{ position: "absolute", top: 4, right: 4 }} />
+        )}
       </a>
       {isCollapsed && hovered && (
         <span
@@ -106,6 +140,20 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [mensajesSinLeer, setMensajesSinLeer] = useState(0);
+
+  useEffect(() => {
+    const fetchMensajesSinLeer = () => {
+      supabase
+        .from("mensajes_contacto")
+        .select("id", { count: "exact", head: true })
+        .eq("leido", false)
+        .then(({ count }) => setMensajesSinLeer(count ?? 0));
+    };
+    fetchMensajesSinLeer();
+    window.addEventListener("mensajes:actualizado", fetchMensajesSinLeer);
+    return () => window.removeEventListener("mensajes:actualizado", fetchMensajesSinLeer);
+  }, [pathname]);
 
   const handleConfirmSignOut = async () => {
     setSigningOut(true);
@@ -193,6 +241,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
                 isCollapsed={isCollapsed}
                 hovered={hoveredHref === item.href}
                 onHoverChange={(hovered) => setHoveredHref(hovered ? item.href : null)}
+                badge={item.href === "/admin/mensajes" ? mensajesSinLeer : undefined}
               />
             );
           })}

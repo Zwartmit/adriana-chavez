@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { supabase } from "@/lib/supabase/client";
 
 const SERVICIOS_OPTIONS = [
   { value: "", label: "Selecciona un servicio..." },
@@ -64,11 +65,28 @@ export function ContactoForm() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    setError(null);
+
+    const { error } = await supabase.from("mensajes_contacto").insert({
+      nombre: formState.nombre,
+      telefono: formState.telefono,
+      email: formState.email || null,
+      servicio: formState.servicio || null,
+      mensaje: formState.mensaje,
+    });
+
+    if (error) {
+      console.error("[ContactoForm] error al enviar mensaje:", error.message);
+      setError("Hubo un problema al enviar tu mensaje. Intenta de nuevo.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(false);
     setSubmitted(true);
   };
@@ -220,6 +238,19 @@ export function ContactoForm() {
             style={{ ...inputStyle, resize: "none", minHeight: "120px" }}
           />
         </div>
+
+        {error && (
+          <p
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-sm)",
+              color: "var(--color-error)",
+              textAlign: "center",
+            }}
+          >
+            {error}
+          </p>
+        )}
 
         <Button type="submit" variant="accent" size="lg" className="w-full" disabled={loading}>
           {loading ? (

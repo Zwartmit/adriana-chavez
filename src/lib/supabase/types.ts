@@ -286,6 +286,20 @@ export interface Database {
         Insert: Omit<Database["public"]["Tables"]["reportes_caja"]["Row"], "id" | "created_at">;
         Update: Partial<Database["public"]["Tables"]["reportes_caja"]["Insert"]>;
       };
+      mensajes_contacto: {
+        Row: {
+          id: string;
+          nombre: string;
+          telefono: string;
+          email: string | null;
+          servicio: string | null;
+          mensaje: string;
+          leido: boolean;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["mensajes_contacto"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["mensajes_contacto"]["Insert"]>;
+      };
     };
     Views: {
       inventario_completo: {

@@ -368,6 +368,22 @@ CREATE TABLE IF NOT EXISTS public.reportes_caja (
 COMMENT ON TABLE public.reportes_caja IS 'Cierre de caja diario. El agente de IA genera este reporte automáticamente';
 
 -- ──────────────────────────────────────────────────────────────────
+-- TABLA: mensajes_contacto
+-- ──────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.mensajes_contacto (
+  id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  nombre      TEXT NOT NULL,
+  telefono    TEXT NOT NULL,
+  email       TEXT,
+  servicio    TEXT,
+  mensaje     TEXT NOT NULL,
+  leido       BOOLEAN DEFAULT FALSE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE public.mensajes_contacto IS 'Mensajes enviados desde el formulario público de contacto';
+
+-- ──────────────────────────────────────────────────────────────────
 -- FUNCIÓN: updated_at automático
 -- ──────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION public.set_updated_at()

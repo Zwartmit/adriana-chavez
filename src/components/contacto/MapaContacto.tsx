@@ -1,59 +1,26 @@
-import { MapPin } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-
 export function MapaContacto() {
   return (
     <section style={{ backgroundColor: "var(--color-bg-alt)" }}>
       <div
         className="h-[300px] md:h-[450px]"
-        style={{ width: "100%", position: "relative", overflow: "hidden" }}
+        style={{
+          width: "100%",
+          borderRadius: "var(--radius-xl)",
+          overflow: "hidden",
+          border: "0.5px solid var(--color-border-gold)",
+          position: "relative",
+        }}
       >
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "var(--color-bg-alt)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "1rem",
-            border: "2px dashed var(--color-border)",
-          }}
-        >
-          <MapPin size={40} color="var(--color-primary)" />
-          <p
-            style={{
-              fontFamily: "var(--font-display)",
-              fontStyle: "italic",
-              fontSize: "var(--text-xl)",
-              color: "var(--color-text-secondary)",
-            }}
-          >
-            Mapa interactivo
-          </p>
-          <p
-            className="uppercase"
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-xs)",
-              color: "var(--color-text-muted)",
-              letterSpacing: "var(--tracking-wider)",
-            }}
-          >
-            Se conectará con Google Maps API
-          </p>
-          <a
-            href="https://maps.google.com"
-            target="_blank"
-            rel="noreferrer"
-            style={{ marginTop: "0.5rem" }}
-          >
-            <Button variant="primary" size="sm">
-              Ver en Google Maps →
-            </Button>
-          </a>
-        </div>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.4714087573995!2d-72.89022048954475!3d4.876936822400488!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6ad3f10fcdd433%3A0xb59fc61f9d00aa82!2sCentro%20de%20Belleza%20Adriana%20Chavez!5e0!3m2!1sen!2sco!4v1787200436030!5m2!1sen!2sco"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          title="Ubicación Centro de Belleza Adriana Chávez"
+        />
       </div>
     </section>
   );

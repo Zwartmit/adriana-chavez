@@ -202,17 +202,19 @@ function ContactoPage() {
               </p>
               <div className="flex items-start gap-2 mb-6">
                 <MapPin size={18} color="var(--color-accent)" style={{ flexShrink: 0, marginTop: "2px" }} />
-                <p
+                <a
+                  href={CONTACT_INFO.mapUrl}
+                  target="_blank"
+                  rel="noreferrer"
                   style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-base)",
                     color: "rgba(247,245,240,0.75)",
+                    textDecoration: "none",
                   }}
                 >
-                  Calle 00 # 00-00, Bogotá D.C.
-                  <br />
-                  Barrio placeholder, Bogotá
-                </p>
+                  {CONTACT_INFO.address}
+                </a>
               </div>
 
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "1.5rem 0" }} />
