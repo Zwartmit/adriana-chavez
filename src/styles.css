@@ -282,6 +282,38 @@ body {
   animation: bounceY 1.8s ease-in-out infinite;
 }
 
+/* ── ADMIN: DayPicker (Noir Couture) ── */
+.admin-daypicker.rdp-root {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-accent-background-color: var(--glass-champagne-bg);
+  --rdp-today-color: var(--color-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+.admin-daypicker .rdp-selected .rdp-day_button {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
+}
+.admin-daypicker .rdp-day_button:hover:not(:disabled) {
+  background-color: var(--glass-champagne-bg);
+}
+.admin-daypicker .rdp-weekday {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+.admin-daypicker .rdp-caption_label {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-primary);
+}
+.admin-daypicker .rdp-button_previous,
+.admin-daypicker .rdp-button_next {
+  color: var(--color-text-secondary);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

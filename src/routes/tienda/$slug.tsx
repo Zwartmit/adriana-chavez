@@ -1,12 +1,56 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Check, Star } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ProductCard, type ProductCardProps } from "@/components/tienda/ProductCard";
 import { PRODUCTOS } from "@/components/tienda/ProductosGrid";
+import { LoadingState, ErrorState } from "@/components/ui/QueryState";
+import { supabase } from "@/lib/supabase/client";
 import { useCart } from "@/lib/cart/CartContext";
 import { formatPrice } from "@/lib/utils";
+
+// $slug.tsx hace su propia consulta independiente a Supabase en vez de
+// depender de que ProductosGrid ya se haya montado y poblado PRODUCTOS
+// (necesario para navegación directa a /tienda/{slug}). El export
+// PRODUCTOS se mantiene (poblado por ProductosGrid) solo como respaldo
+// para head(), que corre en SSR sin poder esperar una consulta async aquí.
+
+interface ProductoDetalleRow {
+  id: string;
+  slug: string;
+  nombre: string;
+  marca: string;
+  descripcion: string | null;
+  precio: number;
+  precio_original: number | null;
+  imagenes: string[];
+  rating: number;
+  total_resenas: number;
+  es_nuevo: boolean;
+  categorias_productos: { nombre: string; slug: string } | null;
+  inventario: { stock_virtual: number; stock_fisico: number }[] | null;
+}
+
+function mapProductoDetalle(p: ProductoDetalleRow): ProductCardProps {
+  const stock = p.inventario?.[0];
+  const isAgotado = stock ? stock.stock_virtual + stock.stock_fisico === 0 : false;
+  return {
+    id: p.id,
+    slug: p.slug,
+    name: p.nombre,
+    brand: p.marca,
+    description: p.descripcion ?? "",
+    price: p.precio,
+    originalPrice: p.precio_original ?? undefined,
+    image: p.imagenes?.[0] ?? "",
+    category: p.categorias_productos?.slug ?? "",
+    rating: p.rating,
+    reviews: p.total_resenas,
+    isNew: p.es_nuevo,
+    isAgotado,
+  };
+}
 
 export const Route = createFileRoute("/tienda/$slug")({
   component: ProductoPage,
@@ -57,9 +101,61 @@ const TABS = ["Descripción", "Características", "Reseñas"] as const;
 
 function ProductoPage() {
   const { slug } = Route.useParams();
-  const producto = PRODUCTOS.find((p) => p.slug === slug);
+  const [producto, setProducto] = useState<ProductCardProps | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!producto) {
+  const fetchProducto = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setNotFound(false);
+    const { data, error } = await supabase
+      .from("productos")
+      .select("*, categorias_productos(nombre, slug), inventario(stock_virtual, stock_fisico)")
+      .eq("slug", slug)
+      .eq("activo", true)
+      .maybeSingle();
+
+    if (error) {
+      console.error("[ProductoPage] error al cargar:", error.message);
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    if (!data) {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
+
+    console.log("[ProductoPage] producto cargado desde Supabase");
+    setProducto(mapProductoDetalle(data as unknown as ProductoDetalleRow));
+    setLoading(false);
+  }, [slug]);
+
+  useEffect(() => {
+    fetchProducto();
+  }, [fetchProducto]);
+
+  if (loading) {
+    return (
+      <main style={{ minHeight: "60vh", paddingTop: "80px" }}>
+        <LoadingState />
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main style={{ minHeight: "60vh", paddingTop: "80px" }}>
+        <ErrorState message={error} onRetry={fetchProducto} />
+      </main>
+    );
+  }
+
+  if (notFound || !producto) {
     return (
       <main
         style={{
@@ -97,10 +193,36 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("Descripción");
+  const [relacionados, setRelacionados] = useState<ProductCardProps[]>([]);
 
-  const relacionados = PRODUCTOS.filter(
-    (p) => p.category === producto.category && p.id !== producto.id,
-  ).slice(0, 4);
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchRelacionados() {
+      const { data, error } = await supabase
+        .from("productos")
+        .select("*, categorias_productos(nombre, slug), inventario(stock_virtual, stock_fisico)")
+        .eq("activo", true)
+        .neq("id", producto.id)
+        .limit(8);
+
+      if (error) {
+        console.error("[ProductoPage] error al cargar relacionados:", error.message);
+        return;
+      }
+      if (cancelled) return;
+
+      const mapped = (data as unknown as ProductoDetalleRow[])
+        .map(mapProductoDetalle)
+        .filter((p) => p.category === producto.category)
+        .slice(0, 4);
+      console.log(`[ProductoPage] ${mapped.length} productos relacionados cargados desde Supabase`);
+      setRelacionados(mapped);
+    }
+    fetchRelacionados();
+    return () => {
+      cancelled = true;
+    };
+  }, [producto.id, producto.category]);
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {

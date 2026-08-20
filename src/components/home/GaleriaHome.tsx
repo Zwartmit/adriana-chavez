@@ -1,16 +1,75 @@
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { LoadingState, ErrorState } from "@/components/ui/QueryState";
+import { supabase } from "@/lib/supabase/client";
 
-const GALERIA = [
-  { id: "1", src: "https://placehold.co/600x800/181818/E8C97A?text=Antes+%26+Despu%C3%A9s", alt: "Transformación 1", gridRow: "span 2", gridColumn: undefined },
-  { id: "2", src: "https://placehold.co/600x400/131118/E8C97A?text=Coloraci%C3%B3n", alt: "Coloración", gridRow: undefined, gridColumn: undefined },
-  { id: "3", src: "https://placehold.co/600x800/131118/E8C97A?text=Corte", alt: "Corte", gridRow: "span 2", gridColumn: undefined },
-  { id: "4", src: "https://placehold.co/600x400/E8C97A/0A0A0B?text=Tratamiento", alt: "Tratamiento", gridRow: undefined, gridColumn: undefined },
-  { id: "5", src: "https://placehold.co/600x400/181818/F5F2EB?text=Peinado", alt: "Peinado", gridRow: undefined, gridColumn: undefined },
-  { id: "6", src: "https://placehold.co/800x400/131118/E8C97A?text=Manicure", alt: "Manicure", gridRow: undefined, gridColumn: "span 2" },
-]
+// Array local original — comentado por si hay que hacer rollback rápido.
+// const GALERIA = [
+//   { id: "1", src: "https://placehold.co/600x800/181818/E8C97A?text=Antes+%26+Despu%C3%A9s", alt: "Transformación 1", gridRow: "span 2", gridColumn: undefined },
+//   { id: "2", src: "https://placehold.co/600x400/131118/E8C97A?text=Coloraci%C3%B3n", alt: "Coloración", gridRow: undefined, gridColumn: undefined },
+//   { id: "3", src: "https://placehold.co/600x800/131118/E8C97A?text=Corte", alt: "Corte", gridRow: "span 2", gridColumn: undefined },
+//   { id: "4", src: "https://placehold.co/600x400/E8C97A/0A0A0B?text=Tratamiento", alt: "Tratamiento", gridRow: undefined, gridColumn: undefined },
+//   { id: "5", src: "https://placehold.co/600x400/181818/F5F2EB?text=Peinado", alt: "Peinado", gridRow: undefined, gridColumn: undefined },
+//   { id: "6", src: "https://placehold.co/800x400/131118/E8C97A?text=Manicure", alt: "Manicure", gridRow: undefined, gridColumn: "span 2" },
+// ]
+
+interface GaleriaHomeItem {
+  id: string;
+  src: string;
+  alt: string;
+  gridRow?: string;
+  gridColumn?: string;
+}
+
+// Patrón de grid original repetido por índice (span2, normal, span2, normal, normal, span2col)
+const GRID_PATTERN: { gridRow?: string; gridColumn?: string }[] = [
+  { gridRow: "span 2" },
+  {},
+  { gridRow: "span 2" },
+  {},
+  {},
+  { gridColumn: "span 2" },
+];
 
 export function GaleriaHome() {
+  const [galeria, setGaleria] = useState<GaleriaHomeItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchGaleria = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await supabase
+      .from("galeria")
+      .select("*")
+      .eq("activo", true)
+      .order("orden", { ascending: true })
+      .limit(6);
+
+    if (error) {
+      console.error("[GaleriaHome] error al cargar:", error.message);
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    console.log(`[GaleriaHome] ${data.length} registros cargados desde Supabase`);
+    setGaleria(
+      data.map((g, i) => ({
+        id: g.id,
+        src: g.imagen_url,
+        alt: g.titulo ?? g.tag ?? "",
+        ...GRID_PATTERN[i % GRID_PATTERN.length],
+      })),
+    );
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchGaleria();
+  }, [fetchGaleria]);
+
   return (
     <section
       style={{
@@ -37,6 +96,11 @@ export function GaleriaHome() {
           className="mx-auto mb-12"
         />
 
+        {loading ? (
+          <LoadingState />
+        ) : error ? (
+          <ErrorState message={error} onRetry={fetchGaleria} />
+        ) : (
         <div
           style={{
             display: "grid",
@@ -45,7 +109,7 @@ export function GaleriaHome() {
             gap: "0.75rem",
           }}
         >
-          {GALERIA.map((g) => (
+          {galeria.map((g) => (
             <a
               key={g.id}
               href="/galeria"
@@ -114,6 +178,7 @@ export function GaleriaHome() {
             </a>
           ))}
         </div>
+        )}
 
         <div style={{ display: "flex", justifyContent: "center", marginTop: "3rem" }}>
           <a href="/galeria" style={{ display: "inline-block" }}>

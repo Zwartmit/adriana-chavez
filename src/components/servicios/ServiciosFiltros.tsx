@@ -1,12 +1,15 @@
 import { Search } from "lucide-react";
 
-const CATEGORIAS = ["Todos", "Cabello", "Color", "Tratamiento", "Uñas", "Peinado"];
+// Categorías hardcodeadas originales — comentado, ahora vienen de Supabase
+// (categorias_servicios) vía ServiciosGrid → onCategoriesChange.
+// const CATEGORIAS = ["Todos", "Cabello", "Color", "Tratamiento", "Uñas", "Peinado"];
 
 interface ServiciosFiltrosProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
   activeCategory: string;
   onCategoryChange: (category: string) => void;
+  categories: string[];
 }
 
 export function ServiciosFiltros({
@@ -14,7 +17,9 @@ export function ServiciosFiltros({
   onSearchChange,
   activeCategory,
   onCategoryChange,
+  categories,
 }: ServiciosFiltrosProps) {
+  const CATEGORIAS = ["Todos", ...categories];
   return (
     <section
       style={{

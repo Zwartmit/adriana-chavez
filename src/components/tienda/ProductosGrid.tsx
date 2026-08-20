@@ -1,132 +1,63 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { ProductCard, type ProductCardProps } from "@/components/tienda/ProductCard";
 import { useCart } from "@/lib/cart/CartContext";
+import { LoadingState, ErrorState } from "@/components/ui/QueryState";
+import { supabase } from "@/lib/supabase/client";
 
-export const PRODUCTOS: ProductCardProps[] = [
-  // Cuidado capilar
-  {
-    id: "p1", slug: "shampoo-hidratacion-profunda",
-    name: "Shampoo Hidratación Profunda", brand: "L'Oréal Professionnel",
-    description: "Shampoo nutritivo para cabello seco y dañado. Fórmula con aceite de argán.",
-    price: 85000, category: "cuidado-capilar", rating: 4.8, reviews: 24,
-    image: "https://placehold.co/400x400/131118/E8C97A?text=Shampoo",
-    isNew: true,
-  },
-  {
-    id: "p2", slug: "acondicionador-reparador",
-    name: "Acondicionador Reparador", brand: "Kérastase",
-    description: "Acondicionador de alta concentración para cabello muy dañado o quebradizo.",
-    price: 125000, category: "cuidado-capilar", rating: 4.9, reviews: 18,
-    image: "https://placehold.co/400x400/181818/E8C97A?text=Acondicionador",
-  },
-  {
-    id: "p3", slug: "mascarilla-nutricion-extrema",
-    name: "Mascarilla Nutrición Extrema", brand: "Wella Professionals",
-    description: "Mascarilla semanal de nutrición profunda. Restaura la fibra capilar desde adentro.",
-    price: 98000, category: "cuidado-capilar", rating: 4.7, reviews: 31,
-    image: "https://placehold.co/400x400/131118/E8C97A?text=Mascarilla",
-  },
-  {
-    id: "p4", slug: "serum-brillo-intenso",
-    name: "Sérum Brillo Intenso", brand: "Redken",
-    description: "Sérum ligero para dar brillo y suavidad sin pesar el cabello.",
-    price: 72000, category: "cuidado-capilar", rating: 4.6, reviews: 15,
-    image: "https://placehold.co/400x400/E8C97A/0A0A0B?text=S%C3%A9rum",
-  },
-  // Coloración
-  {
-    id: "p5", slug: "tinte-permanente-castaño",
-    name: "Tinte Permanente Castaño Natural", brand: "Schwarzkopf",
-    description: "Coloración permanente profesional. Cobertura total de canas con brillo intenso.",
-    price: 45000, category: "coloracion", rating: 4.5, reviews: 42,
-    image: "https://placehold.co/400x400/181818/E8C97A?text=Tinte",
-  },
-  {
-    id: "p6", slug: "tratamiento-post-color",
-    name: "Tratamiento Post-Color", brand: "L'Oréal Professionnel",
-    description: "Tratamiento sellador para preservar el color y añadir brillo después de la coloración.",
-    price: 68000, category: "coloracion", rating: 4.8, reviews: 19,
-    image: "https://placehold.co/400x400/131118/E8C97A?text=Post-Color",
-    isNew: true,
-  },
-  // Tratamientos
-  {
-    id: "p7", slug: "ampolla-keratina-pura",
-    name: "Ampolla Keratina Pura", brand: "Inoar",
-    description: "Ampolla de keratina pura para uso en casa. Sella la cutícula y elimina el frizz.",
-    price: 35000, category: "tratamientos", rating: 4.7, reviews: 56,
-    image: "https://placehold.co/400x400/181818/E8C97A?text=Amp%C3%B3lla",
-  },
-  {
-    id: "p8", slug: "aceite-argán-premium",
-    name: "Aceite de Argán Premium", brand: "Moroccanoil",
-    description: "Aceite multiusos de argán marroquí. Nutrición, brillo y protección térmica.",
-    price: 145000, category: "tratamientos", rating: 4.9, reviews: 67,
-    image: "https://placehold.co/400x400/E8C97A/0A0A0B?text=Aceite+Arg%C3%A1n",
-  },
-  {
-    id: "p9", slug: "crema-peinar-rizos",
-    name: "Crema para Peinar Rizos", brand: "DevaCurl",
-    description: "Crema definidora de rizos sin sulfatos. Define, hidrata y controla el volumen.",
-    price: 89000, category: "tratamientos", rating: 4.6, reviews: 28,
-    image: "https://placehold.co/400x400/131118/E8C97A?text=Crema+Rizos",
-  },
-  // Estilizado
-  {
-    id: "p10", slug: "spray-protector-termico",
-    name: "Spray Protector Térmico", brand: "Tresemmé Pro",
-    description: "Protector térmico hasta 230°C. Ideal para uso con plancha y secador profesional.",
-    price: 42000, category: "estilizado", rating: 4.5, reviews: 33,
-    image: "https://placehold.co/400x400/181818/E8C97A?text=Protector+T%C3%A9rmico",
-  },
-  {
-    id: "p11", slug: "laca-fijacion-fuerte",
-    name: "Laca Fijación Fuerte", brand: "Schwarzkopf",
-    description: "Laca de fijación extrafuerte para peinados duraderos. Sin efecto cartón.",
-    price: 38000, category: "estilizado", rating: 4.4, reviews: 21,
-    image: "https://placehold.co/400x400/131118/E8C97A?text=Laca",
-  },
-  {
-    id: "p12", slug: "cera-modeladora-mate",
-    name: "Cera Modeladora Mate", brand: "American Crew",
-    description: "Cera de acabado mate para dar textura y definición con sujeción flexible.",
-    price: 55000, category: "estilizado", rating: 4.7, reviews: 14,
-    image: "https://placehold.co/400x400/181818/E8C97A?text=Cera",
-    isAgotado: true,
-  },
-  // Uñas
-  {
-    id: "p13", slug: "esmalte-semipermanente-nude",
-    name: "Esmalte Semipermanente Nude", brand: "OPI",
-    description: "Esmalte gel de larga duración. Tono nude natural. Hasta 3 semanas sin descascararse.",
-    price: 32000, category: "unas", rating: 4.8, reviews: 45,
-    image: "https://placehold.co/400x400/E8C97A/0A0A0B?text=Esmalte+Nude",
-  },
-  {
-    id: "p14", slug: "base-coat-uñas",
-    name: "Base Coat Fortalecedora", brand: "Sally Hansen",
-    description: "Base endurecedora de uñas con calcio y vitaminas. Previene el quiebre.",
-    price: 28000, category: "unas", rating: 4.6, reviews: 38,
-    image: "https://placehold.co/400x400/131118/E8C97A?text=Base+Coat",
-  },
-  // Accesorios
-  {
-    id: "p15", slug: "cepillo-paleta-profesional",
-    name: "Cepillo Paleta Profesional", brand: "Termix",
-    description: "Cepillo de paleta neumática con cerdas de jabalí y nylon. Desenlaza sin romper.",
-    price: 78000, category: "accesorios", rating: 4.9, reviews: 22,
-    image: "https://placehold.co/400x400/181818/E8C97A?text=Cepillo",
-    isNew: true,
-  },
-  {
-    id: "p16", slug: "toalla-microfibra-cabello",
-    name: "Toalla de Microfibra para Cabello", brand: "Aquis",
-    description: "Toalla ultrafina de microfibra que reduce el frizz y el tiempo de secado en un 50%.",
-    price: 48000, category: "accesorios", rating: 4.7, reviews: 29,
-    image: "https://placehold.co/400x400/131118/E8C97A?text=Toalla",
-  },
-];
+// Array local original — comentado por si hay que hacer rollback rápido.
+// const PRODUCTOS_LOCAL: ProductCardProps[] = [
+//   {
+//     id: "p1", slug: "shampoo-hidratacion-profunda",
+//     name: "Shampoo Hidratación Profunda", brand: "L'Oréal Professionnel",
+//     description: "Shampoo nutritivo para cabello seco y dañado. Fórmula con aceite de argán.",
+//     price: 85000, category: "cuidado-capilar", rating: 4.8, reviews: 24,
+//     image: "https://placehold.co/400x400/131118/E8C97A?text=Shampoo",
+//     isNew: true,
+//   },
+//   // ... ver historial de git para el array completo de 16 productos
+// ];
+
+// Poblado por ProductosGrid tras su fetch a Supabase. Usado por
+// src/routes/tienda/$slug.tsx solo como respaldo — esa ruta hace su
+// propia consulta independiente para no depender del montaje de este grid.
+export let PRODUCTOS: ProductCardProps[] = [];
+
+type ProductoRow = {
+  id: string;
+  slug: string;
+  nombre: string;
+  marca: string;
+  descripcion: string | null;
+  precio: number;
+  precio_original: number | null;
+  imagenes: string[];
+  rating: number;
+  total_resenas: number;
+  es_nuevo: boolean;
+  categorias_productos: { nombre: string; slug: string } | null;
+  inventario: { stock_virtual: number; stock_fisico: number }[] | null;
+};
+
+function mapProducto(p: ProductoRow): ProductCardProps {
+  const stock = p.inventario?.[0];
+  const isAgotado = stock ? stock.stock_virtual + stock.stock_fisico === 0 : false;
+  return {
+    id: p.id,
+    slug: p.slug,
+    name: p.nombre,
+    brand: p.marca,
+    description: p.descripcion ?? "",
+    price: p.precio,
+    originalPrice: p.precio_original ?? undefined,
+    image: p.imagenes?.[0] ?? "",
+    category: p.categorias_productos?.slug ?? "",
+    rating: p.rating,
+    reviews: p.total_resenas,
+    isNew: p.es_nuevo,
+    isAgotado,
+  };
+}
 
 interface ProductosGridProps {
   searchQuery: string;
@@ -144,9 +75,39 @@ export function ProductosGrid({
   onClearFilters,
 }: ProductosGridProps) {
   const { addItem } = useCart();
+  const [productos, setProductos] = useState<ProductCardProps[]>(PRODUCTOS);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchProductos = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await supabase
+      .from("productos")
+      .select("*, categorias_productos(nombre, slug), inventario(stock_virtual, stock_fisico)")
+      .eq("activo", true)
+      .order("orden", { ascending: true });
+
+    if (error) {
+      console.error("[ProductosGrid] error al cargar:", error.message);
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    console.log(`[ProductosGrid] ${data.length} registros cargados desde Supabase`);
+    const mapped = (data as unknown as ProductoRow[]).map(mapProducto);
+    PRODUCTOS = mapped;
+    setProductos(mapped);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchProductos();
+  }, [fetchProductos]);
 
   const productosFiltrados = useMemo(() => {
-    let result = PRODUCTOS.filter((p) => {
+    let result = productos.filter((p) => {
       const matchCat = activeCategory === "todas" || p.category === activeCategory;
       const matchSearch =
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -169,7 +130,7 @@ export function ProductosGrid({
     }
 
     return result;
-  }, [activeCategory, searchQuery, sortOrder]);
+  }, [productos, activeCategory, searchQuery, sortOrder]);
 
   useEffect(() => {
     onFilteredCountChange(productosFiltrados.length);
@@ -205,7 +166,11 @@ export function ProductosGrid({
           paddingRight: "1.5rem",
         }}
       >
-        {productosFiltrados.length > 0 ? (
+        {loading ? (
+          <LoadingState />
+        ) : error ? (
+          <ErrorState message={error} onRetry={fetchProductos} />
+        ) : productosFiltrados.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {productosFiltrados.map((p) => (

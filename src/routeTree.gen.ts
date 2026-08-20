@@ -18,6 +18,10 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as TiendaIndexRouteImport } from './routes/tienda/index'
 import { Route as TiendaSlugRouteImport } from './routes/tienda/$slug'
+import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/index'
+import { Route as AdminClientesClienteIdRouteImport } from './routes/admin/clientes/$clienteId'
+import { Route as AdminInventarioIndexRouteImport } from './routes/admin/inventario/index'
+import { Route as AdminReportesIndexRouteImport } from './routes/admin/reportes/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +68,26 @@ const TiendaSlugRoute = TiendaSlugRouteImport.update({
   path: '/tienda/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminClientesIndexRoute = AdminClientesIndexRouteImport.update({
+  id: '/admin/clientes/',
+  path: '/admin/clientes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminClientesClienteIdRoute = AdminClientesClienteIdRouteImport.update({
+  id: '/admin/clientes/$clienteId',
+  path: '/admin/clientes/$clienteId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminInventarioIndexRoute = AdminInventarioIndexRouteImport.update({
+  id: '/admin/inventario/',
+  path: '/admin/inventario/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReportesIndexRoute = AdminReportesIndexRouteImport.update({
+  id: '/admin/reportes/',
+  path: '/admin/reportes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +99,10 @@ export interface FileRoutesByFullPath {
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
+  '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
+  '/admin/clientes/': typeof AdminClientesIndexRoute
+  '/admin/inventario/': typeof AdminInventarioIndexRoute
+  '/admin/reportes/': typeof AdminReportesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +114,10 @@ export interface FileRoutesByTo {
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin': typeof AdminIndexRoute
   '/tienda': typeof TiendaIndexRoute
+  '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
+  '/admin/clientes': typeof AdminClientesIndexRoute
+  '/admin/inventario': typeof AdminInventarioIndexRoute
+  '/admin/reportes': typeof AdminReportesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +130,10 @@ export interface FileRoutesById {
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
+  '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
+  '/admin/clientes/': typeof AdminClientesIndexRoute
+  '/admin/inventario/': typeof AdminInventarioIndexRoute
+  '/admin/reportes/': typeof AdminReportesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +147,10 @@ export interface FileRouteTypes {
     | '/tienda/$slug'
     | '/admin/'
     | '/tienda/'
+    | '/admin/clientes/$clienteId'
+    | '/admin/clientes/'
+    | '/admin/inventario/'
+    | '/admin/reportes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +162,10 @@ export interface FileRouteTypes {
     | '/tienda/$slug'
     | '/admin'
     | '/tienda'
+    | '/admin/clientes/$clienteId'
+    | '/admin/clientes'
+    | '/admin/inventario'
+    | '/admin/reportes'
   id:
     | '__root__'
     | '/'
@@ -133,6 +177,10 @@ export interface FileRouteTypes {
     | '/tienda/$slug'
     | '/admin/'
     | '/tienda/'
+    | '/admin/clientes/$clienteId'
+    | '/admin/clientes/'
+    | '/admin/inventario/'
+    | '/admin/reportes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +193,10 @@ export interface RootRouteChildren {
   TiendaSlugRoute: typeof TiendaSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   TiendaIndexRoute: typeof TiendaIndexRoute
+  AdminClientesClienteIdRoute: typeof AdminClientesClienteIdRoute
+  AdminClientesIndexRoute: typeof AdminClientesIndexRoute
+  AdminInventarioIndexRoute: typeof AdminInventarioIndexRoute
+  AdminReportesIndexRoute: typeof AdminReportesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +264,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TiendaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/clientes/': {
+      id: '/admin/clientes/'
+      path: '/admin/clientes'
+      fullPath: '/admin/clientes/'
+      preLoaderRoute: typeof AdminClientesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/clientes/$clienteId': {
+      id: '/admin/clientes/$clienteId'
+      path: '/admin/clientes/$clienteId'
+      fullPath: '/admin/clientes/$clienteId'
+      preLoaderRoute: typeof AdminClientesClienteIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/inventario/': {
+      id: '/admin/inventario/'
+      path: '/admin/inventario'
+      fullPath: '/admin/inventario/'
+      preLoaderRoute: typeof AdminInventarioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reportes/': {
+      id: '/admin/reportes/'
+      path: '/admin/reportes'
+      fullPath: '/admin/reportes/'
+      preLoaderRoute: typeof AdminReportesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +305,10 @@ const rootRouteChildren: RootRouteChildren = {
   TiendaSlugRoute: TiendaSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   TiendaIndexRoute: TiendaIndexRoute,
+  AdminClientesClienteIdRoute: AdminClientesClienteIdRoute,
+  AdminClientesIndexRoute: AdminClientesIndexRoute,
+  AdminInventarioIndexRoute: AdminInventarioIndexRoute,
+  AdminReportesIndexRoute: AdminReportesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

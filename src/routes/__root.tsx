@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -179,12 +180,14 @@ function RootComponent() {
 
 function RootLayout() {
   const { isDrawerOpen, closeDrawer } = useCart();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdmin = pathname.startsWith("/admin");
 
   return (
     <>
-      <Navbar />
+      {!isAdmin && <Navbar />}
       <Outlet />
-      <Footer />
+      {!isAdmin && <Footer />}
       <CartDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
     </>
   );

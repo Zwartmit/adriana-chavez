@@ -1,45 +1,33 @@
+import { useCallback, useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { LoadingState, ErrorState } from "@/components/ui/QueryState";
+import { supabase } from "@/lib/supabase/client";
 
-const EQUIPO = [
-  {
-    id: "e1",
-    name: "Adriana Chávez",
-    role: "Fundadora & Directora Creativa",
-    experience: 14,
-    specialties: ["Coloración", "Balayage", "Dirección artística"],
-    photo: "https://placehold.co/120x120/1A1820/D4AF6B?text=AC",
-    bio: "Fundadora del salón con más de 14 años de experiencia. Formada en Colombia, México y España.",
-  },
-  {
-    id: "e2",
-    name: "Valentina Mora",
-    role: "Estilista Senior",
-    experience: 8,
-    specialties: ["Corte", "Peinado", "Tratamientos"],
-    photo: "https://placehold.co/120x120/1A1820/D4AF6B?text=VM",
-    bio: "Especialista en cortes de precisión y peinados para eventos. Certificada por L'Oréal Professionnel.",
-  },
-  {
-    id: "e3",
-    name: "Camila Restrepo",
-    role: "Colorista",
-    experience: 6,
-    specialties: ["Highlights", "Mechas", "Color fantasy"],
-    photo: "https://placehold.co/120x120/D4AF6B/0C0B0F?text=CR",
-    bio: "Colorista especializada en técnicas de iluminación y color contemporáneo.",
-  },
-  {
-    id: "e4",
-    name: "Laura Jiménez",
-    role: "Especialista en Uñas",
-    experience: 5,
-    specialties: ["Manicure", "Nail art", "Acrílico"],
-    photo: "https://placehold.co/120x120/1A1820/D4AF6B?text=LJ",
-    bio: "Especialista en nail art y técnicas de uñas con formación en Brasil y Colombia.",
-  },
-];
+// Array local original — comentado por si hay que hacer rollback rápido.
+// const EQUIPO = [
+//   {
+//     id: "e1",
+//     name: "Adriana Chávez",
+//     role: "Fundadora & Directora Creativa",
+//     experience: 14,
+//     specialties: ["Coloración", "Balayage", "Dirección artística"],
+//     photo: "https://placehold.co/120x120/1A1820/D4AF6B?text=AC",
+//     bio: "Fundadora del salón con más de 14 años de experiencia. Formada en Colombia, México y España.",
+//   },
+//   // ... ver historial de git para el array completo de 4 estilistas
+// ];
+
+interface EstilistaUI {
+  id: string;
+  name: string;
+  role: string;
+  experience: number;
+  specialties: string[];
+  photo: string;
+  bio: string;
+}
 
 interface EstilistaCardProps {
   name: string;
@@ -128,6 +116,45 @@ function EstilistaCard({ name, role, experience, specialties, photo }: Estilista
 }
 
 export function EquipoGrid() {
+  const [equipo, setEquipo] = useState<EstilistaUI[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchEquipo = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await supabase
+      .from("estilistas")
+      .select("*")
+      .eq("activo", true)
+      .order("orden", { ascending: true });
+
+    if (error) {
+      console.error("[EquipoGrid] error al cargar:", error.message);
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    console.log(`[EquipoGrid] ${data.length} registros cargados desde Supabase`);
+    setEquipo(
+      data.map((e) => ({
+        id: e.id,
+        name: e.nombre,
+        role: e.cargo,
+        experience: e.anos_experiencia,
+        specialties: e.especialidades,
+        photo: e.foto_url ?? "",
+        bio: e.bio ?? "",
+      })),
+    );
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchEquipo();
+  }, [fetchEquipo]);
+
   return (
     <section
       style={{
@@ -153,11 +180,17 @@ export function EquipoGrid() {
           className="mx-auto mb-16"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {EQUIPO.map((e) => (
-            <EstilistaCard key={e.id} {...e} />
-          ))}
-        </div>
+        {loading ? (
+          <LoadingState />
+        ) : error ? (
+          <ErrorState message={error} onRetry={fetchEquipo} />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {equipo.map((e) => (
+              <EstilistaCard key={e.id} {...e} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

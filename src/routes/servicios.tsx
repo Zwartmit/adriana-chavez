@@ -21,6 +21,7 @@ export const Route = createFileRoute("/servicios")({
 function ServiciosPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("Todos");
+  const [categories, setCategories] = useState<string[]>([]);
 
   return (
     <main>
@@ -105,6 +106,7 @@ function ServiciosPage() {
         onSearchChange={setSearchQuery}
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
+        categories={categories}
       />
 
       {/* Grid */}
@@ -113,6 +115,7 @@ function ServiciosPage() {
         activeCategory={activeCategory}
         onSearchChange={setSearchQuery}
         onCategoryChange={setActiveCategory}
+        onCategoriesChange={setCategories}
       />
 
       {/* CTA */}

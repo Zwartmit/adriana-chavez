@@ -1,5 +1,7 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ZoomIn } from "lucide-react";
+import { LoadingState, ErrorState } from "@/components/ui/QueryState";
+import { supabase } from "@/lib/supabase/client";
 
 export interface GaleriaItem {
   id: string;
@@ -10,37 +12,16 @@ export interface GaleriaItem {
   aspectRatio: "tall" | "wide" | "square";
 }
 
-const GALERIA_ITEMS: GaleriaItem[] = [
-  // Antes & Después
-  { id: "g1", src: "https://placehold.co/400x600/131118/E8C97A?text=Antes+%26+Despu%C3%A9s+1", alt: "Transformación completa 1", category: "Antes & Después", tag: "Transformación completa", aspectRatio: "tall" },
-  { id: "g2", src: "https://placehold.co/400x600/181818/E8C97A?text=Antes+%26+Despu%C3%A9s+2", alt: "Transformación completa 2", category: "Antes & Después", tag: "Cambio de look", aspectRatio: "tall" },
-  { id: "g3", src: "https://placehold.co/400x600/131118/E8C97A?text=Antes+%26+Despu%C3%A9s+3", alt: "Transformación completa 3", category: "Antes & Después", tag: "Renovación total", aspectRatio: "tall" },
+// Array local original — comentado por si hay que hacer rollback rápido.
+// const GALERIA_ITEMS: GaleriaItem[] = [
+//   // Antes & Después
+//   { id: "g1", src: "https://placehold.co/400x600/131118/E8C97A?text=Antes+%26+Despu%C3%A9s+1", alt: "Transformación completa 1", category: "Antes & Después", tag: "Transformación completa", aspectRatio: "tall" },
+//   { id: "g2", src: "https://placehold.co/400x600/181818/E8C97A?text=Antes+%26+Despu%C3%A9s+2", alt: "Transformación completa 2", category: "Antes & Después", tag: "Cambio de look", aspectRatio: "tall" },
+//   { id: "g3", src: "https://placehold.co/400x600/131118/E8C97A?text=Antes+%26+Despu%C3%A9s+3", alt: "Transformación completa 3", category: "Antes & Después", tag: "Renovación total", aspectRatio: "tall" },
+//   // ... ver historial de git para el array completo de 18 items
+// ];
 
-  // Coloración
-  { id: "g4", src: "https://placehold.co/600x400/181818/E8C97A?text=Balayage", alt: "Balayage natural", category: "Coloración", tag: "Balayage", aspectRatio: "wide" },
-  { id: "g5", src: "https://placehold.co/500x500/131118/E8C97A?text=Highlights", alt: "Highlights dorados", category: "Coloración", tag: "Highlights", aspectRatio: "square" },
-  { id: "g6", src: "https://placehold.co/600x400/E8C97A/0A0A0B?text=Color+completo", alt: "Color completo castaño", category: "Coloración", tag: "Color completo", aspectRatio: "wide" },
-  { id: "g7", src: "https://placehold.co/400x600/181818/E8C97A?text=Mechas", alt: "Mechas californianas", category: "Coloración", tag: "Mechas californianas", aspectRatio: "tall" },
-
-  // Corte
-  { id: "g8", src: "https://placehold.co/500x500/131118/E8C97A?text=Corte+bob", alt: "Corte bob moderno", category: "Corte", tag: "Bob moderno", aspectRatio: "square" },
-  { id: "g9", src: "https://placehold.co/600x400/181818/E8C97A?text=Corte+largo", alt: "Corte en capas largo", category: "Corte", tag: "Capas largas", aspectRatio: "wide" },
-  { id: "g10", src: "https://placehold.co/400x600/E8C97A/0A0A0B?text=Corte+pixie", alt: "Corte pixie", category: "Corte", tag: "Pixie cut", aspectRatio: "tall" },
-
-  // Tratamiento
-  { id: "g11", src: "https://placehold.co/600x400/131118/E8C97A?text=Alisado", alt: "Alisado brasileño", category: "Tratamiento", tag: "Alisado brasileño", aspectRatio: "wide" },
-  { id: "g12", src: "https://placehold.co/500x500/181818/E8C97A?text=Bot%C3%B3x+capilar", alt: "Botox capilar", category: "Tratamiento", tag: "Botox capilar", aspectRatio: "square" },
-  { id: "g13", src: "https://placehold.co/400x600/131118/E8C97A?text=Tratamiento", alt: "Tratamiento nutritivo", category: "Tratamiento", tag: "Nutrición profunda", aspectRatio: "tall" },
-
-  // Uñas
-  { id: "g14", src: "https://placehold.co/500x500/E8C97A/0A0A0B?text=Manicure", alt: "Manicure semipermanente", category: "Uñas", tag: "Semipermanente", aspectRatio: "square" },
-  { id: "g15", src: "https://placehold.co/600x400/181818/E8C97A?text=Nail+art", alt: "Nail art diseño floral", category: "Uñas", tag: "Nail art", aspectRatio: "wide" },
-
-  // Peinado
-  { id: "g16", src: "https://placehold.co/400x600/131118/E8C97A?text=Peinado+novia", alt: "Peinado de novia", category: "Peinado", tag: "Novia", aspectRatio: "tall" },
-  { id: "g17", src: "https://placehold.co/600x400/181818/E8C97A?text=Recogido", alt: "Recogido elegante", category: "Peinado", tag: "Recogido elegante", aspectRatio: "wide" },
-  { id: "g18", src: "https://placehold.co/500x500/E8C97A/0A0A0B?text=Ondas", alt: "Ondas naturales", category: "Peinado", tag: "Ondas naturales", aspectRatio: "square" },
-];
+const ASPECT_CYCLE: GaleriaItem["aspectRatio"][] = ["tall", "wide", "square"];
 
 interface GaleriaCardProps {
   item: GaleriaItem;
@@ -116,14 +97,52 @@ export function GaleriaGrid({
   onItemClick,
   onFilteredItemsChange,
 }: GaleriaGridProps) {
-  const itemsFiltrados = GALERIA_ITEMS.filter(
+  const [galeriaItems, setGaleriaItems] = useState<GaleriaItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchGaleria = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await supabase
+      .from("galeria")
+      .select("*")
+      .eq("activo", true)
+      .order("orden", { ascending: true });
+
+    if (error) {
+      console.error("[GaleriaGrid] error al cargar:", error.message);
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    console.log(`[GaleriaGrid] ${data.length} registros cargados desde Supabase`);
+    setGaleriaItems(
+      data.map((g, i) => ({
+        id: g.id,
+        src: g.imagen_url,
+        alt: g.titulo ?? g.tag ?? "",
+        category: g.categoria,
+        tag: g.tag ?? undefined,
+        aspectRatio: ASPECT_CYCLE[i % ASPECT_CYCLE.length],
+      })),
+    );
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchGaleria();
+  }, [fetchGaleria]);
+
+  const itemsFiltrados = galeriaItems.filter(
     (item) => activeCategory === "Todos" || item.category === activeCategory,
   );
 
   useEffect(() => {
     onFilteredItemsChange(itemsFiltrados);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCategory]);
+  }, [activeCategory, galeriaItems]);
 
   return (
     <section
@@ -143,14 +162,20 @@ export function GaleriaGrid({
           paddingRight: "1.5rem",
         }}
       >
-        <div
-          key={activeCategory}
-          className="animate-in fade-in duration-300 columns-1 sm:columns-2 lg:columns-3 gap-x-4"
-        >
-          {itemsFiltrados.map((item) => (
-            <GaleriaCard key={item.id} item={item} onClick={() => onItemClick(item)} />
-          ))}
-        </div>
+        {loading ? (
+          <LoadingState />
+        ) : error ? (
+          <ErrorState message={error} onRetry={fetchGaleria} />
+        ) : (
+          <div
+            key={activeCategory}
+            className="animate-in fade-in duration-300 columns-1 sm:columns-2 lg:columns-3 gap-x-4"
+          >
+            {itemsFiltrados.map((item) => (
+              <GaleriaCard key={item.id} item={item} onClick={() => onItemClick(item)} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
