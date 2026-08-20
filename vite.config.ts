@@ -12,4 +12,27 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Passed through to the underlying Vite config via mergeConfig — does not
+  // touch the managed plugins array. Splits the client bundle into smaller
+  // vendor chunks for a lighter initial load.
+  //
+  // This project builds with Vite's Rolldown engine, whose manualChunks only
+  // accepts a function (the classic Rollup object-map shorthand throws).
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (!id.includes("node_modules")) return;
+            if (/[\\/](react|react-dom)[\\/]/.test(id)) return "vendor-react";
+            if (id.includes("@tanstack/react-router")) return "vendor-router";
+            if (id.includes("@supabase/supabase-js")) return "vendor-supabase";
+            if (id.includes("recharts")) return "vendor-recharts";
+            if (/[\\/](lucide-react|embla-carousel-react)[\\/]/.test(id)) return "vendor-ui";
+          },
+        },
+      },
+      chunkSizeWarningLimit: 600,
+    },
+  },
 });
