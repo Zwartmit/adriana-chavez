@@ -19,12 +19,12 @@ interface InlineEditFieldProps {
 const fieldInputStyle: React.CSSProperties = {
   width: "100%",
   padding: "8px 12px",
-  backgroundColor: "var(--color-bg-alt)",
+  backgroundColor: "var(--color-bg-light)",
   border: "1px solid var(--color-primary-dim)",
   borderRadius: "var(--radius-md)",
   fontFamily: "var(--font-body)",
   fontSize: "var(--text-sm)",
-  color: "var(--color-text-primary)",
+  color: "var(--color-text-on-light)",
   outline: "none",
 };
 
@@ -47,7 +47,7 @@ export function InlineEditField({
           fontSize: "var(--text-xs)",
           textTransform: "uppercase",
           letterSpacing: "var(--tracking-wider)",
-          color: "var(--color-text-muted)",
+          color: "var(--color-text-on-light-faint)",
           marginBottom: "4px",
         }}
       >
@@ -95,11 +95,11 @@ export function InlineEditField({
             cursor: "pointer",
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-sm)",
-            color: value ? "var(--color-text-primary)" : "var(--color-text-muted)",
+            color: value ? "var(--color-text-on-light)" : "var(--color-text-on-light-faint)",
           }}
         >
           {displayValue ?? value ?? "—"}
-          <Pencil size={12} color="var(--color-text-muted)" />
+          <Pencil size={12} color="var(--color-text-on-light-faint)" />
         </button>
       )}
     </div>

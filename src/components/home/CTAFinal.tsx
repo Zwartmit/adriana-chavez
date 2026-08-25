@@ -4,6 +4,7 @@ import { MessageCircle } from "lucide-react";
 export function CTAFinal() {
   return (
     <section
+      data-navbar-dark
       className="relative overflow-hidden"
       style={{
         background: `

@@ -4,54 +4,6 @@ import { ServiceCard } from "@/components/servicios/ServiceCard";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 
-// Array local original — comentado por si hay que hacer rollback rápido.
-// const SERVICIOS_DESTACADOS = [
-//   {
-//     id: "1",
-//     name: "Corte & Estilo",
-//     category: "Cabello",
-//     description:
-//       "Corte personalizado según tu tipo de rostro y estilo de vida, con blow dry incluido.",
-//     duration: 60,
-//     price: 85000,
-//     image: "https://placehold.co/600x400/131118/D4AF6B?text=Corte",
-//     href: "/servicios",
-//   },
-//   {
-//     id: "2",
-//     name: "Coloración Premium",
-//     category: "Color",
-//     description:
-//       "Técnicas avanzadas de coloración: balayage, highlights, color completo y más.",
-//     duration: 150,
-//     price: 280000,
-//     image: "https://placehold.co/600x400/1A1820/D4AF6B?text=Coloraci%C3%B3n",
-//     href: "/servicios",
-//   },
-//   {
-//     id: "3",
-//     name: "Tratamiento Capilar",
-//     category: "Tratamiento",
-//     description:
-//       "Nutrición profunda y restauración para cabello dañado o debilitado.",
-//     duration: 90,
-//     price: 150000,
-//     image: "https://placehold.co/600x400/131118/D4AF6B?text=Tratamiento",
-//     href: "/servicios",
-//   },
-//   {
-//     id: "4",
-//     name: "Manicure & Pedicure",
-//     category: "Uñas",
-//     description:
-//       "Cuidado completo de manos y pies con técnicas semipermanentes o acrílico.",
-//     duration: 75,
-//     price: 95000,
-//     image: "https://placehold.co/600x400/1A1820/D4AF6B?text=Manicure",
-//     href: "/servicios",
-//   },
-// ];
-
 interface ServicioDestacadoUI {
   id: string;
   name: string;
@@ -108,6 +60,7 @@ export function ServiciosDestacados() {
 
   return (
     <section
+      data-navbar-dark
       className="section-glow-center"
       style={{
         backgroundColor: "var(--color-bg-alt)",

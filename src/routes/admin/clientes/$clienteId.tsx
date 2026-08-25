@@ -58,7 +58,7 @@ const ESTADO_STYLES: Record<EstadoCita, { label: string; bg: string; color: stri
   en_proceso: { label: "En proceso", bg: "rgba(232,201,122,0.15)", color: "var(--color-primary)" },
   completada: { label: "Completada", bg: "rgba(76,175,128,0.15)", color: "var(--color-success)" },
   cancelada: { label: "Cancelada", bg: "rgba(224,82,82,0.15)", color: "var(--color-error)" },
-  no_asistio: { label: "No asistió", bg: "rgba(245,242,235,0.08)", color: "var(--color-text-muted)" },
+  no_asistio: { label: "No asistió", bg: "rgba(10,10,11,0.08)", color: "var(--color-text-on-light-faint)" },
 };
 
 function EstadoBadge({ estado }: { estado: EstadoCita }) {
@@ -265,24 +265,31 @@ function ClienteDetallePage() {
           cursor: "pointer",
           fontFamily: "var(--font-mono)",
           fontSize: "var(--text-sm)",
-          color: "var(--color-text-muted)",
+          color: "var(--color-text-on-light-faint)",
           marginBottom: "1.5rem",
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
-        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
       >
         ← Volver a clientes
       </button>
 
       {loading ? (
-        <LoadingState />
+        <LoadingState variant="light" />
       ) : error || !cliente ? (
-        <ErrorState message={error ?? "Clienta no encontrada."} onRetry={fetchCliente} />
+        <ErrorState message={error ?? "Clienta no encontrada."} onRetry={fetchCliente} variant="light" />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Columna izquierda — datos */}
           <div className="flex flex-col gap-6">
-            <div className="glass-obsidian" style={cardStyle}>
+            <div
+              style={{
+                ...cardStyle,
+                backgroundColor: "var(--color-surface-light)",
+                border: "1px solid var(--color-border-light)",
+                boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
+              }}
+            >
               <div className="flex items-center gap-3" style={{ marginBottom: "1.5rem" }}>
                 <h2
                   style={{
@@ -290,7 +297,7 @@ function ClienteDetallePage() {
                     fontStyle: "italic",
                     fontWeight: 600,
                     fontSize: "var(--text-2xl)",
-                    color: "var(--color-text-primary)",
+                    color: "var(--color-text-on-light)",
                   }}
                 >
                   {cliente.nombre} {cliente.apellido ?? ""}
@@ -303,8 +310,8 @@ function ClienteDetallePage() {
                     letterSpacing: "var(--tracking-wider)",
                     padding: "3px 10px",
                     borderRadius: "var(--radius-full)",
-                    color: cliente.activo ? "var(--color-primary)" : "var(--color-text-muted)",
-                    backgroundColor: cliente.activo ? "var(--color-accent-lt)" : "rgba(245,242,235,0.08)",
+                    color: cliente.activo ? "var(--color-primary-dim)" : "var(--color-text-on-light-faint)",
+                    backgroundColor: cliente.activo ? "rgba(200,168,74,0.15)" : "rgba(10,10,11,0.06)",
                   }}
                 >
                   {cliente.activo ? "Activa" : "Inactiva"}
@@ -350,14 +357,21 @@ function ClienteDetallePage() {
               </div>
             </div>
 
-            <div className="glass-champagne" style={cardStyle}>
+            <div
+              style={{
+                ...cardStyle,
+                backgroundColor: "var(--color-surface-light)",
+                border: "1px solid var(--color-border-light-gold)",
+                boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
+              }}
+            >
               <p
                 className="uppercase"
                 style={{
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-xs)",
                   letterSpacing: "var(--tracking-wider)",
-                  color: "var(--color-accent)",
+                  color: "var(--color-primary-dim)",
                   marginBottom: "1.25rem",
                 }}
               >
@@ -378,7 +392,7 @@ function ClienteDetallePage() {
                         fontFamily: "var(--font-body)",
                         fontWeight: 600,
                         fontSize: "var(--text-sm)",
-                        color: "var(--color-text-primary)",
+                        color: "var(--color-text-on-light)",
                       }}
                     >
                       {f.label}
@@ -390,12 +404,12 @@ function ClienteDetallePage() {
                       style={{
                         width: "100%",
                         padding: "10px 14px",
-                        backgroundColor: "var(--color-bg-alt)",
-                        border: "1px solid var(--color-border)",
+                        backgroundColor: "var(--color-bg-light)",
+                        border: "1px solid var(--color-border-light)",
                         borderRadius: "var(--radius-lg)",
                         fontFamily: "var(--font-body)",
                         fontSize: "var(--text-sm)",
-                        color: "var(--color-text-primary)",
+                        color: "var(--color-text-on-light)",
                         outline: "none",
                         resize: "vertical",
                       }}
@@ -412,14 +426,14 @@ function ClienteDetallePage() {
 
           {/* Columna derecha — historial */}
           <div className="flex flex-col gap-6">
-            <div style={{ ...cardStyle, backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
+            <div style={{ ...cardStyle, backgroundColor: "var(--color-surface-light)", border: "1px solid var(--color-border-light)", boxShadow: "0 2px 12px rgba(10,10,11,0.08)" }}>
               <h3
                 style={{
                   fontFamily: "var(--font-display)",
                   fontStyle: "italic",
                   fontWeight: 600,
                   fontSize: "var(--text-xl)",
-                  color: "var(--color-text-primary)",
+                  color: "var(--color-text-on-light)",
                   marginBottom: "1.25rem",
                 }}
               >
@@ -427,9 +441,9 @@ function ClienteDetallePage() {
               </h3>
 
               {citasLoading ? (
-                <LoadingState />
+                <LoadingState variant="light" />
               ) : proximas.length === 0 ? (
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-muted)" }}>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)" }}>
                   No hay citas próximas
                 </p>
               ) : (
@@ -440,20 +454,20 @@ function ClienteDetallePage() {
                       className="flex items-center justify-between gap-3"
                       style={{
                         padding: "0.85rem 1rem",
-                        backgroundColor: "var(--color-bg-alt)",
+                        backgroundColor: "var(--color-bg-light)",
                         borderRadius: "var(--radius-lg)",
                       }}
                     >
                       <div>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-primary)" }}>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-primary-dim)" }}>
                           {c.fechaHora.toLocaleDateString("es-CO", { day: "numeric", month: "short" })}
                           {" · "}
                           {c.fechaHora.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}
                         </p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-primary)" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                           {c.servicioNombre}
                         </p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
                           {c.estilistaNombre}
                         </p>
                       </div>
@@ -464,14 +478,14 @@ function ClienteDetallePage() {
               )}
             </div>
 
-            <div style={{ ...cardStyle, backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
+            <div style={{ ...cardStyle, backgroundColor: "var(--color-surface-light)", border: "1px solid var(--color-border-light)", boxShadow: "0 2px 12px rgba(10,10,11,0.08)" }}>
               <h3
                 style={{
                   fontFamily: "var(--font-display)",
                   fontStyle: "italic",
                   fontWeight: 600,
                   fontSize: "var(--text-xl)",
-                  color: "var(--color-text-primary)",
+                  color: "var(--color-text-on-light)",
                   marginBottom: "1.25rem",
                 }}
               >
@@ -479,9 +493,9 @@ function ClienteDetallePage() {
               </h3>
 
               {citasLoading ? (
-                <LoadingState />
+                <LoadingState variant="light" />
               ) : historial.length === 0 ? (
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-muted)" }}>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)" }}>
                   Sin historial de citas
                 </p>
               ) : (
@@ -493,24 +507,24 @@ function ClienteDetallePage() {
                         className="flex items-center justify-between gap-3"
                         style={{
                           padding: "0.85rem 1rem",
-                          backgroundColor: "var(--color-bg-alt)",
+                          backgroundColor: "var(--color-bg-light)",
                           borderRadius: "var(--radius-lg)",
                         }}
                       >
                         <div>
-                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
+                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
                             {c.fechaHora.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
                           </p>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-primary)" }}>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                             {c.servicioNombre}
                           </p>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
                             {c.estilistaNombre}
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <EstadoBadge estado={c.estado} />
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                             {c.precioCobrado ? formatPrice(c.precioCobrado) : "—"}
                           </span>
                         </div>
@@ -522,7 +536,7 @@ function ClienteDetallePage() {
                       marginTop: "1rem",
                       fontFamily: "var(--font-mono)",
                       fontSize: "var(--text-sm)",
-                      color: "var(--color-text-muted)",
+                      color: "var(--color-text-on-light-faint)",
                     }}
                   >
                     {historial.length} {historial.length === 1 ? "cita" : "citas"} · Total: {formatPrice(historialTotal)}

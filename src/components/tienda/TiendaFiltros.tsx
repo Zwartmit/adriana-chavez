@@ -60,6 +60,7 @@ export function TiendaFiltros({
 }: TiendaFiltrosProps) {
   return (
     <section
+      data-navbar-dark
       style={{
         backgroundColor: "var(--color-bg-alt)",
         paddingTop: "2rem",

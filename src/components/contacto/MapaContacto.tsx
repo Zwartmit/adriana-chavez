@@ -1,6 +1,6 @@
 export function MapaContacto() {
   return (
-    <section style={{ backgroundColor: "var(--color-bg-alt)" }}>
+    <section>
       <div
         className="h-[300px] md:h-[450px]"
         style={{

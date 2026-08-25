@@ -38,6 +38,7 @@ function GaleriaPage() {
     <main>
       {/* Hero */}
       <section
+        data-navbar-dark
         className="relative overflow-hidden"
         style={{
           background: `

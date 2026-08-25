@@ -43,14 +43,14 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 export function IngresosChart({ data, variant }: IngresosChartProps) {
-  const tickStyle = { fontFamily: "var(--font-mono)", fontSize: 11, fill: "var(--color-text-muted)" };
+  const tickStyle = { fontFamily: "var(--font-mono)", fontSize: 11, fill: "var(--color-text-on-light-faint)" };
 
   return (
     <ResponsiveContainer width="100%" height={280}>
       {variant === "bar" ? (
         <BarChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
-          <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-          <XAxis dataKey="label" tick={tickStyle} axisLine={{ stroke: "var(--color-border)" }} tickLine={false} />
+          <CartesianGrid stroke="rgba(10,10,11,0.06)" vertical={false} />
+          <XAxis dataKey="label" tick={tickStyle} axisLine={{ stroke: "var(--color-border-light)" }} tickLine={false} />
           <YAxis
             tick={tickStyle}
             axisLine={false}
@@ -68,8 +68,8 @@ export function IngresosChart({ data, variant }: IngresosChartProps) {
               <stop offset="100%" stopColor="#E8C97A" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-          <XAxis dataKey="label" tick={tickStyle} axisLine={{ stroke: "var(--color-border)" }} tickLine={false} />
+          <CartesianGrid stroke="rgba(10,10,11,0.06)" vertical={false} />
+          <XAxis dataKey="label" tick={tickStyle} axisLine={{ stroke: "var(--color-border-light)" }} tickLine={false} />
           <YAxis
             tick={tickStyle}
             axisLine={false}

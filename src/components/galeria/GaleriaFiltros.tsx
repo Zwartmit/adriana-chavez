@@ -23,6 +23,7 @@ export function GaleriaFiltros({
 }: GaleriaFiltrosProps) {
   return (
     <section
+      data-navbar-dark
       style={{
         backgroundColor: "var(--color-bg-alt)",
         paddingTop: "2rem",

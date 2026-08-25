@@ -22,6 +22,7 @@ export function ServiciosFiltros({
   const CATEGORIAS = ["Todos", ...categories];
   return (
     <section
+      data-navbar-dark
       style={{
         backgroundColor: "var(--color-bg-alt)",
         paddingTop: "2rem",

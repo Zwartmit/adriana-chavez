@@ -151,8 +151,8 @@ export function ProductosGrid({
   return (
     <section
       style={{
-        backgroundColor: "var(--color-bg)",
-        paddingTop: "4rem",
+        backgroundColor: "var(--color-bg-light)",
+        paddingTop: "3rem",
         paddingBottom: "6rem",
       }}
     >
@@ -167,14 +167,14 @@ export function ProductosGrid({
         }}
       >
         {loading ? (
-          <LoadingState />
+          <LoadingState variant="light" />
         ) : error ? (
-          <ErrorState message={error} onRetry={fetchProductos} />
+          <ErrorState message={error} onRetry={fetchProductos} variant="light" />
         ) : productosFiltrados.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {productosFiltrados.map((p) => (
-                <ProductCard key={p.id} {...p} onAddToCart={handleAddToCart} />
+                <ProductCard key={p.id} {...p} theme="light" onAddToCart={handleAddToCart} />
               ))}
             </div>
 
@@ -187,9 +187,9 @@ export function ProductosGrid({
                   height: "40px",
                   padding: "0 1rem",
                   borderRadius: "var(--radius-full)",
-                  border: "1px solid var(--color-border)",
+                  border: "1px solid var(--color-border-light)",
                   backgroundColor: "transparent",
-                  color: "var(--color-text-muted)",
+                  color: "var(--color-text-on-light-faint)",
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-sm)",
                   cursor: "not-allowed",
@@ -204,9 +204,9 @@ export function ProductosGrid({
                     width: "40px",
                     height: "40px",
                     borderRadius: "var(--radius-full)",
-                    border: page === 1 ? "none" : "1px solid var(--color-border)",
+                    border: page === 1 ? "none" : "1px solid var(--color-border-light)",
                     backgroundColor: page === 1 ? "var(--color-primary)" : "transparent",
-                    color: page === 1 ? "var(--color-text-inverse)" : "var(--color-text-secondary)",
+                    color: page === 1 ? "var(--color-text-inverse)" : "var(--color-text-on-light-muted)",
                     fontFamily: "var(--font-mono)",
                     fontSize: "var(--text-sm)",
                     cursor: "pointer",
@@ -221,9 +221,9 @@ export function ProductosGrid({
                   height: "40px",
                   padding: "0 1rem",
                   borderRadius: "var(--radius-full)",
-                  border: "1px solid var(--color-border)",
+                  border: "1px solid var(--color-border-light)",
                   backgroundColor: "transparent",
-                  color: "var(--color-text-secondary)",
+                  color: "var(--color-text-on-light-muted)",
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-sm)",
                   cursor: "pointer",
@@ -240,12 +240,17 @@ export function ProductosGrid({
                 fontFamily: "var(--font-display)",
                 fontStyle: "italic",
                 fontSize: "var(--text-2xl)",
-                color: "var(--color-text-muted)",
+                color: "var(--color-text-on-light-faint)",
               }}
             >
               No encontramos productos con ese criterio.
             </span>
-            <Button variant="secondary" size="sm" onClick={onClearFilters}>
+            <Button
+              variant="secondary"
+              size="sm"
+              style={{ borderColor: "var(--color-primary-dim)", color: "var(--color-primary-dim)" }}
+              onClick={onClearFilters}
+            >
               Limpiar filtros
             </Button>
           </div>

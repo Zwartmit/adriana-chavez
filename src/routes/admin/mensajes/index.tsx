@@ -29,7 +29,7 @@ const th: React.CSSProperties = {
   fontSize: "var(--text-xs)",
   textTransform: "uppercase",
   letterSpacing: "var(--tracking-wider)",
-  color: "var(--color-text-muted)",
+  color: "var(--color-primary)",
   whiteSpace: "nowrap",
 };
 
@@ -126,29 +126,35 @@ function MensajesPage() {
               fontStyle: "italic",
               fontWeight: 600,
               fontSize: "var(--text-2xl)",
-              color: "var(--color-text-primary)",
+              color: "var(--color-text-on-light)",
             }}
           >
             Mensajes
           </h2>
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-muted)", marginTop: "0.25rem" }}>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)", marginTop: "0.25rem" }}>
             {sinLeer} {sinLeer === 1 ? "mensaje sin leer" : "mensajes sin leer"}
           </p>
         </div>
-        <Button variant="secondary" size="sm" disabled={marcandoTodo || sinLeer === 0} onClick={handleMarcarTodoLeido}>
+        <Button
+          variant="secondary"
+          size="sm"
+          disabled={marcandoTodo || sinLeer === 0}
+          onClick={handleMarcarTodoLeido}
+          style={{ borderColor: "var(--color-primary-dim)", color: "var(--color-primary-dim)" }}
+        >
           {marcandoTodo ? "Marcando..." : "Marcar todo como leído"}
         </Button>
       </div>
 
       {loading ? (
-        <LoadingState />
+        <LoadingState variant="light" />
       ) : error ? (
-        <ErrorState message={error} onRetry={fetchMensajes} />
+        <ErrorState message={error} onRetry={fetchMensajes} variant="light" />
       ) : (
-        <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border)" }}>
+        <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border-light)", backgroundColor: "var(--color-surface-light)" }}>
           <table className="w-full" style={{ borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ backgroundColor: "var(--color-bg-alt)" }}>
+              <tr style={{ backgroundColor: "#0A0A0B" }}>
                 <th style={th} />
                 <th style={th}>Fecha</th>
                 <th style={th}>Nombre</th>
@@ -164,8 +170,8 @@ function MensajesPage() {
                 <tr>
                   <td colSpan={8}>
                     <div className="flex flex-col items-center gap-3" style={{ padding: "4rem 0" }}>
-                      <MessageSquare size={40} color="var(--color-text-muted)" />
-                      <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-muted)" }}>
+                      <MessageSquare size={40} color="var(--color-text-on-light-faint)" />
+                      <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light-faint)" }}>
                         Aún no hay mensajes recibidos
                       </p>
                     </div>
@@ -177,20 +183,20 @@ function MensajesPage() {
                     key={m.id}
                     onClick={() => handleAbrirMensaje(m)}
                     style={{
-                      backgroundColor: i % 2 === 0 ? "var(--color-bg)" : "var(--color-surface)",
+                      backgroundColor: i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)",
                       cursor: "pointer",
                       opacity: m.leido ? 0.65 : 1,
                       transition: "background-color var(--transition-fast)",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-alt)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = i % 2 === 0 ? "var(--color-bg)" : "var(--color-surface)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg-light-alt)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)")}
                   >
                     <td style={{ padding: "12px 0 12px 16px", width: 20 }}>
                       {!m.leido && (
-                        <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", backgroundColor: "var(--color-primary)" }} />
+                        <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", backgroundColor: "var(--color-primary-dim)" }} />
                       )}
                     </td>
-                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", whiteSpace: "nowrap" }}>
                       {m.createdAt.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
                     </td>
                     <td
@@ -199,28 +205,28 @@ function MensajesPage() {
                         fontFamily: "var(--font-body)",
                         fontWeight: m.leido ? 400 : 600,
                         fontSize: "var(--text-sm)",
-                        color: "var(--color-text-primary)",
+                        color: "var(--color-text-on-light)",
                       }}
                     >
                       {m.nombre}
                     </td>
-                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                       {m.telefono}
                     </td>
-                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                       {m.email ?? "—"}
                     </td>
-                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                       {m.servicio ?? "—"}
                     </td>
-                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)", maxWidth: 260 }}>
+                    <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)", maxWidth: 260 }}>
                       {truncar(m.mensaje, 60)}
                     </td>
                     <td style={{ padding: "12px 16px" }}>
                       <span
                         style={{
-                          backgroundColor: m.leido ? "rgba(245,242,235,0.08)" : "var(--color-accent-lt)",
-                          color: m.leido ? "var(--color-text-muted)" : "var(--color-primary)",
+                          backgroundColor: m.leido ? "rgba(10,10,11,0.06)" : "rgba(200,168,74,0.15)",
+                          color: m.leido ? "var(--color-text-on-light-faint)" : "var(--color-primary-dim)",
                           fontFamily: "var(--font-mono)",
                           fontSize: "var(--text-xs)",
                           textTransform: "uppercase",
@@ -334,7 +340,7 @@ function MensajesPage() {
                   style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-sm)",
-                    color: "var(--color-text-secondary)",
+                    color: "var(--color-text-on-light-muted)",
                     lineHeight: "var(--leading-relaxed)",
                     marginTop: "0.4rem",
                   }}

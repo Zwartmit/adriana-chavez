@@ -44,6 +44,20 @@
   --color-border-strong: rgba(255,255,255,0.14);
   --color-border-gold:   rgba(232,201,122,0.35);
 
+  /* ── FONDOS CLAROS — nuevo sistema ── */
+  --color-bg-light:        #F5F0E8;   /* Marfil cálido — fondo claro principal */
+  --color-bg-light-alt:    #EDE8DF;   /* Marfil medio — fondo claro alterno */
+  --color-surface-light:   #FFFFFF;   /* Blanco puro — cards sobre fondo claro */
+
+  /* ── TEXTO SOBRE FONDOS CLAROS ── */
+  --color-text-on-light:         #0A0A0B;   /* Negro — texto principal sobre claro */
+  --color-text-on-light-muted:   #5A5550;   /* Gris cálido — texto secundario sobre claro */
+  --color-text-on-light-faint:   #9A9590;   /* Gris suave — texto muted sobre claro */
+
+  /* ── BORDES SOBRE FONDOS CLAROS ── */
+  --color-border-light:          rgba(10,10,11,0.10);
+  --color-border-light-gold:     rgba(200,168,74,0.35);
+
   /* ── GLASS — tokens para glassmorphism ── */
   --glass-obsidian-bg:     rgba(255,255,255,0.04);
   --glass-obsidian-border: rgba(255,255,255,0.09);

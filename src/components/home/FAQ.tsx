@@ -4,28 +4,28 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const FAQS = [
   {
-    q: "¿Necesito cita previa para ser atendida?",
-    a: "Sí, trabajamos únicamente con cita previa para garantizarte atención personalizada y sin esperas. Puedes reservar desde nuestra web, WhatsApp o llamando directamente.",
+    q: "¿Con cuánto tiempo debo agendar una cita?",
+    a: "Recomendamos agendar tu cita con al menos 3 a 5 días de anticipación para asegurar disponibilidad, especialmente en fines de semana.",
   },
   {
-    q: "¿Cuánto tiempo dura un servicio de coloración?",
-    a: "Depende de la técnica: una coloración completa toma entre 2 y 3 horas, mientras que un balayage puede tomar entre 2.5 y 4 horas. Te informamos el tiempo exacto al momento de reservar.",
+    q: "¿Realizan servicios sin cita previa?",
+    a: "Sí, pero están sujetos a disponibilidad. Para garantizar tu atención, lo ideal es reservar con anticipación.",
   },
   {
-    q: "¿Aceptan pagos con tarjeta débito y crédito?",
-    a: "Sí, aceptamos todas las formas de pago: efectivo, tarjeta débito, tarjeta crédito y transferencia bancaria. Para compras en nuestra tienda virtual procesamos pagos a través de Wompi.",
+    q: "¿Cuánto duran los servicios de color o balayage?",
+    a: "Dependiendo del tipo de trabajo, pueden durar entre 2 y 8 horas, ya que se personaliza cada técnica según el cabello.",
   },
   {
-    q: "¿Qué pasa si necesito cancelar o reprogramar mi cita?",
-    a: "Puedes cancelar o reprogramar sin costo hasta 24 horas antes de tu cita. Con menos de 24 horas de anticipación aplicamos una tarifa de cancelación del 20% del servicio reservado.",
+    q: "¿La micropigmentación duele?",
+    a: "Es un procedimiento mínimamente incómodo. Se utiliza anestesia tópica para reducir cualquier molestia durante la aplicación.",
   },
   {
-    q: "¿Tienen estacionamiento disponible?",
-    a: "Sí, contamos con parqueadero disponible en el edificio sin costo adicional para nuestras clientas durante el tiempo del servicio.",
+    q: "¿Qué productos utilizan en el salón?",
+    a: "Trabajamos con productos profesionales de alta calidad que cuidan la salud del cabello, la piel y las uñas, garantizando mejores resultados.",
   },
   {
-    q: "¿Realizan servicios a domicilio?",
-    a: "Por el momento no contamos con servicio a domicilio. Todos nuestros servicios se realizan en el salón para garantizar la calidad y los resultados que nos caracterizan.",
+    q: "¿Cuánto tiempo duran las uñas semipermanentes?",
+    a: "Generalmente duran entre 2 y 3 semanas, dependiendo del crecimiento de la uña y los cuidados posteriores.",
   },
 ];
 
@@ -35,7 +35,7 @@ export function FAQ() {
   return (
     <section
       style={{
-        backgroundColor: "var(--color-bg-alt)",
+        backgroundColor: "var(--color-bg-light)",
         paddingTop: "6rem",
         paddingBottom: "6rem",
       }}
@@ -56,6 +56,8 @@ export function FAQ() {
           align="center"
           titleSize="clamp(1.75rem, 3vw, 2.5rem)"
           className="mx-auto mb-12"
+          titleColor="var(--color-text-on-light)"
+          eyebrowColor="var(--color-primary-dim)"
         />
 
         <div className="flex flex-col">
@@ -64,7 +66,7 @@ export function FAQ() {
             return (
               <div
                 key={f.q}
-                style={{ borderTop: "1px solid var(--color-border)" }}
+                style={{ borderTop: "1px solid var(--color-border-light)" }}
               >
                 <button
                   type="button"
@@ -76,8 +78,8 @@ export function FAQ() {
                     fontSize: "var(--text-lg)",
                     fontWeight: isOpen ? 600 : 500,
                     color: isOpen
-                      ? "var(--color-primary)"
-                      : "var(--color-text-primary)",
+                      ? "var(--color-primary-dim)"
+                      : "var(--color-text-on-light)",
                     transition: "color var(--transition-base)",
                   }}
                   aria-expanded={isOpen}
@@ -88,7 +90,7 @@ export function FAQ() {
                     style={{
                       transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                       transition: "transform 300ms ease",
-                      color: "var(--color-accent)",
+                      color: "var(--color-text-on-light-muted)",
                       flexShrink: 0,
                     }}
                   />
@@ -104,7 +106,7 @@ export function FAQ() {
                     style={{
                       paddingBottom: "1.5rem",
                       fontFamily: "var(--font-body)",
-                      color: "var(--color-text-secondary)",
+                      color: "var(--color-text-on-light-muted)",
                       lineHeight: "var(--leading-relaxed)",
                     }}
                   >
@@ -114,7 +116,7 @@ export function FAQ() {
               </div>
             );
           })}
-          <div style={{ borderTop: "1px solid var(--color-border)" }} />
+          <div style={{ borderTop: "1px solid var(--color-border-light)" }} />
         </div>
       </div>
     </section>

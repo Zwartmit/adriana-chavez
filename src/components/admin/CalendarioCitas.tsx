@@ -139,7 +139,7 @@ export function CalendarioCitas() {
               fontStyle: "italic",
               fontWeight: 600,
               fontSize: "var(--text-2xl)",
-              color: "var(--color-text-primary)",
+              color: "var(--color-text-on-light)",
               minWidth: "220px",
             }}
           >
@@ -156,10 +156,10 @@ export function CalendarioCitas() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: "1px solid var(--color-border)",
+                border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-full)",
                 background: "transparent",
-                color: "var(--color-text-secondary)",
+                color: "var(--color-text-on-light-muted)",
                 cursor: "pointer",
               }}
             >
@@ -175,10 +175,10 @@ export function CalendarioCitas() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: "1px solid var(--color-border)",
+                border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-full)",
                 background: "transparent",
-                color: "var(--color-text-secondary)",
+                color: "var(--color-text-on-light-muted)",
                 cursor: "pointer",
               }}
             >
@@ -201,7 +201,7 @@ export function CalendarioCitas() {
       <div
         className="grid grid-cols-7"
         style={{
-          borderBottom: "1px solid var(--color-border)",
+          borderBottom: "1px solid var(--color-border-light)",
           marginBottom: "0.25rem",
         }}
       >
@@ -212,7 +212,7 @@ export function CalendarioCitas() {
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-xs)",
-              color: "var(--color-text-muted)",
+              color: "var(--color-text-on-light-faint)",
               padding: "0.5rem 0",
               letterSpacing: "var(--tracking-wider)",
             }}
@@ -231,7 +231,8 @@ export function CalendarioCitas() {
               className="animate-pulse"
               style={{
                 minHeight: "110px",
-                backgroundColor: "var(--color-surface)",
+                backgroundColor: "var(--color-surface-light)",
+                border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-md)",
               }}
             />
@@ -251,8 +252,8 @@ export function CalendarioCitas() {
                 style={{
                   minHeight: "110px",
                   padding: "0.5rem",
-                  backgroundColor: "var(--color-surface)",
-                  border: "1px solid var(--color-border)",
+                  backgroundColor: "var(--color-surface-light)",
+                  border: "1px solid var(--color-border-light)",
                   borderRadius: "var(--radius-md)",
                   opacity: enMes ? 1 : 0.25,
                   cursor: "pointer",
@@ -261,15 +262,15 @@ export function CalendarioCitas() {
                   gap: "0.3rem",
                   transition: "background-color var(--transition-fast)",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-alt)")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface)")}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg-light-alt)")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-light)")}
               >
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                   <span
                     style={{
                       fontFamily: "var(--font-mono)",
                       fontSize: "var(--text-sm)",
-                      color: hoy ? "var(--color-text-inverse)" : "var(--color-text-primary)",
+                      color: hoy ? "var(--color-text-inverse)" : "var(--color-text-on-light)",
                       backgroundColor: hoy ? "var(--color-primary)" : "transparent",
                       width: 24,
                       height: 24,

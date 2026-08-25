@@ -27,7 +27,7 @@ export function PropuestaValor() {
   return (
     <section
       style={{
-        backgroundColor: "var(--color-bg)",
+        backgroundColor: "var(--color-bg-light)",
         paddingTop: "6rem",
         paddingBottom: "6rem",
       }}
@@ -48,36 +48,43 @@ export function PropuestaValor() {
               eyebrow="Nuestra historia"
               title="Más de una década transformando belleza"
               titleSize="clamp(2rem, 4vw, 3rem)"
+              titleColor="var(--color-text-on-light)"
+              eyebrowColor="var(--color-primary-dim)"
             />
             <p
               style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-lg)",
-                color: "var(--color-text-secondary)",
+                color: "var(--color-text-on-light-muted)",
                 lineHeight: "var(--leading-relaxed)",
               }}
             >
-              En Adriana Chávez creemos que cada persona merece sentirse
-              extraordinaria. Desde 2012, hemos acompañado a cientos de clientas
-              en Bogotá a descubrir y realzar su mejor versión con técnicas de
-              vanguardia y un servicio profundamente personalizado.
+              En Centro de Belleza Adriana Chávez convertimos cada visita en
+              una experiencia de belleza, bienestar y confianza. Combinamos
+              talento, innovación y atención personalizada para ofrecer
+              resultados que realzan tu esencia y te hacen sentir hermosa en
+              cada detalle.
             </p>
             <p
               style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-lg)",
-                color: "var(--color-text-secondary)",
+                color: "var(--color-text-on-light-muted)",
                 lineHeight: "var(--leading-relaxed)",
               }}
             >
-              Nuestro equipo de estilistas certificados combina creatividad y
-              precisión técnica para garantizar resultados que superan
-              expectativas, en un espacio diseñado para que te sientas
-              completamente a gusto.
+              Más que un salón de belleza, somos un espacio donde la
+              experiencia, la innovación y el cuidado de cada detalle se unen
+              para resaltar la belleza de cada persona. Nuestro compromiso es
+              brindar un servicio personalizado con altos estándares de
+              calidad, para que cada visita se convierta en una experiencia
+              única.
             </p>
             <div style={{ marginTop: "1.5rem" }}>
               <a href="/sobre-nosotros" style={{ display: "inline-block" }}>
-                <Button variant="secondary" size="md">Conoce nuestra historia →</Button>
+                <Button variant="secondary" size="md" style={{ borderColor: "#0A0A0B", color: "#0A0A0B" }}>
+                  Conoce nuestra historia →
+                </Button>
               </a>
             </div>
           </div>
@@ -96,11 +103,8 @@ export function PropuestaValor() {
               style={{
                 bottom: "1.5rem",
                 left: "-1.5rem",
-                background: "linear-gradient(135deg, rgba(232,201,122,0.12) 0%, rgba(232,201,122,0.05) 100%)",
-                border: "0.5px solid rgba(232,201,122,0.35)",
-                boxShadow: "inset 0 1px 0 rgba(232,201,122,0.2), 0 8px 32px rgba(0,0,0,0.5)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
+                backgroundColor: "#0A0A0B",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
                 borderRadius: "var(--radius-xl)",
                 padding: "16px 20px",
               }}
@@ -134,29 +138,30 @@ export function PropuestaValor() {
               key={title}
               className="group flex flex-col items-center text-center gap-3 hover:-translate-y-1"
               style={{
-                backgroundColor: "var(--color-surface)",
+                backgroundColor: "var(--color-surface-light)",
+                border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-xl)",
                 padding: "2rem",
                 borderTop: "3px solid transparent",
-                boxShadow: "var(--shadow-card)",
+                boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
                 transition: "all 300ms ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderTopColor = "var(--color-accent)";
-                e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                e.currentTarget.style.borderTopColor = "var(--color-primary-dim)";
+                e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,10,11,0.12)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderTopColor = "transparent";
-                e.currentTarget.style.boxShadow = "var(--shadow-card)";
+                e.currentTarget.style.boxShadow = "0 2px 12px rgba(10,10,11,0.08)";
               }}
             >
-              <Icon size={28} color="var(--color-accent)" />
+              <Icon size={28} color="var(--color-primary-dim)" />
               <h3
                 style={{
                   fontFamily: "var(--font-display)",
                   fontWeight: 600,
                   fontSize: "var(--text-xl)",
-                  color: "var(--color-text-primary)",
+                  color: "var(--color-text-on-light)",
                 }}
               >
                 {title}
@@ -164,7 +169,7 @@ export function PropuestaValor() {
               <p
                 style={{
                   fontFamily: "var(--font-body)",
-                  color: "var(--color-text-secondary)",
+                  color: "var(--color-text-on-light-muted)",
                   lineHeight: "var(--leading-relaxed)",
                 }}
               >

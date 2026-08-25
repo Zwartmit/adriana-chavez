@@ -147,8 +147,8 @@ export function GaleriaGrid({
   return (
     <section
       style={{
-        backgroundColor: "var(--color-bg)",
-        paddingTop: "4rem",
+        backgroundColor: "var(--color-bg-light)",
+        paddingTop: "3rem",
         paddingBottom: "6rem",
       }}
     >
@@ -163,9 +163,9 @@ export function GaleriaGrid({
         }}
       >
         {loading ? (
-          <LoadingState />
+          <LoadingState variant="light" />
         ) : error ? (
-          <ErrorState message={error} onRetry={fetchGaleria} />
+          <ErrorState message={error} onRetry={fetchGaleria} variant="light" />
         ) : (
           <div
             key={activeCategory}

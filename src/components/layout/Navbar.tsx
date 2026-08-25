@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { NAV_LINKS } from "@/constants";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart/CartContext";
 
-function CartIcon() {
+function CartIcon({ isDark }: { isDark: boolean }) {
   const { totalItems, openDrawer } = useCart();
   return (
     <button
@@ -15,8 +16,9 @@ function CartIcon() {
         position: "relative",
         display: "inline-flex",
         alignItems: "center",
-        color: "var(--color-text-primary)",
+        color: isDark ? "#F5F2EB" : "#0A0A0B",
         padding: "8px",
+        transition: "color 300ms ease",
       }}
     >
       <ShoppingBag size={22} />
@@ -28,8 +30,8 @@ function CartIcon() {
             right: 0,
             width: "18px",
             height: "18px",
-            backgroundColor: "var(--color-accent)",
-            color: "var(--color-primary)",
+            backgroundColor: "#E8C97A",
+            color: "#0A0A0B",
             borderRadius: "50%",
             fontSize: "10px",
             fontWeight: 700,
@@ -47,15 +49,30 @@ function CartIcon() {
 }
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const sections = document.querySelectorAll<HTMLElement>("[data-navbar-dark]");
+    if (sections.length === 0) {
+      setIsDark(false);
+      return;
+    }
+
+    const intersecting = new Map<Element, boolean>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) intersecting.set(entry.target, entry.isIntersecting);
+        setIsDark(Array.from(intersecting.values()).some(Boolean));
+      },
+      // Franja delgada justo debajo del navbar: cuenta como "oscuro" cuando
+      // una sección con data-navbar-dark ocupa esa franja del viewport.
+      { rootMargin: "-72px 0px -80% 0px", threshold: 0 },
+    );
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -64,6 +81,10 @@ export function Navbar() {
     };
   }, [open]);
 
+  const textColor = isDark ? "rgba(245,242,235,0.7)" : "rgba(10,10,11,0.7)";
+  const textHoverColor = isDark ? "#F5F2EB" : "#0A0A0B";
+  const logoColor = isDark ? "#E8C97A" : "#0A0A0B";
+
   return (
     <>
       <header
@@ -71,12 +92,11 @@ export function Navbar() {
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease",
         )}
         style={{
-          backgroundColor: scrolled ? "var(--color-bg)" : "transparent",
-          borderBottom: scrolled ? "0.5px solid var(--color-border-gold)" : "none",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
-          boxShadow: scrolled ? "0 8px 32px rgba(0,0,0,0.5)" : "none",
-          color: "var(--color-text-primary)",
+          backgroundColor: isDark ? "rgba(10,10,11,0.85)" : "rgba(245,240,232,0.92)",
+          borderBottom: isDark ? "0.5px solid rgba(232,201,122,0.15)" : "0.5px solid rgba(10,10,11,0.08)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          color: textColor,
         }}
       >
         <div
@@ -101,7 +121,8 @@ export function Navbar() {
               fontStyle: "italic",
               fontSize: "var(--text-xl)",
               fontWeight: 600,
-              color: "var(--color-primary)",
+              color: logoColor,
+              transition: "color 300ms ease",
             }}
           >
             Adriana Chávez
@@ -113,21 +134,22 @@ export function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="group relative uppercase transition-colors"
+                className="group relative uppercase"
                 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-sm)",
                   fontWeight: 500,
                   letterSpacing: "var(--tracking-wide)",
-                  color: "var(--color-text-primary)",
+                  color: textColor,
+                  transition: "color 300ms ease",
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = textHoverColor)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = textColor)}
               >
-                <span className="group-hover:text-[var(--color-accent)] transition-colors">
-                  {link.label}
-                </span>
+                <span>{link.label}</span>
                 <span
                   className="absolute -bottom-1 left-0 h-px w-0 group-hover:w-full transition-all duration-300 ease"
-                  style={{ backgroundColor: "var(--color-accent)" }}
+                  style={{ backgroundColor: "#E8C97A" }}
                 />
               </a>
             ))}
@@ -139,8 +161,8 @@ export function Navbar() {
               href="/contacto"
               className="hidden md:inline-flex items-center justify-center transition-colors"
               style={{
-                backgroundColor: "var(--color-accent)",
-                color: "var(--color-text-inverse)",
+                backgroundColor: "#E8C97A",
+                color: "#0A0A0B",
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-sm)",
                 fontWeight: 600,
@@ -150,18 +172,17 @@ export function Navbar() {
                 whiteSpace: "nowrap",
                 borderRadius: "var(--radius-full)",
               }}
-
               onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "var(--color-accent-dim)")
+                (e.currentTarget.style.backgroundColor = "var(--color-primary-lt)")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "var(--color-accent)")
+                (e.currentTarget.style.backgroundColor = "#E8C97A")
               }
             >
               Reservar cita →
             </a>
 
-            <CartIcon />
+            <CartIcon isDark={isDark} />
 
             {/* Mobile hamburger */}
             <button
@@ -169,7 +190,7 @@ export function Navbar() {
               aria-label="Abrir menú"
               className="md:hidden p-2"
               onClick={() => setOpen(true)}
-              style={{ color: "var(--color-text-primary)" }}
+              style={{ color: isDark ? "#F5F2EB" : "#0A0A0B", transition: "color 300ms ease" }}
             >
               <Menu size={24} />
             </button>

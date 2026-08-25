@@ -70,20 +70,23 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
   const sidebarWidth = isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "var(--color-bg)" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--color-bg-light)" }}>
       <AdminSidebar isCollapsed={isCollapsed} onToggleCollapsed={() => setIsCollapsed((c) => !c)} />
       <div
         style={{
           marginLeft: `${sidebarWidth}px`,
           minHeight: "100vh",
-          backgroundColor: "var(--color-bg)",
-          padding: "2rem",
+          backgroundColor: "var(--color-bg-light)",
           transition: "margin-left 250ms ease",
         }}
       >
         <header
           className="flex items-center justify-between"
-          style={{ marginBottom: "2rem" }}
+          style={{
+            backgroundColor: "var(--color-surface-light)",
+            borderBottom: "1px solid var(--color-border-light)",
+            padding: "1.5rem 2rem",
+          }}
         >
           <h1
             style={{
@@ -91,7 +94,7 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
               fontStyle: "italic",
               fontWeight: 600,
               fontSize: "var(--text-2xl)",
-              color: "var(--color-text-primary)",
+              color: "var(--color-text-on-light)",
               textTransform: "capitalize",
             }}
           >
@@ -102,13 +105,13 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-sm)",
-              color: "var(--color-text-muted)",
+              color: "var(--color-text-on-light-faint)",
             }}
           >
             {FECHA_HOY}
           </span>
         </header>
-        {children}
+        <div style={{ padding: "2rem" }}>{children}</div>
       </div>
     </div>
   );

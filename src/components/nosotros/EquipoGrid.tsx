@@ -42,18 +42,19 @@ function EstilistaCard({ name, role, experience, specialties, photo }: Estilista
     <div
       className="text-center"
       style={{
-        backgroundColor: "var(--color-surface)",
+        backgroundColor: "var(--color-surface-light)",
+        border: "1px solid var(--color-border-light)",
         borderRadius: "var(--radius-xl)",
         padding: "2rem",
-        boxShadow: "var(--shadow-card)",
+        boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
         transition: "all var(--transition-slow)",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "var(--shadow-lg)";
-        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,10,11,0.12)";
+        e.currentTarget.style.transform = "translateY(-3px)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "var(--shadow-card)";
+        e.currentTarget.style.boxShadow = "0 2px 12px rgba(10,10,11,0.08)";
         e.currentTarget.style.transform = "translateY(0)";
       }}
     >
@@ -64,7 +65,7 @@ function EstilistaCard({ name, role, experience, specialties, photo }: Estilista
         style={{
           width: 120,
           height: 120,
-          border: "3px solid var(--color-accent)",
+          border: "3px solid var(--color-primary-dim)",
           objectFit: "cover",
         }}
       />
@@ -75,7 +76,7 @@ function EstilistaCard({ name, role, experience, specialties, photo }: Estilista
           fontStyle: "italic",
           fontWeight: 600,
           fontSize: "var(--text-xl)",
-          color: "var(--color-text-primary)",
+          color: "var(--color-text-on-light)",
         }}
       >
         {name}
@@ -86,13 +87,13 @@ function EstilistaCard({ name, role, experience, specialties, photo }: Estilista
           fontFamily: "var(--font-mono)",
           fontSize: "var(--text-xs)",
           letterSpacing: "var(--tracking-wider)",
-          color: "var(--color-accent)",
+          color: "var(--color-primary-dim)",
         }}
       >
         {role}
       </p>
 
-      <div style={{ borderTop: "1px solid var(--color-border)", margin: "1rem 0" }} />
+      <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1rem 0" }} />
 
       <div className="flex flex-wrap items-center justify-center gap-2">
         {specialties.slice(0, 3).map((s) => (
@@ -105,10 +106,10 @@ function EstilistaCard({ name, role, experience, specialties, photo }: Estilista
         style={{
           fontFamily: "var(--font-mono)",
           fontSize: "var(--text-sm)",
-          color: "var(--color-text-muted)",
+          color: "var(--color-text-on-light-faint)",
         }}
       >
-        <Star size={12} color="var(--color-accent)" />
+        <Star size={12} color="var(--color-primary-dim)" />
         {experience} años de exp.
       </div>
     </div>
@@ -158,7 +159,7 @@ export function EquipoGrid() {
   return (
     <section
       style={{
-        backgroundColor: "var(--color-bg-alt)",
+        backgroundColor: "var(--color-bg-light)",
         paddingTop: "6rem",
         paddingBottom: "6rem",
       }}
@@ -178,12 +179,14 @@ export function EquipoGrid() {
           title="Las manos detrás de cada transformación"
           align="center"
           className="mx-auto mb-16"
+          titleColor="var(--color-text-on-light)"
+          eyebrowColor="var(--color-primary-dim)"
         />
 
         {loading ? (
-          <LoadingState />
+          <LoadingState variant="light" />
         ) : error ? (
-          <ErrorState message={error} onRetry={fetchEquipo} />
+          <ErrorState message={error} onRetry={fetchEquipo} variant="light" />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {equipo.map((e) => (

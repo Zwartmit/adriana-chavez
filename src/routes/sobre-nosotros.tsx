@@ -53,6 +53,7 @@ function SobreNosotrosPage() {
     <main>
       {/* Hero */}
       <section
+        data-navbar-dark
         className="relative overflow-hidden"
         style={{
           background: `
@@ -129,7 +130,7 @@ function SobreNosotrosPage() {
       {/* Historia */}
       <section
         style={{
-          backgroundColor: "var(--color-bg)",
+          backgroundColor: "var(--color-bg-light)",
           paddingTop: "6rem",
           paddingBottom: "6rem",
         }}
@@ -158,11 +159,8 @@ function SobreNosotrosPage() {
                 style={{
                   bottom: "1.5rem",
                   right: "-1rem",
-                  background: "linear-gradient(135deg, rgba(232,201,122,0.12) 0%, rgba(232,201,122,0.05) 100%)",
-                  border: "0.5px solid rgba(232,201,122,0.35)",
-                  boxShadow: "inset 0 1px 0 rgba(232,201,122,0.2), 0 8px 32px rgba(0,0,0,0.5)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
+                  backgroundColor: "#0A0A0B",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
                   borderRadius: "var(--radius-xl)",
                   padding: "20px 24px",
                 }}
@@ -203,13 +201,18 @@ function SobreNosotrosPage() {
 
             {/* Columna derecha — texto */}
             <div className="flex flex-col gap-6">
-              <SectionHeader eyebrow="Nuestra historia" title="El origen de una pasión" />
+              <SectionHeader
+                eyebrow="Nuestra historia"
+                title="El origen de una pasión"
+                titleColor="var(--color-text-on-light)"
+                eyebrowColor="var(--color-primary-dim)"
+              />
               <div className="flex flex-col" style={{ gap: "1.5rem" }}>
                 <p
                   style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-lg)",
-                    color: "var(--color-text-secondary)",
+                    color: "var(--color-text-on-light-muted)",
                     lineHeight: "var(--leading-relaxed)",
                   }}
                 >
@@ -224,7 +227,7 @@ function SobreNosotrosPage() {
                   style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-lg)",
-                    color: "var(--color-text-secondary)",
+                    color: "var(--color-text-on-light-muted)",
                     lineHeight: "var(--leading-relaxed)",
                   }}
                 >
@@ -238,7 +241,7 @@ function SobreNosotrosPage() {
                   style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-lg)",
-                    color: "var(--color-text-secondary)",
+                    color: "var(--color-text-on-light-muted)",
                     lineHeight: "var(--leading-relaxed)",
                   }}
                 >
@@ -255,6 +258,7 @@ function SobreNosotrosPage() {
 
       {/* Misión, Visión y Valores */}
       <section
+        data-navbar-dark
         className="section-glow-center"
         style={{
           backgroundColor: "var(--color-bg-alt)",
@@ -404,6 +408,7 @@ function SobreNosotrosPage() {
 
       {/* Cifras */}
       <section
+        data-navbar-dark
         style={{
           backgroundColor: "var(--color-bg)",
           paddingTop: "5rem",

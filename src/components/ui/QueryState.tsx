@@ -1,6 +1,14 @@
 import { Button } from "@/components/ui/Button";
 
-export function LoadingState({ label = "Cargando..." }: { label?: string }) {
+interface StateVariantProps {
+  /** "dark" (default) for dark sections, "light" for sections on --color-bg-light. */
+  variant?: "dark" | "light";
+}
+
+export function LoadingState({
+  label = "Cargando...",
+  variant = "dark",
+}: { label?: string } & StateVariantProps) {
   return (
     <div
       style={{
@@ -9,7 +17,7 @@ export function LoadingState({ label = "Cargando..." }: { label?: string }) {
         padding: "3rem 0",
         fontFamily: "var(--font-mono)",
         fontSize: "var(--text-sm)",
-        color: "var(--color-text-muted)",
+        color: variant === "light" ? "var(--color-text-on-light-faint)" : "var(--color-text-muted)",
       }}
     >
       {label}
@@ -17,7 +25,11 @@ export function LoadingState({ label = "Cargando..." }: { label?: string }) {
   );
 }
 
-export function ErrorState({ message, onRetry }: { message?: string; onRetry: () => void }) {
+export function ErrorState({
+  message,
+  onRetry,
+  variant = "dark",
+}: { message?: string; onRetry: () => void } & StateVariantProps) {
   return (
     <div className="flex flex-col items-center gap-4" style={{ padding: "3rem 0", textAlign: "center" }}>
       <p
@@ -29,7 +41,12 @@ export function ErrorState({ message, onRetry }: { message?: string; onRetry: ()
       >
         {message ?? "No pudimos cargar la información. Intenta de nuevo."}
       </p>
-      <Button variant="secondary" size="sm" onClick={onRetry}>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={onRetry}
+        style={variant === "light" ? { borderColor: "var(--color-primary-dim)", color: "var(--color-primary-dim)" } : undefined}
+      >
         Reintentar
       </Button>
     </div>

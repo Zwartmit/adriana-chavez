@@ -114,8 +114,8 @@ export function ServiciosGrid({
   return (
     <section
       style={{
-        backgroundColor: "var(--color-bg)",
-        paddingTop: "4rem",
+        backgroundColor: "var(--color-bg-light)",
+        paddingTop: "3rem",
         paddingBottom: "6rem",
       }}
     >
@@ -130,9 +130,9 @@ export function ServiciosGrid({
         }}
       >
         {loading ? (
-          <LoadingState />
+          <LoadingState variant="light" />
         ) : error ? (
-          <ErrorState message={error} onRetry={fetchServicios} />
+          <ErrorState message={error} onRetry={fetchServicios} variant="light" />
         ) : (
           <>
             <p
@@ -140,7 +140,7 @@ export function ServiciosGrid({
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: "var(--text-sm)",
-                color: "var(--color-text-muted)",
+                color: "var(--color-text-on-light-faint)",
               }}
             >
               {serviciosFiltrados.length} {serviciosFiltrados.length === 1 ? "servicio" : "servicios"} encontrados
@@ -150,13 +150,13 @@ export function ServiciosGrid({
               <div
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 style={{
-                  backgroundColor: "var(--color-bg-alt)",
+                  backgroundColor: "var(--color-bg-light-alt)",
                   borderRadius: "var(--radius-2xl)",
                   padding: "2rem",
                 }}
               >
                 {serviciosFiltrados.map((s) => (
-                  <ServiceCard key={s.id} {...s} />
+                  <ServiceCard key={s.id} {...s} theme="light" />
                 ))}
               </div>
             ) : (
@@ -166,7 +166,7 @@ export function ServiciosGrid({
                     fontFamily: "var(--font-display)",
                     fontStyle: "italic",
                     fontSize: "var(--text-2xl)",
-                    color: "var(--color-text-muted)",
+                    color: "var(--color-text-on-light-faint)",
                   }}
                 >
                   No encontramos servicios con ese criterio.
@@ -174,6 +174,7 @@ export function ServiciosGrid({
                 <Button
                   variant="secondary"
                   size="sm"
+                  style={{ borderColor: "var(--color-primary-dim)", color: "var(--color-primary-dim)" }}
                   onClick={() => {
                     onSearchChange("");
                     onCategoryChange("Todos");

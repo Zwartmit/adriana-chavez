@@ -141,6 +141,7 @@ export function Testimonios() {
 
   return (
     <section
+      data-navbar-dark
       style={{
         backgroundColor: "var(--color-surface)",
         paddingTop: "4rem",

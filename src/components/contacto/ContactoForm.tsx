@@ -16,24 +16,24 @@ const SERVICIOS_OPTIONS = [
 ];
 
 const inputStyle: React.CSSProperties = {
-  backgroundColor: "var(--color-surface)",
-  border: "1px solid var(--color-border)",
+  backgroundColor: "var(--color-surface-light)",
+  border: "1px solid var(--color-border-light)",
   borderRadius: "var(--radius-lg)",
   padding: "14px 16px",
   fontFamily: "var(--font-body)",
   fontSize: "var(--text-base)",
-  color: "var(--color-text-primary)",
+  color: "var(--color-text-on-light)",
   width: "100%",
   transition: "border var(--transition-base), box-shadow var(--transition-base)",
 };
 
 function handleFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-  e.currentTarget.style.border = "2px solid var(--color-primary)";
-  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,201,122,0.08)";
+  e.currentTarget.style.border = "2px solid var(--color-primary-dim)";
+  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(200,168,74,0.12)";
 }
 
 function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-  e.currentTarget.style.border = "1px solid var(--color-border)";
+  e.currentTarget.style.border = "1px solid var(--color-border-light)";
   e.currentTarget.style.boxShadow = "none";
 }
 
@@ -45,12 +45,12 @@ function Label({ children, required }: { children: React.ReactNode; required?: b
         fontFamily: "var(--font-body)",
         fontWeight: 600,
         fontSize: "var(--text-sm)",
-        color: "var(--color-text-primary)",
+        color: "var(--color-text-on-light)",
         marginBottom: "6px",
       }}
     >
       {children}
-      {required && <span style={{ color: "var(--color-accent)" }}> *</span>}
+      {required && <span style={{ color: "var(--color-primary-dim)" }}> *</span>}
     </label>
   );
 }
@@ -94,13 +94,13 @@ export function ContactoForm() {
   if (submitted) {
     return (
       <div style={{ textAlign: "center", padding: "3rem 2rem" }}>
-        <CheckCircle size={48} color="var(--color-primary)" className="mx-auto" />
+        <CheckCircle size={48} color="var(--color-primary-dim)" className="mx-auto" />
         <h3
           style={{
             fontFamily: "var(--font-display)",
             fontStyle: "italic",
             fontSize: "var(--text-2xl)",
-            color: "var(--color-primary)",
+            color: "var(--color-primary-dim)",
             margin: "1rem 0 0.5rem",
           }}
         >
@@ -110,7 +110,7 @@ export function ContactoForm() {
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-base)",
-            color: "var(--color-text-secondary)",
+            color: "var(--color-text-on-light-muted)",
           }}
         >
           Te responderemos en menos de 24 horas. También puedes escribirnos
@@ -120,7 +120,7 @@ export function ContactoForm() {
           variant="secondary"
           size="sm"
           onClick={() => setSubmitted(false)}
-          style={{ marginTop: "1.5rem" }}
+          style={{ marginTop: "1.5rem", borderColor: "var(--color-primary-dim)", color: "var(--color-primary-dim)" }}
         >
           Enviar otro mensaje
         </Button>
@@ -136,7 +136,7 @@ export function ContactoForm() {
           fontFamily: "var(--font-mono)",
           fontSize: "var(--text-xs)",
           letterSpacing: "var(--tracking-widest)",
-          color: "var(--color-accent)",
+          color: "var(--color-primary-dim)",
         }}
       >
         Envíanos un mensaje
@@ -147,7 +147,7 @@ export function ContactoForm() {
           fontStyle: "italic",
           fontWeight: 600,
           fontSize: "var(--text-3xl)",
-          color: "var(--color-text-primary)",
+          color: "var(--color-text-on-light)",
           marginTop: "0.5rem",
         }}
       >
@@ -157,7 +157,7 @@ export function ContactoForm() {
         style={{
           fontFamily: "var(--font-body)",
           fontSize: "var(--text-base)",
-          color: "var(--color-text-secondary)",
+          color: "var(--color-text-on-light-muted)",
           marginTop: "0.5rem",
           marginBottom: "2rem",
         }}

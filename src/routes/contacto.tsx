@@ -56,13 +56,17 @@ const CANALES = [
     linkLabel: "Escribir ahora →",
     href: "https://wa.me/573000000000",
   },
-  {
-    icon: Mail,
-    name: "Correo electrónico",
-    detail: CONTACT_INFO.email,
-    linkLabel: "Enviar correo →",
-    href: `mailto:${CONTACT_INFO.email}`,
-  },
+  ...(CONTACT_INFO.email
+    ? [
+        {
+          icon: Mail,
+          name: "Correo electrónico",
+          detail: CONTACT_INFO.email,
+          linkLabel: "Enviar correo →",
+          href: `mailto:${CONTACT_INFO.email}`,
+        },
+      ]
+    : []),
   {
     icon: Phone,
     name: "Teléfono",
@@ -79,6 +83,7 @@ function ContactoPage() {
     <main>
       {/* Hero */}
       <section
+        data-navbar-dark
         className="relative overflow-hidden"
         style={{
           background: `
@@ -155,7 +160,7 @@ function ContactoPage() {
       {/* Formulario + Info */}
       <section
         style={{
-          backgroundColor: "var(--color-bg)",
+          backgroundColor: "var(--color-bg-light)",
           paddingTop: "6rem",
           paddingBottom: "6rem",
         }}
@@ -174,14 +179,11 @@ function ContactoPage() {
             {/* Formulario */}
             <ContactoForm />
 
-            {/* Info de contacto */}
+            {/* Info de contacto — tarjeta oscura dentro de la sección clara */}
             <div
               style={{
-                background: "linear-gradient(135deg, rgba(232,201,122,0.08) 0%, rgba(255,255,255,0.02) 100%)",
-                border: "0.5px solid rgba(232,201,122,0.25)",
-                boxShadow: "inset 0 1px 0 rgba(232,201,122,0.12), var(--shadow-lg)",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
+                backgroundColor: "#0A0A0B",
+                boxShadow: "0 8px 32px rgba(10,10,11,0.18)",
                 borderRadius: "var(--radius-2xl)",
                 padding: "2.5rem",
                 color: "var(--color-text-primary)",
@@ -259,18 +261,20 @@ function ContactoPage() {
                   <MessageCircle size={18} color="#25D366" />
                   WhatsApp
                 </a>
-                <a
-                  href={`mailto:${CONTACT_INFO.email}`}
-                  className="flex items-center gap-2"
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-base)",
-                    color: "rgba(247,245,240,0.75)",
-                  }}
-                >
-                  <Mail size={18} color="var(--color-accent)" />
-                  {CONTACT_INFO.email}
-                </a>
+                {CONTACT_INFO.email && (
+                  <a
+                    href={`mailto:${CONTACT_INFO.email}`}
+                    className="flex items-center gap-2"
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-base)",
+                      color: "rgba(247,245,240,0.75)",
+                    }}
+                  >
+                    <Mail size={18} color="var(--color-accent)" />
+                    {CONTACT_INFO.email}
+                  </a>
+                )}
               </div>
 
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "1.5rem 0" }} />
@@ -356,7 +360,7 @@ function ContactoPage() {
       {/* Horarios + Canales */}
       <section
         style={{
-          backgroundColor: "var(--color-bg)",
+          backgroundColor: "var(--color-bg-light)",
           paddingTop: "6rem",
           paddingBottom: "6rem",
         }}
@@ -378,54 +382,32 @@ function ContactoPage() {
                 eyebrow="Horarios de atención"
                 title="¿Cuándo puedes visitarnos?"
                 className="mb-8"
+                titleColor="var(--color-text-on-light)"
+                eyebrowColor="var(--color-primary-dim)"
               />
               <div>
                 <div
                   className="flex items-center justify-between"
-                  style={{ padding: "1rem 0", borderBottom: "1px solid var(--color-border)" }}
+                  style={{ padding: "1rem 0", borderBottom: "1px solid var(--color-border-light)" }}
                 >
                   <span
                     style={{
                       fontFamily: "var(--font-body)",
                       fontWeight: 600,
                       fontSize: "var(--text-base)",
-                      color: "var(--color-text-primary)",
+                      color: "var(--color-text-on-light)",
                     }}
                   >
-                    Lunes a Viernes
+                    Lunes a Sábado
                   </span>
                   <span
                     style={{
                       fontFamily: "var(--font-mono)",
                       fontSize: "var(--text-base)",
-                      color: "var(--color-primary)",
+                      color: "var(--color-primary-dim)",
                     }}
                   >
-                    9:00 am – 7:00 pm
-                  </span>
-                </div>
-                <div
-                  className="flex items-center justify-between"
-                  style={{ padding: "1rem 0", borderBottom: "1px solid var(--color-border)" }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontWeight: 600,
-                      fontSize: "var(--text-base)",
-                      color: "var(--color-text-primary)",
-                    }}
-                  >
-                    Sábado
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-base)",
-                      color: "var(--color-primary)",
-                    }}
-                  >
-                    9:00 am – 5:00 pm
+                    8:00 am – 12:00 pm · 2:00 pm – 6:00 pm
                   </span>
                 </div>
                 <div
@@ -433,7 +415,7 @@ function ContactoPage() {
                   style={{
                     padding: "1rem",
                     margin: "0 -1rem",
-                    backgroundColor: "rgba(192,57,43,0.04)",
+                    backgroundColor: "rgba(192,57,43,0.06)",
                   }}
                 >
                   <span
@@ -441,7 +423,7 @@ function ContactoPage() {
                       fontFamily: "var(--font-body)",
                       fontWeight: 600,
                       fontSize: "var(--text-base)",
-                      color: "var(--color-text-primary)",
+                      color: "var(--color-text-on-light)",
                     }}
                   >
                     Domingo
@@ -462,7 +444,7 @@ function ContactoPage() {
                 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-sm)",
-                  color: "var(--color-text-muted)",
+                  color: "var(--color-text-on-light-faint)",
                 }}
               >
                 Las citas se agendan con mínimo 24 horas de anticipación.
@@ -475,6 +457,8 @@ function ContactoPage() {
                 eyebrow="Canales de contacto"
                 title="Elige cómo contactarnos"
                 className="mb-8"
+                titleColor="var(--color-text-on-light)"
+                eyebrowColor="var(--color-primary-dim)"
               />
               <div className="flex flex-col gap-4">
                 {CANALES.map(({ icon: Icon, name, detail, linkLabel, href }) => (
@@ -482,14 +466,14 @@ function ContactoPage() {
                     key={name}
                     className="flex items-start gap-4"
                     style={{
-                      backgroundColor: "var(--color-surface)",
-                      border: "1px solid var(--color-border)",
+                      backgroundColor: "var(--color-surface-light)",
+                      border: "1px solid var(--color-border-light)",
                       borderRadius: "var(--radius-xl)",
                       padding: "1.5rem",
                       transition: "all var(--transition-slow)",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                      e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,10,11,0.12)";
                       e.currentTarget.style.transform = "translateY(-2px)";
                     }}
                     onMouseLeave={(e) => {
@@ -502,11 +486,11 @@ function ContactoPage() {
                       style={{
                         width: 40,
                         height: 40,
-                        backgroundColor: "var(--color-accent-lt)",
+                        backgroundColor: "rgba(200,168,74,0.15)",
                         borderRadius: "var(--radius-lg)",
                       }}
                     >
-                      <Icon size={20} color="var(--color-accent)" />
+                      <Icon size={20} color="var(--color-primary-dim)" />
                     </div>
                     <div className="flex flex-col gap-1">
                       <span
@@ -514,7 +498,7 @@ function ContactoPage() {
                           fontFamily: "var(--font-body)",
                           fontWeight: 600,
                           fontSize: "var(--text-base)",
-                          color: "var(--color-text-primary)",
+                          color: "var(--color-text-on-light)",
                         }}
                       >
                         {name}
@@ -523,7 +507,7 @@ function ContactoPage() {
                         style={{
                           fontFamily: "var(--font-mono)",
                           fontSize: "var(--text-sm)",
-                          color: "var(--color-text-secondary)",
+                          color: "var(--color-text-on-light-muted)",
                         }}
                       >
                         {detail}
@@ -537,11 +521,11 @@ function ContactoPage() {
                           fontFamily: "var(--font-body)",
                           fontWeight: 600,
                           fontSize: "var(--text-sm)",
-                          color: "var(--color-primary)",
+                          color: "var(--color-primary-dim)",
                           transition: "color var(--transition-base)",
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-lt)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
                       >
                         {linkLabel}
                       </a>
@@ -556,6 +540,7 @@ function ContactoPage() {
 
       {/* FAQ */}
       <section
+        data-navbar-dark
         style={{
           backgroundColor: "var(--color-bg-alt)",
           paddingTop: "5rem",

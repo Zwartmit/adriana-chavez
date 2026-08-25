@@ -10,6 +10,8 @@ export interface ServiceCardProps {
   price: number;
   image: string;
   href: string;
+  /** "dark" (default, glass card) for dark sections, "light" for --color-bg-light sections. */
+  theme?: "dark" | "light";
 }
 
 function formatCOP(n: number) {
@@ -28,28 +30,53 @@ export function ServiceCard({
   price,
   image,
   href,
+  theme = "dark",
 }: ServiceCardProps) {
+  const isLight = theme === "light";
+
   return (
     <article
-      className="service-card-nc flex flex-col group"
-      style={{
-        background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
-        border: "0.5px solid rgba(255,255,255,0.08)",
-        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderRadius: "var(--radius-xl)",
-        overflow: "hidden",
-        transition: "border-color var(--transition-slow), box-shadow var(--transition-slow)",
-        position: "relative",
-      }}
+      className={isLight ? "flex flex-col group" : "service-card-nc flex flex-col group"}
+      style={
+        isLight
+          ? {
+              backgroundColor: "var(--color-surface-light)",
+              border: "1px solid var(--color-border-light)",
+              boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
+              borderRadius: "var(--radius-xl)",
+              overflow: "hidden",
+              transition: "box-shadow var(--transition-slow), transform var(--transition-slow)",
+              position: "relative",
+            }
+          : {
+              background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
+              border: "0.5px solid rgba(255,255,255,0.08)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              borderRadius: "var(--radius-xl)",
+              overflow: "hidden",
+              transition: "border-color var(--transition-slow), box-shadow var(--transition-slow)",
+              position: "relative",
+            }
+      }
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "rgba(232,201,122,0.35)";
-        e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.5)";
+        if (isLight) {
+          e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,10,11,0.12)";
+          e.currentTarget.style.transform = "translateY(-3px)";
+        } else {
+          e.currentTarget.style.borderColor = "rgba(232,201,122,0.35)";
+          e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.5)";
+        }
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-        e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)";
+        if (isLight) {
+          e.currentTarget.style.boxShadow = "0 2px 12px rgba(10,10,11,0.08)";
+          e.currentTarget.style.transform = "translateY(0)";
+        } else {
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+          e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)";
+        }
       }}
     >
       <div className="relative" style={{ height: "180px", overflow: "hidden" }}>
@@ -68,7 +95,7 @@ export function ServiceCard({
             fontFamily: "var(--font-display)",
             fontWeight: 600,
             fontSize: "var(--text-2xl)",
-            color: "var(--color-text-primary)",
+            color: isLight ? "var(--color-text-on-light)" : "var(--color-text-primary)",
             lineHeight: "var(--leading-tight)",
           }}
         >
@@ -78,7 +105,7 @@ export function ServiceCard({
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-sm)",
-            color: "rgba(247, 245, 240, 0.7)",
+            color: isLight ? "var(--color-text-on-light-muted)" : "rgba(247, 245, 240, 0.7)",
             lineHeight: "var(--leading-relaxed)",
           }}
         >
@@ -87,14 +114,14 @@ export function ServiceCard({
 
         <div
           className="flex items-center justify-between mt-auto pt-4"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ borderTop: isLight ? "1px solid var(--color-border-light)" : "1px solid rgba(255,255,255,0.08)" }}
         >
           <div
             className="flex items-center gap-2"
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-xs)",
-              color: "rgba(247, 245, 240, 0.6)",
+              color: isLight ? "var(--color-text-on-light-muted)" : "rgba(247, 245, 240, 0.6)",
             }}
           >
             <Clock size={14} />
@@ -105,7 +132,7 @@ export function ServiceCard({
               fontFamily: "var(--font-mono)",
               fontWeight: 600,
               fontSize: "var(--text-lg)",
-              color: "var(--color-accent)",
+              color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
             }}
           >
             {formatCOP(price)}

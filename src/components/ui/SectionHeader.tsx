@@ -10,6 +10,10 @@ interface SectionHeaderProps {
   titleSize?: string;
   /** CSS color for the title. Defaults to var(--color-text-primary). */
   titleColor?: string;
+  /** CSS color for the eyebrow. Defaults to var(--color-accent). */
+  eyebrowColor?: string;
+  /** CSS color for the description. Defaults to var(--color-text-secondary). */
+  descriptionColor?: string;
 }
 
 export function SectionHeader({
@@ -20,6 +24,8 @@ export function SectionHeader({
   className,
   titleSize = "clamp(1.75rem, 3vw, 2.5rem)",
   titleColor,
+  eyebrowColor,
+  descriptionColor,
 }: SectionHeaderProps) {
   const isCenter = align === "center";
   return (
@@ -36,7 +42,7 @@ export function SectionHeader({
           style={{
             fontFamily: "var(--font-mono)",
             fontSize: "var(--text-xs)",
-            color: "var(--color-accent)",
+            color: eyebrowColor || "var(--color-accent)",
             letterSpacing: "var(--tracking-widest)",
           }}
         >
@@ -60,7 +66,7 @@ export function SectionHeader({
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-lg)",
-            color: "var(--color-text-secondary)",
+            color: descriptionColor || "var(--color-text-secondary)",
             maxWidth: "560px",
             lineHeight: "var(--leading-normal)",
           }}

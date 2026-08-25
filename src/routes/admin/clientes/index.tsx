@@ -137,7 +137,7 @@ function ClientesPage() {
               fontStyle: "italic",
               fontWeight: 600,
               fontSize: "var(--text-2xl)",
-              color: "var(--color-text-primary)",
+              color: "var(--color-text-on-light)",
             }}
           >
             Clientes
@@ -146,7 +146,7 @@ function ClientesPage() {
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-sm)",
-              color: "var(--color-text-muted)",
+              color: "var(--color-text-on-light-faint)",
               marginTop: "0.25rem",
             }}
           >
@@ -167,7 +167,7 @@ function ClientesPage() {
             left: 14,
             top: "50%",
             transform: "translateY(-50%)",
-            color: "var(--color-text-muted)",
+            color: "var(--color-text-on-light-faint)",
           }}
         />
         <input
@@ -178,12 +178,12 @@ function ClientesPage() {
           style={{
             width: "100%",
             padding: "10px 14px 10px 42px",
-            backgroundColor: "var(--color-surface)",
-            border: "1px solid var(--color-border)",
+            backgroundColor: "var(--color-surface-light)",
+            border: "1px solid var(--color-border-light)",
             borderRadius: "var(--radius-lg)",
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-sm)",
-            color: "var(--color-text-primary)",
+            color: "var(--color-text-on-light)",
             outline: "none",
           }}
         />
@@ -194,10 +194,10 @@ function ClientesPage() {
       )}
 
       {/* Tabla */}
-      <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border)" }}>
+      <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border-light)" }}>
         <table className="w-full" style={{ borderCollapse: "collapse" }}>
           <thead>
-            <tr style={{ backgroundColor: "var(--color-bg-alt)" }}>
+            <tr style={{ backgroundColor: "#0A0A0B" }}>
               {["Nombre completo", "Teléfono", "Email", "Estilista preferida", "Última cita", "Total citas", "Acciones"].map(
                 (h) => (
                   <th
@@ -209,7 +209,7 @@ function ClientesPage() {
                       fontSize: "var(--text-xs)",
                       textTransform: "uppercase",
                       letterSpacing: "var(--tracking-wider)",
-                      color: "var(--color-text-muted)",
+                      color: "var(--color-primary)",
                     }}
                   >
                     {h}
@@ -221,11 +221,11 @@ function ClientesPage() {
           <tbody>
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
-                <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "var(--color-bg)" : "var(--color-surface)" }}>
+                <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)" }}>
                   <td colSpan={7} style={{ padding: "16px" }}>
                     <div
                       className="animate-pulse"
-                      style={{ height: 16, borderRadius: "var(--radius-sm)", backgroundColor: "var(--color-surface-alt)" }}
+                      style={{ height: 16, borderRadius: "var(--radius-sm)", backgroundColor: "var(--color-bg-light-alt)" }}
                     />
                   </td>
                 </tr>
@@ -234,13 +234,13 @@ function ClientesPage() {
               <tr>
                 <td colSpan={7}>
                   <div className="flex flex-col items-center gap-3" style={{ padding: "4rem 0" }}>
-                    <Users size={40} color="var(--color-text-muted)" />
+                    <Users size={40} color="var(--color-text-on-light-faint)" />
                     <p
                       style={{
                         fontFamily: "var(--font-display)",
                         fontStyle: "italic",
                         fontSize: "var(--text-xl)",
-                        color: "var(--color-text-muted)",
+                        color: "var(--color-text-on-light-faint)",
                       }}
                     >
                       Aún no hay clientas registradas
@@ -253,11 +253,11 @@ function ClientesPage() {
                 <tr
                   key={c.id}
                   style={{
-                    backgroundColor: i % 2 === 0 ? "var(--color-bg)" : "var(--color-surface)",
+                    backgroundColor: i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)",
                     transition: "background-color var(--transition-fast)",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-alt)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = i % 2 === 0 ? "var(--color-bg)" : "var(--color-surface)")}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg-light-alt)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)")}
                 >
                   <td style={{ padding: "14px 16px" }}>
                     <button
@@ -270,11 +270,11 @@ function ClientesPage() {
                         fontFamily: "var(--font-body)",
                         fontWeight: 600,
                         fontSize: "var(--text-sm)",
-                        color: "var(--color-text-primary)",
+                        color: "var(--color-text-on-light)",
                         textDecoration: "none",
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-primary)")}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light)")}
                     >
                       {c.nombreCompleto}
                     </button>
@@ -284,26 +284,26 @@ function ClientesPage() {
                           marginLeft: 8,
                           fontFamily: "var(--font-mono)",
                           fontSize: "var(--text-xs)",
-                          color: "var(--color-text-muted)",
+                          color: "var(--color-text-on-light-faint)",
                         }}
                       >
                         (inactiva)
                       </span>
                     )}
                   </td>
-                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                     {c.telefono ?? "—"}
                   </td>
-                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                     {c.email ?? "—"}
                   </td>
-                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                     {c.estilistaNombre ?? "—"}
                   </td>
-                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                     {c.ultimaCita ? c.ultimaCita.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" }) : "—"}
                   </td>
-                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                  <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                     {c.totalCitas}
                   </td>
                   <td style={{ padding: "14px 16px" }}>
@@ -312,9 +312,9 @@ function ClientesPage() {
                         type="button"
                         aria-label="Ver ficha"
                         onClick={() => navigate({ to: "/admin/clientes/$clienteId", params: { clienteId: c.id } })}
-                        style={{ color: "var(--color-text-muted)", background: "transparent", border: "none", cursor: "pointer" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                        style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
                       >
                         <Eye size={16} />
                       </button>
@@ -322,9 +322,9 @@ function ClientesPage() {
                         type="button"
                         aria-label="Editar"
                         onClick={() => navigate({ to: "/admin/clientes/$clienteId", params: { clienteId: c.id } })}
-                        style={{ color: "var(--color-text-muted)", background: "transparent", border: "none", cursor: "pointer" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                        style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
                       >
                         <Edit size={16} />
                       </button>
@@ -347,9 +347,9 @@ function ClientesPage() {
             style={{
               padding: "8px 16px",
               borderRadius: "var(--radius-full)",
-              border: "1px solid var(--color-border)",
+              border: "1px solid var(--color-border-light)",
               backgroundColor: "transparent",
-              color: page === 1 ? "var(--color-text-muted)" : "var(--color-text-secondary)",
+              color: page === 1 ? "var(--color-text-on-light-faint)" : "var(--color-text-on-light-muted)",
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-sm)",
               cursor: page === 1 ? "not-allowed" : "pointer",
@@ -361,7 +361,7 @@ function ClientesPage() {
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-sm)",
-              color: "var(--color-text-muted)",
+              color: "var(--color-text-on-light-faint)",
               padding: "0 0.5rem",
             }}
           >
@@ -374,9 +374,9 @@ function ClientesPage() {
             style={{
               padding: "8px 16px",
               borderRadius: "var(--radius-full)",
-              border: "1px solid var(--color-border)",
+              border: "1px solid var(--color-border-light)",
               backgroundColor: "transparent",
-              color: page === totalPages ? "var(--color-text-muted)" : "var(--color-text-secondary)",
+              color: page === totalPages ? "var(--color-text-on-light-faint)" : "var(--color-text-on-light-muted)",
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-sm)",
               cursor: page === totalPages ? "not-allowed" : "pointer",

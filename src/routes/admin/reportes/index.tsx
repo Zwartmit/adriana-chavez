@@ -95,10 +95,16 @@ function rangoPeriodoAnterior(periodo: Periodo, ref: Date) {
   }
 }
 
-const cardStyle: React.CSSProperties = { borderRadius: "var(--radius-2xl)", padding: "1.5rem" };
+const cardStyle: React.CSSProperties = {
+  borderRadius: "var(--radius-2xl)",
+  padding: "1.5rem",
+  backgroundColor: "var(--color-surface-light)",
+  border: "1px solid var(--color-border-light)",
+  boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
+};
 const sectionCardStyle: React.CSSProperties = {
-  backgroundColor: "var(--color-surface)",
-  border: "1px solid var(--color-border)",
+  backgroundColor: "var(--color-surface-light)",
+  border: "1px solid var(--color-border-light)",
   borderRadius: "var(--radius-xl)",
   padding: "1.75rem",
 };
@@ -110,14 +116,14 @@ const th: React.CSSProperties = {
   fontSize: "var(--text-xs)",
   textTransform: "uppercase",
   letterSpacing: "var(--tracking-wider)",
-  color: "var(--color-text-muted)",
+  color: "var(--color-primary)",
   whiteSpace: "nowrap",
 };
 const td: React.CSSProperties = {
   padding: "10px 14px",
   fontFamily: "var(--font-body)",
   fontSize: "var(--text-sm)",
-  color: "var(--color-text-secondary)",
+  color: "var(--color-text-on-light-muted)",
 };
 
 function ReportesPage() {
@@ -424,7 +430,7 @@ function ReportesPage() {
             fontStyle: "italic",
             fontWeight: 600,
             fontSize: "var(--text-2xl)",
-            color: "var(--color-text-primary)",
+            color: "var(--color-text-on-light)",
           }}
         >
           Reportes
@@ -439,13 +445,12 @@ function ReportesPage() {
                   key={p.value}
                   type="button"
                   onClick={() => setPeriodo(p.value)}
-                  className={active ? "glass-champagne" : ""}
                   style={{
                     padding: "8px 18px",
                     borderRadius: "var(--radius-full)",
-                    border: active ? "none" : "1px solid var(--color-border)",
-                    backgroundColor: "transparent",
-                    color: active ? "var(--color-primary)" : "var(--color-text-secondary)",
+                    border: active ? "1px solid var(--color-border-light-gold)" : "1px solid var(--color-border-light)",
+                    backgroundColor: active ? "rgba(200,168,74,0.12)" : "transparent",
+                    color: active ? "var(--color-primary-dim)" : "var(--color-text-on-light-muted)",
                     fontFamily: "var(--font-body)",
                     fontWeight: 500,
                     fontSize: "var(--text-sm)",
@@ -465,18 +470,18 @@ function ReportesPage() {
       </div>
 
       {loading ? (
-        <LoadingState />
+        <LoadingState variant="light" />
       ) : error ? (
-        <ErrorState message={error} onRetry={() => fetchReporte(periodo)} />
+        <ErrorState message={error} onRetry={() => fetchReporte(periodo)} variant="light" />
       ) : (
         <>
           {/* Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: "1.75rem" }}>
-            <div className="glass-obsidian" style={cardStyle}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-muted)" }}>
+            <div style={cardStyle}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
                 Ingresos totales
               </p>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary-dim)", marginTop: "0.4rem" }}>
                 {formatPrice(ingresosTotales)}
               </p>
               <p
@@ -484,7 +489,7 @@ function ReportesPage() {
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-xs)",
                   marginTop: "0.4rem",
-                  color: cambioVsAnterior === null ? "var(--color-primary)" : cambioVsAnterior >= 0 ? "var(--color-success)" : "var(--color-error)",
+                  color: cambioVsAnterior === null ? "var(--color-primary-dim)" : cambioVsAnterior >= 0 ? "var(--color-success)" : "var(--color-error)",
                 }}
               >
                 {cambioVsAnterior === null
@@ -493,38 +498,38 @@ function ReportesPage() {
               </p>
             </div>
 
-            <div className="glass-obsidian" style={cardStyle}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-muted)" }}>
+            <div style={cardStyle}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
                 Citas completadas
               </p>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary-dim)", marginTop: "0.4rem" }}>
                 {completadas.length}
               </p>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", marginTop: "0.4rem" }}>
                 de {citas.length} citas totales agendadas
               </p>
             </div>
 
-            <div className="glass-obsidian" style={cardStyle}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-muted)" }}>
+            <div style={cardStyle}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
                 Ticket promedio
               </p>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary-dim)", marginTop: "0.4rem" }}>
                 {formatPrice(ticketPromedio)}
               </p>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", marginTop: "0.4rem" }}>
                 por servicio completado
               </p>
             </div>
 
-            <div className="glass-obsidian" style={cardStyle}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-muted)" }}>
+            <div style={cardStyle}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
                 Tasa de cancelación
               </p>
               <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: colorCancelacion, marginTop: "0.4rem" }}>
                 {tasaCancelacion.toFixed(1)}%
               </p>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", marginTop: "0.4rem" }}>
                 {canceladas.length} citas canceladas
               </p>
             </div>
@@ -538,7 +543,7 @@ function ReportesPage() {
                 fontStyle: "italic",
                 fontWeight: 600,
                 fontSize: "var(--text-xl)",
-                color: "var(--color-text-primary)",
+                color: "var(--color-text-on-light)",
                 marginBottom: "1rem",
               }}
             >
@@ -555,7 +560,7 @@ function ReportesPage() {
                 fontStyle: "italic",
                 fontWeight: 600,
                 fontSize: "var(--text-xl)",
-                color: "var(--color-text-primary)",
+                color: "var(--color-text-on-light)",
                 padding: "1.75rem 1.75rem 1rem",
               }}
             >
@@ -563,7 +568,7 @@ function ReportesPage() {
             </h3>
             <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ backgroundColor: "var(--color-bg-alt)" }}>
+                <tr style={{ backgroundColor: "#0A0A0B" }}>
                   <th style={th}>Servicio</th>
                   <th style={th}>Citas completadas</th>
                   <th style={th}>Ingresos generados</th>
@@ -582,19 +587,19 @@ function ReportesPage() {
                   <>
                     {serviciosStats.map((s) => (
                       <tr key={s.id}>
-                        <td style={{ ...td, color: "var(--color-text-primary)", fontWeight: 500 }}>{s.nombre}</td>
+                        <td style={{ ...td, color: "var(--color-text-on-light)", fontWeight: 500 }}>{s.nombre}</td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{s.citas}</td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(s.ingresos)}</td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{s.porcentaje.toFixed(1)}%</td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(s.ticketPromedio)}</td>
                       </tr>
                     ))}
-                    <tr style={{ backgroundColor: "var(--color-surface-alt)" }}>
-                      <td style={{ ...td, fontWeight: 700, color: "var(--color-text-primary)" }}>Total</td>
-                      <td style={{ ...td, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                    <tr style={{ backgroundColor: "var(--color-bg-light-alt)" }}>
+                      <td style={{ ...td, fontWeight: 700, color: "var(--color-text-on-light)" }}>Total</td>
+                      <td style={{ ...td, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--color-text-on-light)" }}>
                         {serviciosStats.reduce((sum, s) => sum + s.citas, 0)}
                       </td>
-                      <td style={{ ...td, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      <td style={{ ...td, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--color-text-on-light)" }}>
                         {formatPrice(serviciosStats.reduce((sum, s) => sum + s.ingresos, 0))}
                       </td>
                       <td style={td} />
@@ -614,7 +619,7 @@ function ReportesPage() {
                 fontStyle: "italic",
                 fontWeight: 600,
                 fontSize: "var(--text-xl)",
-                color: "var(--color-text-primary)",
+                color: "var(--color-text-on-light)",
                 padding: "1.75rem 1.75rem 1rem",
               }}
             >
@@ -622,7 +627,7 @@ function ReportesPage() {
             </h3>
             <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ backgroundColor: "var(--color-bg-alt)" }}>
+                <tr style={{ backgroundColor: "#0A0A0B" }}>
                   <th style={th}>Estilista</th>
                   <th style={th}>Citas completadas</th>
                   <th style={th}>Ingresos</th>
@@ -640,11 +645,11 @@ function ReportesPage() {
                 ) : (
                   estilistasStats.map((e) => (
                     <tr key={e.id}>
-                      <td style={{ ...td, color: "var(--color-text-primary)", fontWeight: 500 }}>{e.nombre}</td>
+                      <td style={{ ...td, color: "var(--color-text-on-light)", fontWeight: 500 }}>{e.nombre}</td>
                       <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{e.citas}</td>
                       <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(e.ingresos)}</td>
                       <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(e.ticketPromedio)}</td>
-                      <td style={{ ...td, fontFamily: "var(--font-mono)", color: e.cancelaciones > 0 ? "var(--color-error)" : "var(--color-text-secondary)" }}>
+                      <td style={{ ...td, fontFamily: "var(--font-mono)", color: e.cancelaciones > 0 ? "var(--color-error)" : "var(--color-text-on-light-muted)" }}>
                         {e.cancelaciones}
                       </td>
                     </tr>
@@ -664,12 +669,12 @@ function ReportesPage() {
                     fontStyle: "italic",
                     fontWeight: 600,
                     fontSize: "var(--text-xl)",
-                    color: "var(--color-text-primary)",
+                    color: "var(--color-text-on-light)",
                   }}
                 >
                   Cierre de caja diario
                 </h3>
-                <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-muted)", marginTop: "0.25rem" }}>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)", marginTop: "0.25rem" }}>
                   Cierres registrados
                 </p>
               </div>
@@ -679,11 +684,11 @@ function ReportesPage() {
             </div>
 
             {cierresLoading ? (
-              <LoadingState />
+              <LoadingState variant="light" />
             ) : (
               <table className="w-full" style={{ borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ backgroundColor: "var(--color-bg-alt)" }}>
+                  <tr style={{ backgroundColor: "#0A0A0B" }}>
                     <th style={th}>Fecha</th>
                     <th style={th}>Ingresos servicios</th>
                     <th style={th}>Ingresos productos</th>
@@ -703,12 +708,12 @@ function ReportesPage() {
                   ) : (
                     cierres.map((c) => (
                       <tr key={c.id}>
-                        <td style={{ ...td, fontFamily: "var(--font-mono)", color: "var(--color-text-primary)" }}>
+                        <td style={{ ...td, fontFamily: "var(--font-mono)", color: "var(--color-text-on-light)" }}>
                           {format(new Date(c.fecha + "T00:00:00"), "d MMM yyyy", { locale: es })}
                         </td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(c.ingresos_servicios)}</td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(c.ingresos_productos)}</td>
-                        <td style={{ ...td, fontFamily: "var(--font-mono)", fontWeight: 600, color: "var(--color-primary)" }}>
+                        <td style={{ ...td, fontFamily: "var(--font-mono)", fontWeight: 600, color: "var(--color-primary-dim)" }}>
                           {formatPrice(c.total_ingresos)}
                         </td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{c.citas_completadas}</td>

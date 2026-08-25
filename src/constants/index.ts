@@ -14,19 +14,19 @@ export const SOCIAL_LINKS = {
 } as const;
 
 export const CONTACT_INFO = {
-  phone: "+57 300 000 0000", // actualizar cuando Adriana confirme
-  email: "hola@adrianachavez.com",
-  address: "Centro de Belleza Adriana Chávez, Bogotá D.C.",
-  mapUrl: "https://maps.google.com/?q=Centro+de+Belleza+Adriana+Chavez",
+  phone: "+57 300 000 0000", // pendiente confirmar
+  email: null as string | null, // Adriana confirmó que no tiene correo público
+  address: "Monterrey, Casanare, Colombia",
+  mapUrl: "https://maps.google.com/?q=Centro+de+Belleza+Adriana+Chavez+Monterrey+Casanare",
   schedule: {
-    weekdays: "Lun – Vie: 9:00 am – 7:00 pm",
-    saturday: "Sábado: 9:00 am – 5:00 pm",
+    weekdays: "Lun – Vie: 8:00 am – 12:00 pm · 2:00 pm – 6:00 pm",
+    saturday: "Sábado: 8:00 am – 12:00 pm · 2:00 pm – 6:00 pm",
     sunday: "Domingo: Cerrado",
   },
 } as const;
 
 export const SITE_CONFIG = {
   name: "Adriana Chávez",
-  description: "Salón de belleza premium en Bogotá, Colombia.",
+  description: "Salón de belleza en Monterrey, Casanare, Colombia.",
   url: "https://adrianachavez.com",
 } as const;

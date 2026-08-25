@@ -9,6 +9,7 @@ const STATS = [
 export function HeroBanner() {
   return (
     <section
+      data-navbar-dark
       className="relative overflow-hidden"
       style={{
         minHeight: "100vh",
@@ -48,7 +49,7 @@ export function HeroBanner() {
               color: "var(--color-accent)",
             }}
           >
-            Salón de belleza en Bogotá
+            Salón de belleza · Monterrey, Casanare
           </span>
 
           <h1
@@ -63,9 +64,9 @@ export function HeroBanner() {
               color: "var(--color-text-primary)",
             }}
           >
-            Tu belleza,
+            Belleza, estilo y
             <br />
-            nuestra pasión.
+            confianza en un solo lugar.
           </h1>
 
           <p
@@ -80,8 +81,7 @@ export function HeroBanner() {
               lineHeight: "var(--leading-normal)",
             }}
           >
-            Expertos en realzar tu estilo con técnicas premium y atención
-            personalizada.
+            Profesionalismo, calidad y atención personalizada.
           </p>
 
           <div

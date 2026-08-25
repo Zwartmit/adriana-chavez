@@ -73,7 +73,7 @@ export function GaleriaHome() {
   return (
     <section
       style={{
-        backgroundColor: "var(--color-bg-alt)",
+        backgroundColor: "var(--color-bg-light)",
         paddingTop: "6rem",
         paddingBottom: "6rem",
       }}
@@ -94,12 +94,14 @@ export function GaleriaHome() {
           align="center"
           titleSize="clamp(2rem, 4vw, 3rem)"
           className="mx-auto mb-12"
+          titleColor="var(--color-text-on-light)"
+          eyebrowColor="var(--color-primary-dim)"
         />
 
         {loading ? (
-          <LoadingState />
+          <LoadingState variant="light" />
         ) : error ? (
-          <ErrorState message={error} onRetry={fetchGaleria} />
+          <ErrorState message={error} onRetry={fetchGaleria} variant="light" />
         ) : (
         <div
           style={{

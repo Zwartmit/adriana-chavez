@@ -17,6 +17,8 @@ export interface ProductCardProps {
   isAgotado?: boolean;
   slug: string;
   onAddToCart?: (product: ProductCardProps) => void;
+  /** "dark" (default) for dark sections, "light" for --color-bg-light sections. */
+  theme?: "dark" | "light";
 }
 
 export function ProductCard(props: ProductCardProps) {
@@ -32,7 +34,9 @@ export function ProductCard(props: ProductCardProps) {
     isAgotado,
     slug,
     onAddToCart,
+    theme = "dark",
   } = props;
+  const isLight = theme === "light";
 
   return (
     <div className="flex flex-col">
@@ -92,14 +96,37 @@ export function ProductCard(props: ProductCardProps) {
 
       <div
         className="flex flex-col gap-1"
-        style={{
-          backgroundColor: "var(--color-surface)",
-          borderLeft: "1px solid var(--color-border)",
-          borderRight: "1px solid var(--color-border)",
-          borderBottom: "1px solid var(--color-border)",
-          borderRadius: "0 0 var(--radius-xl) var(--radius-xl)",
-          padding: "1.25rem",
-          flex: 1,
+        style={
+          isLight
+            ? {
+                backgroundColor: "var(--color-surface-light)",
+                border: "1px solid var(--color-border-light)",
+                borderTop: "none",
+                boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
+                borderRadius: "0 0 var(--radius-xl) var(--radius-xl)",
+                padding: "1.25rem",
+                flex: 1,
+                transition: "box-shadow var(--transition-slow), transform var(--transition-slow)",
+              }
+            : {
+                backgroundColor: "var(--color-surface)",
+                borderLeft: "1px solid var(--color-border)",
+                borderRight: "1px solid var(--color-border)",
+                borderBottom: "1px solid var(--color-border)",
+                borderRadius: "0 0 var(--radius-xl) var(--radius-xl)",
+                padding: "1.25rem",
+                flex: 1,
+              }
+        }
+        onMouseEnter={(e) => {
+          if (!isLight) return;
+          e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,10,11,0.12)";
+          e.currentTarget.style.transform = "translateY(-3px)";
+        }}
+        onMouseLeave={(e) => {
+          if (!isLight) return;
+          e.currentTarget.style.boxShadow = "0 2px 12px rgba(10,10,11,0.08)";
+          e.currentTarget.style.transform = "translateY(0)";
         }}
       >
         <span
@@ -108,7 +135,7 @@ export function ProductCard(props: ProductCardProps) {
             fontFamily: "var(--font-mono)",
             fontSize: "var(--text-xs)",
             letterSpacing: "var(--tracking-wider)",
-            color: "var(--color-accent)",
+            color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
           }}
         >
           {brand}
@@ -120,7 +147,7 @@ export function ProductCard(props: ProductCardProps) {
               fontStyle: "italic",
               fontWeight: 600,
               fontSize: "var(--text-lg)",
-              color: "var(--color-text-primary)",
+              color: isLight ? "var(--color-text-on-light)" : "var(--color-text-primary)",
               display: "-webkit-box",
               WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
@@ -134,7 +161,7 @@ export function ProductCard(props: ProductCardProps) {
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-sm)",
-            color: "var(--color-text-secondary)",
+            color: isLight ? "var(--color-text-on-light-muted)" : "var(--color-text-secondary)",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
@@ -145,14 +172,14 @@ export function ProductCard(props: ProductCardProps) {
         </p>
 
         <div className="flex items-center gap-2 mt-1">
-          <span style={{ color: "var(--color-accent)" }}>
+          <span style={{ color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)" }}>
             {"★".repeat(Math.round(rating))}
           </span>
           <span
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-xs)",
-              color: "var(--color-text-muted)",
+              color: isLight ? "var(--color-text-on-light-faint)" : "var(--color-text-muted)",
             }}
           >
             ({rating}) {reviews} reseñas
@@ -167,7 +194,7 @@ export function ProductCard(props: ProductCardProps) {
                   fontFamily: "var(--font-mono)",
                   fontWeight: 700,
                   fontSize: "var(--text-xl)",
-                  color: "var(--color-text-muted)",
+                  color: isLight ? "var(--color-text-on-light-faint)" : "var(--color-text-muted)",
                   textDecoration: "line-through",
                 }}
               >
@@ -189,7 +216,7 @@ export function ProductCard(props: ProductCardProps) {
                 fontFamily: "var(--font-mono)",
                 fontWeight: 700,
                 fontSize: "var(--text-xl)",
-                color: "var(--color-primary)",
+                color: isLight ? "var(--color-primary-dim)" : "var(--color-primary)",
               }}
             >
               {formatPrice(price)}

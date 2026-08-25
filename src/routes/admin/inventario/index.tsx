@@ -61,25 +61,25 @@ interface MovimientoRow {
 }
 
 const ESTADO_STYLES: Record<EstadoStock, { label: string; bg: string; color: string }> = {
-  disponible: { label: "Disponible", bg: "rgba(76,175,128,0.15)", color: "#4CAF80" },
-  critico: { label: "Crítico", bg: "rgba(232,201,122,0.15)", color: "var(--color-primary)" },
+  disponible: { label: "Disponible", bg: "rgba(76,175,128,0.15)", color: "#3D8F66" },
+  critico: { label: "Crítico", bg: "rgba(200,168,74,0.18)", color: "var(--color-primary-dim)" },
   agotado: { label: "Agotado", bg: "rgba(224,82,82,0.15)", color: "var(--color-error)" },
 };
 
 const TIPO_STYLES: Record<TipoMovimiento, { label: string; bg: string; color: string }> = {
-  entrada: { label: "Entrada", bg: "rgba(76,175,128,0.15)", color: "#4CAF80" },
+  entrada: { label: "Entrada", bg: "rgba(76,175,128,0.15)", color: "#3D8F66" },
   salida: { label: "Salida", bg: "rgba(224,82,82,0.15)", color: "var(--color-error)" },
-  ajuste: { label: "Ajuste", bg: "rgba(232,201,122,0.15)", color: "var(--color-primary)" },
+  ajuste: { label: "Ajuste", bg: "rgba(200,168,74,0.18)", color: "var(--color-primary-dim)" },
 };
 
 const selectStyle: React.CSSProperties = {
   padding: "10px 14px",
-  backgroundColor: "var(--color-surface)",
-  border: "1px solid var(--color-border)",
+  backgroundColor: "var(--color-surface-light)",
+  border: "1px solid var(--color-border-light)",
   borderRadius: "var(--radius-lg)",
   fontFamily: "var(--font-body)",
   fontSize: "var(--text-sm)",
-  color: "var(--color-text-primary)",
+  color: "var(--color-text-on-light)",
   outline: "none",
 };
 
@@ -217,7 +217,7 @@ function InventarioPage() {
             fontStyle: "italic",
             fontWeight: 600,
             fontSize: "var(--text-2xl)",
-            color: "var(--color-text-primary)",
+            color: "var(--color-text-on-light)",
           }}
         >
           Inventario
@@ -228,22 +228,22 @@ function InventarioPage() {
       </div>
 
       {loading ? (
-        <LoadingState />
+        <LoadingState variant="light" />
       ) : error ? (
-        <ErrorState message={error} onRetry={fetchInventario} />
+        <ErrorState message={error} onRetry={fetchInventario} variant="light" />
       ) : (
         <>
           {/* Resumen */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" style={{ marginBottom: "1.75rem" }}>
             <div
               style={{
-                backgroundColor: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
+                backgroundColor: "var(--color-surface-light)",
+                border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-xl)",
                 padding: "1.25rem 1.5rem",
               }}
             >
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-muted)" }}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
                 Productos en stock
               </p>
               <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 600, fontSize: "var(--text-3xl)", color: "#4CAF80", marginTop: "0.4rem" }}>
@@ -252,15 +252,15 @@ function InventarioPage() {
             </div>
             <div
               style={{
-                backgroundColor: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
+                backgroundColor: "var(--color-surface-light)",
+                border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-xl)",
                 padding: "1.25rem 1.5rem",
                 position: "relative",
               }}
             >
               <div className="flex items-center gap-2">
-                <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-muted)" }}>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
                   Stock crítico
                 </p>
                 {resumen.critico > 0 && (
@@ -270,19 +270,19 @@ function InventarioPage() {
                   />
                 )}
               </div>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 600, fontSize: "var(--text-3xl)", color: "var(--color-primary)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 600, fontSize: "var(--text-3xl)", color: "var(--color-primary-dim)", marginTop: "0.4rem" }}>
                 {resumen.critico}
               </p>
             </div>
             <div
               style={{
-                backgroundColor: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
+                backgroundColor: "var(--color-surface-light)",
+                border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-xl)",
                 padding: "1.25rem 1.5rem",
               }}
             >
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-muted)" }}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
                 Agotados
               </p>
               <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 600, fontSize: "var(--text-3xl)", color: "var(--color-error)", marginTop: "0.4rem" }}>
@@ -308,7 +308,7 @@ function InventarioPage() {
               <option value="agotado">Agotado</option>
             </select>
             <div className="relative" style={{ maxWidth: 280 }}>
-              <Search size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)" }} />
+              <Search size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-on-light-faint)" }} />
               <input
                 type="text"
                 value={searchInput}
@@ -320,10 +320,10 @@ function InventarioPage() {
           </div>
 
           {/* Tabla */}
-          <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border)" }}>
+          <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border-light)", backgroundColor: "var(--color-surface-light)" }}>
             <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ backgroundColor: "var(--color-bg-alt)" }}>
+                <tr style={{ backgroundColor: "#0A0A0B" }}>
                   {["Producto", "Marca", "Categoría", "Stock virtual", "Stock físico", "Stock total", "Umbral alerta", "Estado", "Acciones"].map((h) => (
                     <th
                       key={h}
@@ -334,7 +334,7 @@ function InventarioPage() {
                         fontSize: "var(--text-xs)",
                         textTransform: "uppercase",
                         letterSpacing: "var(--tracking-wider)",
-                        color: "var(--color-text-muted)",
+                        color: "var(--color-primary)",
                         whiteSpace: "nowrap",
                       }}
                     >
@@ -348,8 +348,8 @@ function InventarioPage() {
                   <tr>
                     <td colSpan={9}>
                       <div className="flex flex-col items-center gap-3" style={{ padding: "3rem 0" }}>
-                        <Package size={36} color="var(--color-text-muted)" />
-                        <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-lg)", color: "var(--color-text-muted)" }}>
+                        <Package size={36} color="var(--color-text-on-light-faint)" />
+                        <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-lg)", color: "var(--color-text-on-light-faint)" }}>
                           No hay productos con ese criterio.
                         </p>
                       </div>
@@ -366,25 +366,25 @@ function InventarioPage() {
                         : { borderLeft: "2px solid transparent" };
                     return (
                       <tr key={r.id} style={rowStyle}>
-                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "var(--text-sm)", color: "var(--color-text-primary)" }}>
+                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                           {r.producto_nombre}
                         </td>
-                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                           {r.producto_marca}
                         </td>
-                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                           {r.categoria_nombre}
                         </td>
-                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                           {r.stock_virtual}
                         </td>
-                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                           {r.stock_fisico}
                         </td>
-                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontWeight: 600, fontSize: "var(--text-sm)", color: "var(--color-text-primary)" }}>
+                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontWeight: 600, fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                           {r.stock_total}
                         </td>
-                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                           {r.umbral_alerta}
                         </td>
                         <td style={{ padding: "12px 16px" }}>
@@ -410,9 +410,9 @@ function InventarioPage() {
                               type="button"
                               aria-label="Ajustar umbrales"
                               onClick={() => setUmbralesTarget(r)}
-                              style={{ color: "var(--color-text-muted)", background: "transparent", border: "none", cursor: "pointer" }}
+                              style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
                               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
                             >
                               <Edit size={16} />
                             </button>
@@ -420,9 +420,9 @@ function InventarioPage() {
                               type="button"
                               aria-label="Registrar entrada"
                               onClick={() => openMovimiento("entrada", r)}
-                              style={{ color: "var(--color-text-muted)", background: "transparent", border: "none", cursor: "pointer" }}
+                              style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
                               onMouseEnter={(e) => (e.currentTarget.style.color = "#4CAF80")}
-                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
                             >
                               <Plus size={16} />
                             </button>
@@ -430,9 +430,9 @@ function InventarioPage() {
                               type="button"
                               aria-label="Registrar salida"
                               onClick={() => openMovimiento("salida", r)}
-                              style={{ color: "var(--color-text-muted)", background: "transparent", border: "none", cursor: "pointer" }}
+                              style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
                               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-error)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
                             >
                               <Minus size={16} />
                             </button>
@@ -459,7 +459,7 @@ function InventarioPage() {
                 fontFamily: "var(--font-body)",
                 fontWeight: 600,
                 fontSize: "var(--text-base)",
-                color: "var(--color-text-primary)",
+                color: "var(--color-text-on-light)",
                 padding: "0.5rem 0",
               }}
             >
@@ -471,13 +471,13 @@ function InventarioPage() {
             </button>
 
             {historialOpen && (
-              <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border)", marginTop: "1rem" }}>
+              <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border-light)", marginTop: "1rem" }}>
                 {movimientosLoading ? (
-                  <LoadingState />
+                  <LoadingState variant="light" />
                 ) : (
                   <table className="w-full" style={{ borderCollapse: "collapse" }}>
                     <thead>
-                      <tr style={{ backgroundColor: "var(--color-bg-alt)" }}>
+                      <tr style={{ backgroundColor: "#0A0A0B" }}>
                         {["Fecha", "Producto", "Tipo", "Origen", "Cantidad", "Stock antes → después", "Notas"].map((h) => (
                           <th
                             key={h}
@@ -488,7 +488,7 @@ function InventarioPage() {
                               fontSize: "var(--text-xs)",
                               textTransform: "uppercase",
                               letterSpacing: "var(--tracking-wider)",
-                              color: "var(--color-text-muted)",
+                              color: "var(--color-primary)",
                               whiteSpace: "nowrap",
                             }}
                           >
@@ -500,7 +500,7 @@ function InventarioPage() {
                     <tbody>
                       {movimientos.length === 0 ? (
                         <tr>
-                          <td colSpan={7} style={{ padding: "2rem 16px", textAlign: "center", fontFamily: "var(--font-body)", color: "var(--color-text-muted)" }}>
+                          <td colSpan={7} style={{ padding: "2rem 16px", textAlign: "center", fontFamily: "var(--font-body)", color: "var(--color-text-on-light-faint)" }}>
                             Aún no hay movimientos registrados.
                           </td>
                         </tr>
@@ -508,13 +508,13 @@ function InventarioPage() {
                         movimientos.map((m, i) => {
                           const tStyle = TIPO_STYLES[m.tipo];
                           return (
-                            <tr key={m.id} style={{ backgroundColor: i % 2 === 0 ? "var(--color-bg)" : "var(--color-surface)" }}>
-                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
+                            <tr key={m.id} style={{ backgroundColor: i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)" }}>
+                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", whiteSpace: "nowrap" }}>
                                 {m.createdAt.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
                                 {" "}
                                 {m.createdAt.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}
                               </td>
-                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-primary)" }}>
+                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                                 {m.productoNombre}
                               </td>
                               <td style={{ padding: "10px 16px" }}>
@@ -533,16 +533,16 @@ function InventarioPage() {
                                   {tStyle.label}
                                 </span>
                               </td>
-                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)", textTransform: "capitalize" }}>
+                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)", textTransform: "capitalize" }}>
                                 {m.origen?.replace(/_/g, " ") ?? "—"}
                               </td>
-                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                                 {m.cantidad}
                               </td>
-                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                                 {m.stockAntes} → {m.stockDespues}
                               </td>
-                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-muted)" }}>
+                              <td style={{ padding: "10px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)" }}>
                                 {m.notas ?? "—"}
                               </td>
                             </tr>

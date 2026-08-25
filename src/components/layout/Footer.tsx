@@ -133,10 +133,12 @@ export function Footer() {
               <Phone size={16} className="mt-0.5 shrink-0" />
               {CONTACT_INFO.phone}
             </li>
-            <li className="flex items-start gap-2" style={linkStyle}>
-              <Mail size={16} className="mt-0.5 shrink-0" />
-              {CONTACT_INFO.email}
-            </li>
+            {CONTACT_INFO.email && (
+              <li className="flex items-start gap-2" style={linkStyle}>
+                <Mail size={16} className="mt-0.5 shrink-0" />
+                {CONTACT_INFO.email}
+              </li>
+            )}
           </ul>
 
           <h3 style={{ ...headingStyle, marginTop: "1rem" }}>Horarios</h3>
