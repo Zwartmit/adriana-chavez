@@ -23,7 +23,7 @@ export const Route = createFileRoute("/contacto")({
       {
         name: "description",
         content:
-          "Reserva tu cita en el salón Adriana Chávez. Encuéntranos en Bogotá. Atención por WhatsApp, teléfono o formulario.",
+          "Reserva tu cita en el centro Adriana Chávez. Encuéntranos en Monterrey, Casanare. Atención por WhatsApp, teléfono o formulario.",
       },
     ],
   }),
@@ -58,14 +58,14 @@ const CANALES = [
   },
   ...(CONTACT_INFO.email
     ? [
-        {
-          icon: Mail,
-          name: "Correo electrónico",
-          detail: CONTACT_INFO.email,
-          linkLabel: "Enviar correo →",
-          href: `mailto:${CONTACT_INFO.email}`,
-        },
-      ]
+      {
+        icon: Mail,
+        name: "Correo electrónico",
+        detail: CONTACT_INFO.email,
+        linkLabel: "Enviar correo →",
+        href: `mailto:${CONTACT_INFO.email}`,
+      },
+    ]
     : []),
   {
     icon: Phone,

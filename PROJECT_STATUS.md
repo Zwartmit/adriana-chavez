@@ -207,7 +207,7 @@ Definidas en `.env.local` (raíz del proyecto, **no versionado** — ver confirm
 ### Fase A — Datos reales
 - Poblar Supabase con los 12+ servicios, 16 productos, equipo, galería y testimonios reales (reemplazar los arrays placeholder de cada componente).
 - Conectar el frontend público a Supabase (`react-query` + tablas ya creadas) en vez de arrays locales.
-- Subir fotografía real del salón/equipo/portafolio (hoy todo es `placehold.co`).
+- Subir fotografía real del centro/equipo/portafolio (hoy todo es `placehold.co`).
 
 ### Fase B — Panel de administración
 - Calendario de citas (tablas `citas`, `bloqueos_horario` ya existen).

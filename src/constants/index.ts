@@ -16,7 +16,7 @@ export const SOCIAL_LINKS = {
 export const CONTACT_INFO = {
   phone: "+57 300 000 0000", // pendiente confirmar
   email: null as string | null, // Adriana confirmó que no tiene correo público
-  address: "Monterrey, Casanare, Colombia",
+  address: "Monterrey, Casanare",
   mapUrl: "https://maps.google.com/?q=Centro+de+Belleza+Adriana+Chavez+Monterrey+Casanare",
   schedule: {
     weekdays: "Lun – Vie: 8:00 am – 12:00 pm · 2:00 pm – 6:00 pm",
@@ -27,6 +27,6 @@ export const CONTACT_INFO = {
 
 export const SITE_CONFIG = {
   name: "Adriana Chávez",
-  description: "Salón de belleza en Monterrey, Casanare, Colombia.",
+  description: "Centro de belleza en Monterrey, Casanare.",
   url: "https://adrianachavez.com",
 } as const;

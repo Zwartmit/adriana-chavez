@@ -20,7 +20,7 @@ const FAQS = [
     a: "Es un procedimiento mínimamente incómodo. Se utiliza anestesia tópica para reducir cualquier molestia durante la aplicación.",
   },
   {
-    q: "¿Qué productos utilizan en el salón?",
+    q: "¿Qué productos utilizan en el centro?",
     a: "Trabajamos con productos profesionales de alta calidad que cuidan la salud del cabello, la piel y las uñas, garantizando mejores resultados.",
   },
   {

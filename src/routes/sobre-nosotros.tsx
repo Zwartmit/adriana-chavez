@@ -12,7 +12,7 @@ export const Route = createFileRoute("/sobre-nosotros")({
       {
         name: "description",
         content:
-          "Conoce la historia, el equipo y los valores del salón de belleza Adriana Chávez en Bogotá. Más de 12 años transformando belleza.",
+          "Conoce la historia, el equipo y los valores del centro de belleza Adriana Chávez en Monterrey, Casanare. Más de 12 años transformando belleza.",
       },
     ],
   }),
@@ -122,7 +122,7 @@ function SobreNosotrosPage() {
             }}
           >
             Más de una década dedicada a realzar la belleza de las mujeres de
-            Bogotá.
+            Monterrey, Casanare.
           </p>
         </div>
       </section>
@@ -194,7 +194,7 @@ function SobreNosotrosPage() {
                     color: "rgba(247,245,240,0.6)",
                   }}
                 >
-                  Bogotá, Colombia
+                  Monterrey, Casanare.
                 </div>
               </div>
             </div>
@@ -217,11 +217,8 @@ function SobreNosotrosPage() {
                   }}
                 >
                   Todo comenzó en 2012 cuando Adriana Chávez decidió convertir
-                  su pasión por la belleza en un espacio donde las mujeres
-                  bogotanas pudieran sentirse verdaderamente especiales. Con
-                  un pequeño local en el norte de Bogotá y una visión clara,
-                  comenzó a construir lo que hoy es uno de los salones más
-                  queridos de la ciudad.
+                  su pasión por la belleza en un espacio donde las mujeres de
+                  Monterrey, Casanare pudieran sentirse verdaderamente especiales.
                 </p>
                 <p
                   style={{
@@ -231,7 +228,7 @@ function SobreNosotrosPage() {
                     lineHeight: "var(--leading-relaxed)",
                   }}
                 >
-                  A lo largo de los años, el salón creció no solo en tamaño
+                  A lo largo de los años, el centro creció no solo en tamaño
                   sino en propósito. Hoy contamos con un equipo de estilistas
                   certificados internacionalmente, productos de las mejores
                   marcas del mundo y un ambiente diseñado para que cada
@@ -354,10 +351,10 @@ function SobreNosotrosPage() {
                   color: "rgba(247,245,240,0.85)",
                 }}
               >
-                Ser el salón de referencia en Bogotá por la calidad de
-                nuestros servicios, la formación continua de nuestro equipo y
-                la experiencia única que ofrecemos a cada clienta que cruza
-                nuestra puerta.
+                Ser el centro de belleza referencia en Monterrey, Casanare
+                por la calidad de nuestros servicios, la formación continua
+                de nuestro equipo y la experiencia única que ofrecemos a cada
+                clienta que cruza nuestra puerta.
               </p>
             </div>
           </div>

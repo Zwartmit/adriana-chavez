@@ -585,7 +585,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                     }}
                   >
                     Recomendado por nuestro equipo de estilistas para uso regular en casa,
-                    complementando los tratamientos realizados en el salón.
+                    complementando los tratamientos realizados en el centro.
                   </p>
                 </div>
               )}

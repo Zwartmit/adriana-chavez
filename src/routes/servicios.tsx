@@ -12,7 +12,7 @@ export const Route = createFileRoute("/servicios")({
       {
         name: "description",
         content:
-          "Descubre todos nuestros servicios de belleza en Bogotá: corte, coloración, tratamientos, uñas y más. Reserva tu cita hoy.",
+          "Descubre todos nuestros servicios de belleza en Monterrey, Casanare: corte, coloración, tratamientos, uñas y más. Reserva tu cita hoy.",
       },
     ],
   }),

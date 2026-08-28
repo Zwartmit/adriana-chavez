@@ -11,7 +11,7 @@ export const Route = createFileRoute("/tienda/")({
       {
         name: "description",
         content:
-          "Compra los productos de belleza profesionales que usamos en el salón. Envíos a toda Colombia.",
+          "Compra los productos de belleza profesionales que usamos en el centro. Envíos a toda Colombia.",
       },
     ],
   }),
@@ -100,7 +100,7 @@ function TiendaPage() {
               lineHeight: "var(--leading-relaxed)",
             }}
           >
-            Los mismos productos que usamos en el salón, ahora disponibles
+            Los mismos productos que usamos en el centro, ahora disponibles
             para ti en casa.
           </p>
         </div>

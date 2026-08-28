@@ -1,11 +1,6 @@
 import { ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-const STATS = [
-  { value: "320+", label: "clientas felices" },
-  { value: "98%", label: "satisfacción" },
-];
-
 export function HeroBanner() {
   return (
     <section
@@ -49,7 +44,7 @@ export function HeroBanner() {
               color: "var(--color-accent)",
             }}
           >
-            Salón de belleza · Monterrey, Casanare
+            Centro de belleza · Monterrey, Casanare
           </span>
 
           <h1
@@ -110,35 +105,6 @@ export function HeroBanner() {
               marginTop: "1rem",
             }}
           />
-
-          <div
-            className="animate-fade-in-up grid grid-cols-2 gap-8 w-full max-w-xl"
-            style={{ animationDelay: "1.0s", marginTop: "3rem" }}
-          >
-            {STATS.map((s) => (
-              <div key={s.label} className="flex flex-col gap-1">
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 700,
-                    fontSize: "var(--text-3xl)",
-                    color: "var(--color-accent)",
-                  }}
-                >
-                  {s.value}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-sm)",
-                    color: "rgba(247, 245, 240, 0.5)",
-                  }}
-                >
-                  {s.label}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Columna derecha — decoración geométrica */}

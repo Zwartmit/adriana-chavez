@@ -73,7 +73,7 @@ export function PropuestaValor() {
                 lineHeight: "var(--leading-relaxed)",
               }}
             >
-              Más que un salón de belleza, somos un espacio donde la
+              Más que un centro de belleza, somos un espacio donde la
               experiencia, la innovación y el cuidado de cada detalle se unen
               para resaltar la belleza de cada persona. Nuestro compromiso es
               brindar un servicio personalizado con altos estándares de
@@ -92,7 +92,7 @@ export function PropuestaValor() {
           <div className="md:col-span-2 relative">
             <img
               src="https://placehold.co/600x700/1A1820/D4AF6B?text=Foto+Sal%C3%B3n"
-              alt="Salón Adriana Chávez"
+              alt="Centro Adriana Chávez"
               width={600}
               height={700}
               className="w-full h-auto"

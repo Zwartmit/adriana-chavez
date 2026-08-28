@@ -1,5 +1,5 @@
 -- ══════════════════════════════════════════════════════════════════
--- ADRIANA CHÁVEZ — SALÓN DE BELLEZA
+-- ADRIANA CHÁVEZ — CENTRO DE BELLEZA
 -- Data de prueba (seed) — Fase A1
 -- Ejecutar en: Supabase → SQL Editor → New query
 -- ══════════════════════════════════════════════════════════════════
@@ -10,7 +10,7 @@
 INSERT INTO public.estilistas (nombre, cargo, especialidades, bio, foto_url, anos_experiencia, activo, orden) VALUES
   ('Adriana Chávez', 'Fundadora & Directora Creativa',
     ARRAY['Coloración', 'Balayage', 'Dirección artística'],
-    'Fundadora del salón con más de 14 años de experiencia. Formada en Colombia, México y España.',
+    'Fundadora del centro con más de 14 años de experiencia. Formada en Colombia, México y España.',
     'https://placehold.co/120x120/1A1820/D4AF6B?text=AC', 14, TRUE, 1),
 
   ('Valentina Mora', 'Estilista Senior',
@@ -244,7 +244,7 @@ INSERT INTO public.galeria (titulo, categoria, tag, imagen_url, activo, orden) V
 -- ──────────────────────────────────────────────────────────────────
 INSERT INTO public.testimonios (nombre, servicio, texto, rating, desde_anio, aprobado, orden) VALUES
   ('María García', 'Coloración Premium',
-    'El mejor salón en el que he estado. El resultado superó todas mis expectativas. Adriana y su equipo son increíbles.',
+    'El mejor centro en el que he estado. El resultado superó todas mis expectativas. Adriana y su equipo son increíbles.',
     5, 2021, TRUE, 1),
 
   ('Laura Rodríguez', 'Corte & Estilo',

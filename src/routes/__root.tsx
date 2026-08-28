@@ -114,19 +114,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Adriana Chávez — Salón de belleza en Bogotá" },
+      { title: "Adriana Chávez — Centro de belleza en Monterrey, Casanare" },
       {
         name: "description",
         content:
-          "Adriana Chávez — Salón de belleza premium en Bogotá, Colombia.",
+          "Adriana Chávez — Centro de belleza en Monterrey, Casanare.",
       },
       {
         property: "og:title",
-        content: "Adriana Chávez — Salón de belleza en Bogotá",
+        content: "Adriana Chávez — Centro de belleza en Monterrey, Casanare",
       },
       {
         property: "og:description",
-        content: "Salón de belleza premium en Bogotá, Colombia.",
+        content: "Centro de belleza en Monterrey, Casanare.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Adriana Chávez — Centro de Belleza" },
@@ -134,7 +134,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "keywords",
-        content: "salón de belleza bogotá, coloración bogotá, corte de cabello bogotá, adriana chávez belleza",
+        content: "centro de belleza monterrey, coloración monterrey, corte de cabello monterrey, adriana chávez belleza, monterrey casanare, casanare",
       },
       { name: "theme-color", content: "#E8C97A" },
       { name: "apple-mobile-web-app-capable", content: "yes" },

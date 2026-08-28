@@ -14,7 +14,7 @@ import { supabase } from "@/lib/supabase/client";
 //     experience: 14,
 //     specialties: ["Coloración", "Balayage", "Dirección artística"],
 //     photo: "https://placehold.co/120x120/1A1820/D4AF6B?text=AC",
-//     bio: "Fundadora del salón con más de 14 años de experiencia. Formada en Colombia, México y España.",
+//     bio: "Fundadora del centro con más de 14 años de experiencia. Formada en Colombia, México y España.",
 //   },
 //   // ... ver historial de git para el array completo de 4 estilistas
 // ];

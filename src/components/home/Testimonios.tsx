@@ -14,7 +14,7 @@ import { supabase } from "@/lib/supabase/client";
 //     since: "Clienta desde 2021",
 //     service: "Coloración Premium",
 //     rating: 5,
-//     text: "El mejor salón en el que he estado. El resultado superó todas mis expectativas. Adriana y su equipo son increíbles.",
+//     text: "El mejor centro en el que he estado. El resultado superó todas mis expectativas. Adriana y su equipo son increíbles.",
 //     initials: "MG",
 //   },
 //   {

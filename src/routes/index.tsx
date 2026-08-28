@@ -12,21 +12,21 @@ export const Route = createFileRoute("/")({
     meta: [
       {
         title:
-          "Adriana Chávez — Salón de belleza premium en Bogotá | Corte, color y cuidado capilar",
+          "Adriana Chávez — Centro de belleza en Monterrey, Casanare | Corte, color y cuidado capilar",
       },
       {
         name: "description",
         content:
-          "Salón de belleza premium en Bogotá con más de 12 años realzando tu estilo. Corte, coloración, tratamientos capilares y manicure con atención personalizada.",
+          "Centro de belleza en Monterrey, Casanare con más de 12 años realzando tu estilo. Corte, coloración, tratamientos capilares y manicure con atención personalizada.",
       },
       {
         property: "og:title",
-        content: "Adriana Chávez — Salón de belleza premium en Bogotá",
+        content: "Adriana Chávez — Centro de belleza en Monterrey, Casanare.",
       },
       {
         property: "og:description",
         content:
-          "Corte, color, tratamientos y manicure con técnicas premium y atención personalizada en Bogotá.",
+          "Corte, color, tratamientos y manicure con técnicas premium y atención personalizada en Monterrey, Casanare.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

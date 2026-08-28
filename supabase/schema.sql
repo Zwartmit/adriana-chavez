@@ -1,5 +1,5 @@
 -- ══════════════════════════════════════════════════════════════════
--- ADRIANA CHÁVEZ — SALÓN DE BELLEZA
+-- ADRIANA CHÁVEZ — CENTRO DE BELLEZA
 -- Schema completo de base de datos
 -- Ejecutar en: Supabase → SQL Editor → New query
 -- ══════════════════════════════════════════════════════════════════
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS public.estilistas (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE public.estilistas IS 'Equipo de estilistas del salón';
+COMMENT ON TABLE public.estilistas IS 'Equipo de estilistas del centro';
 
 -- ──────────────────────────────────────────────────────────────────
 -- TABLA: categorias_servicios
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS public.servicios (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE public.servicios IS 'Catálogo de servicios del salón';
+COMMENT ON TABLE public.servicios IS 'Catálogo de servicios del centro';
 
 -- ──────────────────────────────────────────────────────────────────
 -- TABLA: clientes (CRM básico)
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS public.clientes (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE public.clientes IS 'CRM de clientes del salón. Incluye campos de privacidad según Ley 1581';
+COMMENT ON TABLE public.clientes IS 'CRM de clientes del centro. Incluye campos de privacidad según Ley 1581';
 
 -- ──────────────────────────────────────────────────────────────────
 -- TABLA: citas
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS public.inventario (
   id                  UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   producto_id         UUID REFERENCES public.productos(id) ON DELETE CASCADE UNIQUE NOT NULL,
   stock_virtual       INTEGER NOT NULL DEFAULT 0, -- Stock tienda online
-  stock_fisico        INTEGER NOT NULL DEFAULT 0, -- Stock físico del salón
+  stock_fisico        INTEGER NOT NULL DEFAULT 0, -- Stock físico del centro
   umbral_alerta       INTEGER NOT NULL DEFAULT 5, -- Alerta cuando baje de este número
   unidad              TEXT DEFAULT 'unidad',
   ultima_entrada      TIMESTAMPTZ,
@@ -346,7 +346,7 @@ CREATE TABLE IF NOT EXISTS public.galeria (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE public.galeria IS 'Portafolio de trabajos del salón';
+COMMENT ON TABLE public.galeria IS 'Portafolio de trabajos del centro';
 
 -- ──────────────────────────────────────────────────────────────────
 -- TABLA: reportes_caja (para el agente de IA)
