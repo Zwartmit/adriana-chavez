@@ -1,6 +1,6 @@
 # PROJECT_STATUS.md — Adriana Chávez
 
-> Informe de estado del proyecto. Última actualización: 18 de agosto de 2026.
+> Informe de estado del proyecto. Última actualización: 28 de agosto de 2026.
 
 ---
 
@@ -65,12 +65,12 @@
 
 | Ruta | Archivo | Estado |
 | --- | --- | --- |
-| `/` | `routes/index.tsx` | ✅ Completa. 7 secciones (Hero, Propuesta de valor, Servicios destacados, Galería, Testimonios, FAQ, CTA final). Data placeholder. |
-| `/servicios` | `routes/servicios.tsx` | ✅ Completa. Hero + buscador/filtros + grid de 12 servicios + estado vacío. Data placeholder. |
-| `/galeria` | `routes/galeria.tsx` | ✅ Completa. Hero + filtros por categoría + grid masonry de 18 items + Lightbox con navegación por teclado. |
-| `/sobre-nosotros` | `routes/sobre-nosotros.tsx` | ✅ Completa. Hero + historia + Misión/Visión/Valores (glass-champagne) + equipo (4 estilistas) + cifras. |
-| `/contacto` | `routes/contacto.tsx` | ✅ Completa. Hero + formulario (envío simulado, sin backend real) + columna de info (glass) + mapa placeholder + horarios/canales + FAQ acordeón. |
-| `/tienda` | `routes/tienda/index.tsx` | ✅ Completa. Hero + filtros (búsqueda/categoría/orden) + grid de 16 productos + paginación visual (no funcional). |
+| `/` | `routes/index.tsx` | ✅ Completa. 7 secciones (Hero, Propuesta de valor, Servicios destacados, Galería, Testimonios, FAQ, CTA final). **Textos reales + 4 servicios destacados dinámicos desde Supabase.** Fondos alternados claro/oscuro. |
+| `/servicios` | `routes/servicios.tsx` | ✅ Completa. Hero + buscador/filtros + grid dinámico (48 servicios desde Supabase) + estado vacío. Fondo claro. |
+| `/galeria` | `routes/galeria.tsx` | ✅ Completa. Hero (oscuro) + filtros (oscuro) + grid masonry (fondo claro) + Lightbox con navegación por teclado. |
+| `/sobre-nosotros` | `routes/sobre-nosotros.tsx` | ✅ Completa. Hero (oscuro) + Historia (claro, con card Fundado en 2012 oscura) + Misión/Visión/Valores (oscuro) + Equipo (claro, 4 estilistas reales) + Cifras (oscuro) + CTA (oscuro). |
+| `/contacto` | `routes/contacto.tsx` | ✅ Completa. Hero (oscuro) + Formulario+Info (claro, con card info oscura) + Mapa + Horarios+Canales (claro, Lun-Sáb 8-12/2-6) + FAQ (oscuro). Correo público deshabilitado (email: null). |
+| `/tienda` | `routes/tienda/index.tsx` | ✅ Completa. Hero (oscuro) + filtros (oscuro) + grid dinámico (fondo claro, productos desde Supabase) + paginación visual. |
 | `/tienda/$slug` | `routes/tienda/$slug.tsx` | ✅ Completa. Breadcrumb, galería de imágenes, selector de cantidad, tabs (Descripción/Características/Reseñas), productos relacionados. |
 | `/admin/login` | `routes/admin/login.tsx` | ✅ Completa y **conectada a Supabase Auth real**. Diseño glass-champagne. |
 | `/admin` | `routes/admin/index.tsx` | ✅ Guard de sesión funcional (`getSession()` → redirige a `/admin/login` si no hay sesión). Placeholder "Panel de Administración — Brandon"; el panel real se construye en Antigravity. |
@@ -94,30 +94,48 @@ Solo quedan 3 (los ~37 componentes shadcn/ui sin usar se eliminaron durante el r
 
 ### Data
 
-**Todo el contenido sigue siendo placeholder**: servicios, productos, testimonios, FAQ, equipo, imágenes (`placehold.co`), teléfono `+57 300 000 0000`, WhatsApp `573000000000`, redes sociales de ejemplo. Cada componente declara su propio array local — no hay una capa de datos compartida ni conexión real a Supabase desde el frontend público todavía (ver Fase A).
+**Contenido real implementado (28 ago 2026):**
+- ✅ **Textos:** Hero, Propuesta de Valor, FAQ (Home) con contenido real de Adriana.
+- ✅ **Estilistas:** 4 registros reales en Supabase (Adriana Chávez, Yariza Pintó, Ofelia Montaña, Belkis Rivero).
+- ✅ **Servicios:** 48 registros en Supabase, 6 categorías (Cabello, Tratamiento, Micropigmentación, Maquillaje, Uñas, Depilación).
+- ✅ **Horarios:** Lun-Sáb 8:00 am–12:00 pm · 2:00 pm–6:00 pm (en `CONTACT_INFO`, contacto.tsx, Footer).
+- ✅ **Usuario admin:** `adrianitachavezmoncada@gmail.com`, rol `admin`, contraseña temporal compartida por WhatsApp.
+- ⚠️ **Aún placeholder:** productos tienda (16), testimonios (8), galería (18), imágenes (`placehold.co`), teléfono (`+57 300 000 0000` pendiente confirmar con Adriana).
 
 ---
 
-## 3. Design system — Noir Couture
+## 3. Design system — Noir Couture + Sistema Claro/Oscuro (28 ago 2026)
 
-El sitio pasó por un rebrand completo: del verde esmeralda + dorado cálido original a **Noir Couture** (negro profundo + champán dorado + glassmorphism). Todos los tokens viven en `:root` de `src/styles.css` y se re-exponen a Tailwind vía `@theme inline`. **Regla del proyecto: nunca hardcodear colores — siempre `var(--color-*)`.**
+El sitio pasó por un rebrand completo: del verde esmeralda + dorado cálido original a **Noir Couture** (negro profundo + champán dorado + glassmorphism). **En agosto 2026 se agregó un sistema de fondos alternados claro/oscuro** para mejorar ritmo visual y adecuación a un salón de belleza premium: fondos crema (`#F5F0E8`) alternan con oscuros a través de las secciones del Home y páginas internas.
+
+Todos los tokens viven en `:root` de `src/styles.css` y se re-exponen a Tailwind vía `@theme inline`. **Regla del proyecto: nunca hardcodear colores — siempre `var(--color-*)`.**
 
 ### Paleta actual
 
 ```css
-/* Fondos */
+/* Fondos — Oscuros */
 --color-bg: #0A0A0B;        --color-bg-alt: #111213;
 --color-surface: #181818;   --color-surface-alt: #202020;
+
+/* Fondos — Claros (NEW 28 ago 2026) */
+--color-bg-light: #F5F0E8;
+--color-bg-light-alt: #EDE8DF;
+--color-surface-light: #FFFFFF;
 
 /* Dorado — color principal de marca */
 --color-primary: #E8C97A;   --color-primary-lt: #F0D99A;   --color-primary-dim: #C8A84A;
 --color-accent: #E8C97A;    --color-accent-lt: rgba(232,201,122,0.12);   --color-accent-dim: #C8A84A;
 
-/* Texto */
+/* Texto — Oscuro (sobre fondo oscuro) */
 --color-text-primary: #F5F2EB;
 --color-text-secondary: rgba(245,242,235,0.55);
 --color-text-muted: rgba(245,242,235,0.30);
 --color-text-inverse: #0A0A0B;   /* SOLO para texto sobre fondo dorado (--color-primary/--color-accent) */
+
+/* Texto — Claro (NEW 28 ago 2026, sobre fondo claro) */
+--color-text-on-light: #0A0A0B;
+--color-text-on-light-muted: #5A5550;
+--color-text-on-light-faint: #9A9590;
 
 /* Estados */
 --color-success: #4CAF80;  --color-warning: #D4A84B;  --color-error: #E05252;
@@ -126,6 +144,8 @@ El sitio pasó por un rebrand completo: del verde esmeralda + dorado cálido ori
 --color-border: rgba(255,255,255,0.08);
 --color-border-strong: rgba(255,255,255,0.14);
 --color-border-gold: rgba(232,201,122,0.35);
+--color-border-light: rgba(10,10,11,0.10);           /* NEW 28 ago */
+--color-border-light-gold: rgba(200,168,74,0.35);    /* NEW 28 ago */
 ```
 
 > ⚠️ **Regla de contraste crítica:** `--color-text-inverse` (negro) solo es correcto sobre un fondo literalmente `var(--color-primary)` o `var(--color-accent)` (dorado). Sobre cualquier otro fondo (transparente, `--color-bg`, `--color-surface`, overlays oscuros) el texto debe ser `--color-text-primary` (marfil). Esto rompió visualmente medio sitio durante el rebrand porque el token cambió de significado (antes era "texto claro para fondo oscuro"; ahora es "texto negro para fondo dorado") — si se vuelve a tocar la paleta, revisar esto primero.
@@ -164,15 +184,18 @@ El reset global `* { margin: 0; padding: 0; }` estaba declarado **sin `@layer`**
 | --- | --- | --- |
 | Cliente browser (`lib/supabase/client.ts`) | ✅ Listo | `createBrowserClient` tipado con `Database` |
 | Cliente server (`lib/supabase/server.ts`) | ✅ Listo, sin usar aún | Para server functions futuras; `setAll` de cookies queda como no-op pendiente |
-| `schema.sql` (14 tablas + 1 vista) | ✅ **Ejecutado en Supabase** | Verificado por REST: `categorias_servicios` devuelve las 5 filas semilla (Cabello, Color, Tratamiento, Uñas, Peinado) |
-| `rls.sql` (políticas RLS) | ✅ Ejecutado (con reserva) | `clientes` (tabla staff-only) devuelve `[]` sin error vía `anon key`, consistente con RLS activo — pero no se verificó tabla por tabla |
-| Auth (email/password) | ✅ Funcional | Probado en `/admin/login`: credenciales inválidas devuelven error correctamente vía llamada real a Supabase |
-| Usuario admin (`92taylorgang92@gmail.com`) | ⚠️ **No verificado** | No se probó un login exitoso (no se tenía la contraseña). Falta confirmar que el usuario existe en Authentication → Users y que su fila en `perfiles` tiene `rol = 'admin'` |
-| Frontend conectado a datos reales | ❌ No | Todo el contenido público sigue siendo arrays locales — ver Fase A |
+| `schema.sql` (14 tablas + 1 vista) | ✅ **Ejecutado en Supabase** | Verificado por REST múltiples veces; 48 servicios reales insertados (28 ago) |
+| `rls.sql` (políticas RLS) | ✅ Ejecutado (con reserva) | `clientes` (tabla staff-only) devuelve `[]` sin error vía `anon key`, consistente con RLS activo |
+| Auth (email/password) | ✅ Funcional | Probado en `/admin/login`: credenciales inválidas devuelven error correctamente |
+| Usuario admin (`adrianitachavezmoncada@gmail.com`) | ✅ **Creado (28 ago 2026)** | Existe en Supabase Authentication, rol `admin` en `perfiles`, contraseña temporal compartida vía WhatsApp |
+| Estilistas reales | ✅ **4 registros (28 ago)** | Adriana Chávez, Yariza Pintó, Ofelia Montaña, Belkis Rivero en tabla `estilistas` |
+| Servicios reales | ✅ **48 registros (28 ago)** | 6 categorías, 14 Cabello, 6 Tratamiento, 7 Micropigmentación, 3 Maquillaje, 9 Uñas, 9 Depilación. `ServiciosDestacados` dinámico (4 destacados). |
+| Frontend conectado a datos reales | ✅ **Parcial (28 ago)** | `ServiciosDestacados` (Home), `ServiciosGrid` (/servicios), `ProductosGrid` (/tienda) ahora dinámicos desde Supabase. Testimonios, Galería, Productos aún placeholder. |
 
-### Las 14 tablas (`supabase/schema.sql`)
+### Las 14 tablas (`supabase/schema.sql`) — estado de datos (28 ago 2026)
 
-`perfiles` (extiende `auth.users`), `estilistas`, `categorias_servicios`, `servicios`, `clientes`, `citas`, `bloqueos_horario`, `categorias_productos`, `productos`, `inventario` (+ vista `inventario_completo`), `movimientos_inventario`, `ordenes`, `items_orden`, `testimonios`, `galeria`, `reportes_caja`.
+- **Con datos reales:** `perfiles` (1 admin), `estilistas` (4), `categorias_servicios` (6), `servicios` (48).
+- **Placeholder/vacío:** `clientes`, `citas`, `bloqueos_horario`, `categorias_productos`, `productos`, `inventario`, `movimientos_inventario`, `ordenes`, `items_orden`, `testimonios`, `galeria`, `reportes_caja`.
 
 ### RLS — resumen de política
 
@@ -204,10 +227,14 @@ Definidas en `.env.local` (raíz del proyecto, **no versionado** — ver confirm
 
 ## 6. Plan de desarrollo pendiente
 
-### Fase A — Datos reales
-- Poblar Supabase con los 12+ servicios, 16 productos, equipo, galería y testimonios reales (reemplazar los arrays placeholder de cada componente).
-- Conectar el frontend público a Supabase (`react-query` + tablas ya creadas) en vez de arrays locales.
-- Subir fotografía real del centro/equipo/portafolio (hoy todo es `placehold.co`).
+### ✅ Fase A — Datos reales (COMPLETADA 28 ago 2026)
+- ✅ **Estilistas:** 4 reales en Supabase (Adriana Chávez, Yariza Pintó, Ofelia Montaña, Belkis Rivero).
+- ✅ **Servicios:** 48 reales en Supabase, 6 categorías.
+- ✅ **Textos:** Hero, Propuesta de Valor, FAQ reales.
+- ✅ **Horarios:** Lun-Sáb 8-12/2-6 en constants y UI.
+- ✅ **Usuario admin:** `adrianitachavezmoncada@gmail.com` creado.
+- ✅ **Conexión parcial:** `ServiciosDestacados` (Home), `ServiciosGrid` (/servicios), `ProductosGrid` (/tienda) ahora dinámicos desde Supabase.
+- ⏳ **Aún pendiente:** Productos (16), testimonios (8), galería (18) reales. Fotos del centro/equipo/portafolio (hoy todo es `placehold.co`).
 
 ### Fase B — Panel de administración
 - Calendario de citas (tablas `citas`, `bloqueos_horario` ya existen).
@@ -243,6 +270,7 @@ Definidas en `.env.local` (raíz del proyecto, **no versionado** — ver confirm
 7. **`SUPABASE_SERVICE_ROLE_KEY` sin prefijo `VITE_`** deliberadamente, para que Vite nunca la incluya en el bundle del cliente aunque algún día se importe por error.
 8. **El carrito no persiste** (no hay `localStorage` ni sincronización con Supabase) — es estado de sesión de navegador únicamente, vía Context API.
 9. **`npm`, no `bun`**, pese a que existe `bunfig.toml` en el repo — `bun` no está disponible en el entorno de desarrollo usado hasta ahora.
+10. **Sistema de fondos alternados claro/oscuro (NEW 28 ago 2026):** El Home y páginas internas alternan entre fondos oscuros (`#0A0A0B`) y claros (`#F5F0E8`) para mejorar ritmo visual y adecuación a un salón de belleza premium. Los tokens nuevos (`--color-bg-light`, `--color-text-on-light`, etc.) se usan SOLO para secciones claras; sections oscuras siguen usando tokens dark de siempre. Navbar dinámico vía `IntersectionObserver` que monitorea `[data-navbar-dark]` elementos para cambiar de tema durante scroll. Regla crítica: nunca texto claro sobre claro ni oscuro sobre oscuro — usar `--color-primary-dim` (`#C8A84A`) para dorado sobre fondo claro (vs `--color-primary` sobre fondo oscuro).
 
 ---
 
@@ -274,8 +302,8 @@ Definidas en `.env.local` (raíz del proyecto, **no versionado** — ver confirm
 2. Confirmar que `.env.local` existe en la raíz con las credenciales reales — si no está, el sitio carga pero cualquier llamada a Supabase falla silenciosamente o con error de red.
 3. Instalar dependencias: `npm install`.
 4. Levantar el dev server: `npm run dev` (Vite elige puerto libre, normalmente 8080 u 8081 — revisar el log de arranque, no asumir el puerto).
-5. Si vas a tocar `src/styles.css`: leer primero la nota de `@layer` en §3 antes de mover/quitar el reset global.
-6. Si vas a tocar colores: la paleta vigente es la de §3 (Noir Couture) — no reintroducir los tonos verdes/dorados originales salvo instrucción explícita.
+5. Si vas a tocar `src/styles.css`: leer primero la nota de `@layer` en §3 antes de mover/quitar el reset global. Los nuevos tokens claro/oscuro (28 ago 2026) están en §3 — no crear secciones claras sin usar estos tokens.
+6. Si vas a tocar colores: la paleta vigente es la de §3 (Noir Couture + sistema claro/oscuro) — nunca texto claro sobre claro ni oscuro sobre oscuro; usar `--color-primary-dim` para dorado en fondos claros.
 7. Antes de dar por "conectado a Supabase" cualquier feature nueva, verificar con una llamada REST real (como se hizo en §4) en vez de asumir — el schema puede estar desincronizado del código si alguien edita una tabla directo en el dashboard.
 8. El panel de administración (Fase B) se construye en **Antigravity**, no en Claude Code — esta sesión solo deja `/admin/login` y el guard de `/admin` listos.
 9. Antes de agregar una tabla o columna nueva a Supabase, actualizar `supabase/schema.sql` **y** `src/lib/supabase/types.ts` a mano (no hay generación automática de tipos configurada).
