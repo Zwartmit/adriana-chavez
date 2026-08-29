@@ -60,7 +60,7 @@ function SobreNosotrosPage() {
             radial-gradient(ellipse at 80% 50%, rgba(232,201,122,0.07) 0%, transparent 55%),
             var(--color-bg)
           `,
-          minHeight: "320px",
+          minHeight: "220px",
           paddingTop: "80px",
           display: "flex",
           alignItems: "center",
@@ -74,8 +74,8 @@ function SobreNosotrosPage() {
             marginRight: "auto",
             paddingLeft: "1.5rem",
             paddingRight: "1.5rem",
-            paddingTop: "4rem",
-            paddingBottom: "4rem",
+            paddingTop: "2rem",
+            paddingBottom: "2rem",
           }}
         >
           <div
@@ -117,7 +117,7 @@ function SobreNosotrosPage() {
               fontWeight: 300,
               fontSize: "var(--text-lg)",
               color: "rgba(247,245,240,0.65)",
-              maxWidth: "520px",
+              maxWidth: "100%",
               lineHeight: "var(--leading-relaxed)",
             }}
           >
@@ -283,22 +283,23 @@ function SobreNosotrosPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
             <div
               style={{
-                background: "linear-gradient(135deg, rgba(232,201,122,0.08) 0%, rgba(232,201,122,0.03) 100%)",
-                border: "0.5px solid rgba(232,201,122,0.35)",
+                background: "var(--color-bg-light)",
+                border: "1px solid rgba(232,201,122,0.35)",
                 boxShadow: "inset 0 1px 0 rgba(232,201,122,0.15), var(--shadow-lg)",
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
                 borderRadius: "var(--radius-xl)",
                 padding: "2.5rem",
+                textAlign: "center",
               }}
             >
               <p
                 className="uppercase"
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-xs)",
+                  fontSize: "var(--text-xl)",
                   letterSpacing: "var(--tracking-widest)",
-                  color: "var(--color-accent)",
+                  color: "var(--color-primary-dim)",
                   marginBottom: "1rem",
                 }}
               >
@@ -307,10 +308,9 @@ function SobreNosotrosPage() {
               <p
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontStyle: "italic",
                   fontSize: "var(--text-xl)",
                   lineHeight: "var(--leading-relaxed)",
-                  color: "rgba(247,245,240,0.85)",
+                  color: "var(--color-text-on-light)",
                 }}
               >
                 Realzar la belleza única de cada clienta mediante servicios
@@ -321,22 +321,23 @@ function SobreNosotrosPage() {
 
             <div
               style={{
-                background: "linear-gradient(135deg, rgba(232,201,122,0.08) 0%, rgba(232,201,122,0.03) 100%)",
+                background: "var(--color-bg-light)",
                 border: "0.5px solid rgba(232,201,122,0.35)",
                 boxShadow: "inset 0 1px 0 rgba(232,201,122,0.15), var(--shadow-lg)",
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
                 borderRadius: "var(--radius-xl)",
                 padding: "2.5rem",
+                textAlign: "center",
               }}
             >
               <p
                 className="uppercase"
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-xs)",
+                  fontSize: "var(--text-xl)",
                   letterSpacing: "var(--tracking-widest)",
-                  color: "var(--color-accent)",
+                  color: "var(--color-primary-dim)",
                   marginBottom: "1rem",
                 }}
               >
@@ -345,10 +346,9 @@ function SobreNosotrosPage() {
               <p
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontStyle: "italic",
                   fontSize: "var(--text-xl)",
                   lineHeight: "var(--leading-relaxed)",
-                  color: "rgba(247,245,240,0.85)",
+                  color: "var(--color-text-on-light)",
                 }}
               >
                 Ser el centro de belleza referencia en Monterrey, Casanare
@@ -359,10 +359,10 @@ function SobreNosotrosPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {VALORES.map(({ icon: Icon, title, description }) => (
               <div key={title} className="flex flex-col">
-                <Icon size={32} color="var(--color-accent)" />
+                <Icon size={32} color="var(--color-accent)" className="mx-auto" />
                 <div
                   style={{
                     width: 40,
@@ -370,6 +370,8 @@ function SobreNosotrosPage() {
                     borderTop: "2px solid rgba(232,201,122,0.3)",
                     marginTop: "1rem",
                     marginBottom: "1rem",
+                    marginLeft: "auto",
+                    marginRight: "auto",
                   }}
                 />
                 <h3

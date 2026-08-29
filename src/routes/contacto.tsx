@@ -39,7 +39,7 @@ function ContactoPage() {
             radial-gradient(ellipse at 80% 50%, rgba(232,201,122,0.07) 0%, transparent 55%),
             var(--color-bg)
           `,
-          minHeight: "320px",
+          minHeight: "220px",
           paddingTop: "80px",
           display: "flex",
           alignItems: "center",
@@ -53,8 +53,8 @@ function ContactoPage() {
             marginRight: "auto",
             paddingLeft: "1.5rem",
             paddingRight: "1.5rem",
-            paddingTop: "4rem",
-            paddingBottom: "4rem",
+            paddingTop: "2rem",
+            paddingBottom: "2rem",
           }}
         >
           <div
@@ -96,12 +96,11 @@ function ContactoPage() {
               fontWeight: 300,
               fontSize: "var(--text-lg)",
               color: "rgba(247,245,240,0.65)",
-              maxWidth: "520px",
+              maxWidth: "100%",
               lineHeight: "var(--leading-relaxed)",
             }}
           >
-            Estamos aquí para atenderte. Escríbenos, llámanos o visítanos
-            directamente.
+            Estamos aquí para atenderte. Escríbenos o visítanos directamente.
           </p>
         </div>
       </section>
@@ -110,8 +109,8 @@ function ContactoPage() {
       <section
         style={{
           backgroundColor: "var(--color-bg-light)",
-          paddingTop: "6rem",
-          paddingBottom: "6rem",
+          paddingTop: "3rem",
+          paddingBottom: "3rem",
         }}
       >
         <div
@@ -124,7 +123,7 @@ function ContactoPage() {
             paddingRight: "1.5rem",
           }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[30fr_70fr] gap-6 items-stretch">
             {/* Info de contacto — tarjeta oscura dentro de la sección clara */}
             <div
               style={{
@@ -182,7 +181,7 @@ function ContactoPage() {
               </p>
               <div className="flex flex-col gap-3 mb-6">
                 <a
-                  href="https://wa.me/573000000000"
+                  href="https://wa.me/573102680814"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 self-start"
@@ -222,34 +221,6 @@ function ContactoPage() {
                   </a>
                 )}
               </div>
-
-              <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "1.5rem 0" }} />
-
-              {/* Llámanos */}
-              <p
-                className="uppercase"
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-xs)",
-                  letterSpacing: "var(--tracking-widest)",
-                  color: "var(--color-accent)",
-                  marginBottom: "1rem",
-                }}
-              >
-                Llámanos
-              </p>
-              <a
-                href="tel:+573000000000"
-                className="flex items-center gap-2 mb-6"
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-base)",
-                  color: "rgba(247,245,240,0.75)",
-                }}
-              >
-                <Phone size={18} color="var(--color-accent)" />
-                {CONTACT_INFO.phone}
-              </a>
 
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "1.5rem 0" }} />
 

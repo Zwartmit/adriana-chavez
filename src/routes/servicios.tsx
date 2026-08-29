@@ -34,7 +34,7 @@ function ServiciosPage() {
             radial-gradient(ellipse at 80% 50%, rgba(232,201,122,0.07) 0%, transparent 55%),
             var(--color-bg)
           `,
-          minHeight: "320px",
+          minHeight: "220px",
           paddingTop: "80px",
           display: "flex",
           alignItems: "center",
@@ -48,8 +48,8 @@ function ServiciosPage() {
             marginRight: "auto",
             paddingLeft: "1.5rem",
             paddingRight: "1.5rem",
-            paddingTop: "4rem",
-            paddingBottom: "4rem",
+            paddingTop: "2rem",
+            paddingBottom: "2rem",
           }}
         >
           <div
@@ -91,7 +91,7 @@ function ServiciosPage() {
               fontWeight: 300,
               fontSize: "var(--text-lg)",
               color: "rgba(247,245,240,0.65)",
-              maxWidth: "520px",
+              maxWidth: "100%",
               lineHeight: "var(--leading-relaxed)",
             }}
           >
