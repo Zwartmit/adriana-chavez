@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 export interface ServiceCardProps {
   id: string;
   name: string;
-  category: string;
+  category?: string;
   description: string;
   duration: number;
   price: number;
@@ -89,7 +89,7 @@ export function ServiceCard({
 
       <div className="flex flex-col gap-3 p-5 flex-1">
 
-        <Badge>{category}</Badge>
+        {category && <Badge>{category}</Badge>}
         <h3
           style={{
             fontFamily: "var(--font-display)",
@@ -125,7 +125,7 @@ export function ServiceCard({
             }}
           >
             <Clock size={14} />
-            {duration} min
+            {duration}min/aprox.
           </div>
           <div
             style={{

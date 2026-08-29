@@ -1,5 +1,6 @@
 import { ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { HeroModel3D } from "./HeroModel3D";
 
 export function HeroBanner() {
   return (
@@ -113,9 +114,8 @@ export function HeroBanner() {
             <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(232,201,122,0.2)" }} />
             <div style={{ position: "absolute", inset: "40px", borderRadius: "50%", border: "1px solid rgba(232,201,122,0.15)" }} />
             <div style={{ position: "absolute", inset: "80px", borderRadius: "50%", border: "1px solid rgba(232,201,122,0.3)", backgroundColor: "rgba(232,201,122,0.06)" }} />
-            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.25rem" }}>
-              <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-5xl)", fontWeight: 600, color: "var(--color-accent)" }}>12</span>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-widest)", textTransform: "uppercase", color: "rgba(247,245,240,0.5)" }}>años de experiencia</span>
+            <div style={{ position: "absolute", inset: "-100px", zIndex: 10 }}>
+              <HeroModel3D />
             </div>
           </div>
         </div>

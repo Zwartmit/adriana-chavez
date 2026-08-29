@@ -1,13 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { ServiceCard } from "@/components/servicios/ServiceCard";
-import { LoadingState, ErrorState } from "@/components/ui/QueryState";
-import { supabase } from "@/lib/supabase/client";
 
 interface ServicioDestacadoUI {
   id: string;
   name: string;
-  category: string;
   description: string;
   duration: number;
   price: number;
@@ -15,48 +11,46 @@ interface ServicioDestacadoUI {
   href: string;
 }
 
+const SERVICIOS_DESTACADOS: ServicioDestacadoUI[] = [
+  {
+    id: "s1",
+    name: "Balayage & Diseño de Color",
+    description: "Técnica de iluminación personalizada para un cabello radiante y natural.",
+    duration: 180,
+    price: 150000,
+    image: "/images/servicios/balayage.jpg",
+    href: "/servicios",
+  },
+  {
+    id: "s2",
+    name: "Diseño y Perfilado de Cejas",
+    description: "Definición perfecta que enmarca tu mirada según tus facciones.",
+    duration: 30,
+    price: 25000,
+    image: "/images/servicios/cejas.jpg",
+    href: "/servicios",
+  },
+  {
+    id: "s3",
+    name: "Maquillaje Profesional",
+    description: "Resaltamos tu belleza para eventos especiales con productos de alta gama.",
+    duration: 60,
+    price: 80000,
+    image: "/images/servicios/maquillaje.jpg",
+    href: "/servicios",
+  },
+  {
+    id: "s4",
+    name: "Manicura Spa",
+    description: "Cuidado completo para tus manos con esmaltado semipermanente.",
+    duration: 45,
+    price: 35000,
+    image: "/images/servicios/unas.jpg",
+    href: "/servicios",
+  },
+];
+
 export function ServiciosDestacados() {
-  const [servicios, setServicios] = useState<ServicioDestacadoUI[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchServiciosDestacados = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    const { data, error } = await supabase
-      .from("servicios")
-      .select("*, categorias_servicios(nombre)")
-      .eq("destacado", true)
-      .eq("activo", true)
-      .order("orden", { ascending: true })
-      .limit(4);
-
-    if (error) {
-      console.error("[ServiciosDestacados] error al cargar:", error.message);
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-
-    console.log(`[ServiciosDestacados] ${data.length} registros cargados desde Supabase`);
-    setServicios(
-      data.map((s) => ({
-        id: s.id,
-        name: s.nombre,
-        category: (s as unknown as { categorias_servicios: { nombre: string } | null }).categorias_servicios?.nombre ?? "",
-        description: s.descripcion ?? "",
-        duration: s.duracion_min,
-        price: s.precio,
-        image: s.imagen_url ?? "",
-        href: "/servicios",
-      })),
-    );
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    fetchServiciosDestacados();
-  }, [fetchServiciosDestacados]);
 
   return (
     <section
@@ -104,17 +98,11 @@ export function ServiciosDestacados() {
           </h2>
         </div>
 
-        {loading ? (
-          <LoadingState />
-        ) : error ? (
-          <ErrorState message={error} onRetry={fetchServiciosDestacados} />
-        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-            {servicios.map((s) => (
+            {SERVICIOS_DESTACADOS.map((s) => (
               <ServiceCard key={s.id} {...s} />
             ))}
           </div>
-        )}
 
         <div style={{ display: "flex", justifyContent: "center", marginTop: "2.5rem" }}>
           <a href="/servicios" style={{ display: "inline-block" }}>

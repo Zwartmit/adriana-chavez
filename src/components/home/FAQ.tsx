@@ -43,7 +43,7 @@ export function FAQ() {
       <div
         className="mx-auto"
         style={{
-          maxWidth: "720px",
+          maxWidth: "1200px",
           marginLeft: "auto",
           marginRight: "auto",
           paddingLeft: "1.5rem",
@@ -60,7 +60,7 @@ export function FAQ() {
           eyebrowColor="var(--color-primary-dim)"
         />
 
-        <div className="flex flex-col">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
           {FAQS.map((f, i) => {
             const isOpen = openIndex === i;
             return (
@@ -116,7 +116,7 @@ export function FAQ() {
               </div>
             );
           })}
-          <div style={{ borderTop: "1px solid var(--color-border-light)" }} />
+
         </div>
       </div>
     </section>
