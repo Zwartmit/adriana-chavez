@@ -1,7 +1,6 @@
 export function MapaContacto() {
   return (
-    <section>
-      <div
+    <div
         className="h-[300px] md:h-[450px]"
         style={{
           width: "100%",
@@ -21,7 +20,6 @@ export function MapaContacto() {
           referrerPolicy="strict-origin-when-cross-origin"
           title="Ubicación Centro de Belleza Adriana Chávez"
         />
-      </div>
-    </section>
+    </div>
   );
 }

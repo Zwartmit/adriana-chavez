@@ -18,7 +18,6 @@ const NAV_ITEMS = [
   { label: "Calendario", href: "/admin", icon: Calendar },
   { label: "Clientes", href: "/admin/clientes", icon: Users },
   { label: "Inventario", href: "/admin/inventario", icon: Package },
-  { label: "Mensajes", href: "/admin/mensajes", icon: MessageSquare },
   { label: "Reportes", href: "/admin/reportes", icon: BarChart3 },
 ];
 
@@ -140,20 +139,6 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
-  const [mensajesSinLeer, setMensajesSinLeer] = useState(0);
-
-  useEffect(() => {
-    const fetchMensajesSinLeer = () => {
-      supabase
-        .from("mensajes_contacto")
-        .select("id", { count: "exact", head: true })
-        .eq("leido", false)
-        .then(({ count }) => setMensajesSinLeer(count ?? 0));
-    };
-    fetchMensajesSinLeer();
-    window.addEventListener("mensajes:actualizado", fetchMensajesSinLeer);
-    return () => window.removeEventListener("mensajes:actualizado", fetchMensajesSinLeer);
-  }, [pathname]);
 
   const handleConfirmSignOut = async () => {
     setSigningOut(true);
@@ -241,7 +226,6 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
                 isCollapsed={isCollapsed}
                 hovered={hoveredHref === item.href}
                 onHoverChange={(hovered) => setHoveredHref(hovered ? item.href : null)}
-                badge={item.href === "/admin/mensajes" ? mensajesSinLeer : undefined}
               />
             );
           })}
