@@ -8,7 +8,7 @@ export const Route = createFileRoute("/servicios")({
   component: ServiciosPage,
   head: () => ({
     meta: [
-      { title: "Servicios — Adriana Chávez" },
+      { title: "Servicios | Centro de belleza Adriana Chávez" },
       {
         name: "description",
         content:

@@ -135,9 +135,17 @@ export function GaleriaGrid({
     fetchGaleria();
   }, [fetchGaleria]);
 
+  const normalize = (str: string) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
   const itemsFiltrados = galeriaItems.filter(
-    (item) => activeCategory === "Todos" || item.category === activeCategory,
+    (item) => activeCategory === "Todos" || normalize(item.category) === normalize(activeCategory),
   );
+
+  const [displayCount, setDisplayCount] = useState(5);
+
+  useEffect(() => {
+    setDisplayCount(5);
+  }, [activeCategory]);
 
   useEffect(() => {
     onFilteredItemsChange(itemsFiltrados);
@@ -167,14 +175,72 @@ export function GaleriaGrid({
         ) : error ? (
           <ErrorState message={error} onRetry={fetchGaleria} variant="light" />
         ) : (
-          <div
-            key={activeCategory}
-            className="animate-in fade-in duration-300 columns-1 sm:columns-2 lg:columns-3 gap-x-4"
-          >
-            {itemsFiltrados.map((item) => (
-              <GaleriaCard key={item.id} item={item} onClick={() => onItemClick(item)} />
-            ))}
-          </div>
+          <>
+            <div
+              key={activeCategory}
+              className="animate-in fade-in duration-300 columns-1 sm:columns-2 lg:columns-3 gap-x-4"
+            >
+              {itemsFiltrados.slice(0, displayCount).map((item) => (
+                <GaleriaCard key={item.id} item={item} onClick={() => onItemClick(item)} />
+              ))}
+            </div>
+            {(displayCount < itemsFiltrados.length || displayCount > 5) && (
+              <div className="flex justify-center mt-12 gap-4">
+                {displayCount > 5 && (
+                  <button
+                    onClick={() => setDisplayCount((prev) => Math.max(5, prev - 5))}
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "var(--color-primary)",
+                      border: "1px solid var(--color-primary)",
+                      padding: "10px 24px",
+                      borderRadius: "var(--radius-full)",
+                      fontFamily: "var(--font-body)",
+                      fontWeight: 500,
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--color-primary)";
+                      e.currentTarget.style.color = "var(--color-text-inverse)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = "var(--color-primary)";
+                    }}
+                  >
+                    Mostrar menos
+                  </button>
+                )}
+                {displayCount < itemsFiltrados.length && (
+                  <button
+                    onClick={() => setDisplayCount((prev) => prev + 5)}
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "var(--color-primary)",
+                      border: "1px solid var(--color-primary)",
+                      padding: "10px 24px",
+                      borderRadius: "var(--radius-full)",
+                      fontFamily: "var(--font-body)",
+                      fontWeight: 500,
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--color-primary)";
+                      e.currentTarget.style.color = "var(--color-text-inverse)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = "var(--color-primary)";
+                    }}
+                  >
+                    Cargar más (5)
+                  </button>
+                )}
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

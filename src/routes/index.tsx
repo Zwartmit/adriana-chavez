@@ -11,8 +11,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       {
-        title:
-          "Adriana Chávez — Centro de belleza en Monterrey, Casanare | Corte, color y cuidado capilar",
+        title: "Centro de belleza Adriana Chávez",
       },
       {
         name: "description",

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/galeria")({
   component: GaleriaPage,
   head: () => ({
     meta: [
-      { title: "Galería — Adriana Chávez" },
+      { title: "Galería | Centro de belleza Adriana Chávez" },
       {
         name: "description",
         content:

@@ -115,20 +115,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Adriana Chávez — Centro de belleza en Monterrey, Casanare" },
+      { title: "Centro de belleza Adriana Chávez" },
       {
         name: "description",
         content:
-          "Adriana Chávez — Centro de belleza en Monterrey, Casanare.",
+          "Centro de belleza en Monterrey, Casanare. Expertos en coloración, cortes, peinados y tratamientos capilares.",
       },
       {
         property: "og:title",
-        content: "Adriana Chávez — Centro de belleza en Monterrey, Casanare",
+        content: "Centro de belleza Adriana Chávez",
       },
       {
         property: "og:description",
         content: "Centro de belleza en Monterrey, Casanare.",
       },
+      { property: "og:image", content: "https://adrianachavez.com/logo.jpeg" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Adriana Chávez — Centro de Belleza" },
       { property: "og:locale", content: "es_CO" },
@@ -144,10 +145,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/manifest.json" },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "icon", href: "/icon-192.png", type: "image/png" },
-      { rel: "apple-touch-icon", href: "/icon-192.png" },
+      { rel: "icon", type: "image/png", href: "/favicon/favicon-96x96.png", sizes: "96x96" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon/favicon.svg" },
+      { rel: "shortcut icon", href: "/favicon/favicon.ico" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/favicon/apple-touch-icon.png" },
+      { rel: "manifest", href: "/favicon/site.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "preconnect",
@@ -167,10 +169,41 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "BeautySalon",
+    "name": "Centro de Belleza Adriana Chávez",
+    "image": "https://adrianachavez.com/logo.jpeg",
+    "@id": "https://adrianachavez.com",
+    "url": "https://adrianachavez.com",
+    "telephone": "+573102680814",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Calle 18 con carrera 3",
+      "addressLocality": "Monterrey",
+      "addressRegion": "Casanare",
+      "addressCountry": "CO"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 4.8769368,
+      "longitude": -72.8902205
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "opens": "08:00",
+        "closes": "18:00"
+      }
+    ]
+  };
+
   return (
     <html lang="es">
       <head>
         <HeadContent />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </head>
       <body>
         {children}

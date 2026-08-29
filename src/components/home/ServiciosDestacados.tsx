@@ -109,7 +109,7 @@ export function ServiciosDestacados() {
         ) : error ? (
           <ErrorState message={error} onRetry={fetchServiciosDestacados} />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             {servicios.map((s) => (
               <ServiceCard key={s.id} {...s} />
             ))}
