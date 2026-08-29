@@ -185,7 +185,7 @@ export function ContactoForm() {
             <input
               type="tel"
               required
-              placeholder="+57 300 000 0000"
+              placeholder="+57 310 268 0814"
               value={formState.telefono}
               onChange={(e) => setFormState({ ...formState, telefono: e.target.value })}
               onFocus={handleFocus}

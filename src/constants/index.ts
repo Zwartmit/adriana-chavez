@@ -8,13 +8,12 @@ export const NAV_LINKS = [
 ] as const;
 
 export const SOCIAL_LINKS = {
-  instagram: "https://instagram.com/adrianachavez",
-  facebook: "https://facebook.com/adrianachavez",
-  tiktok: "https://tiktok.com/@adrianachavez",
+  instagram: "https://instagram.com/adriana_chavez_belleza",
+  facebook: "https://facebook.com/adriana.chavez.524596",
 } as const;
 
 export const CONTACT_INFO = {
-  phone: "+57 300 000 0000", // pendiente confirmar
+  phone: "+57 310 268 0814", // pendiente confirmar
   email: null as string | null, // Adriana confirmó que no tiene correo público
   address: "Monterrey, Casanare",
   mapUrl: "https://maps.google.com/?q=Centro+de+Belleza+Adriana+Chavez+Monterrey+Casanare",

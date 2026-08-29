@@ -1,6 +1,3 @@
-import { MessageCircle } from "lucide-react";
-
-
 export function CTAFinal() {
   return (
     <section
@@ -100,54 +97,7 @@ export function CTAFinal() {
           >
             Reservar mi cita →
           </a>
-          <a
-            href="https://wa.me/573000000000"
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.5rem",
-              backgroundColor: "transparent",
-              color: "var(--color-text-primary)",
-              fontFamily: "var(--font-body)",
-              fontWeight: 600,
-              fontSize: "var(--text-base)",
-              letterSpacing: "var(--tracking-wide)",
-              padding: "14px 36px",
-              borderRadius: "var(--radius-full)",
-              border: "1.5px solid rgba(247,245,240,0.4)",
-              minHeight: "52px",
-              whiteSpace: "nowrap",
-              transition: "all var(--transition-base)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(247,245,240,0.1)";
-              e.currentTarget.style.borderColor = "rgba(247,245,240,0.7)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.borderColor = "rgba(247,245,240,0.4)";
-            }}
-          >
-            <MessageCircle size={18} />
-            Hablar por WhatsApp
-          </a>
         </div>
-
-
-        <span
-          className="uppercase mt-4"
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "var(--text-xs)",
-            letterSpacing: "var(--tracking-wider)",
-            color: "rgba(247, 245, 240, 0.4)",
-          }}
-        >
-          Sin costo de reserva · Fácil y rápido
-        </span>
       </div>
     </section>
   );

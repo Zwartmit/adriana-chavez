@@ -15,6 +15,7 @@ import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { CartProvider, useCart } from "../lib/cart/CartContext";
 import { CartDrawer } from "../components/tienda/CartDrawer";
+import { ScrollToTop } from "../components/ui/ScrollToTop";
 
 function NotFoundComponent() {
   return (
@@ -202,6 +203,7 @@ function RootLayout() {
       <Outlet />
       {!isAdmin && <Footer />}
       <CartDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
+      {!isAdmin && <ScrollToTop />}
     </>
   );
 }

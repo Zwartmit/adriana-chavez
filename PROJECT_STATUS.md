@@ -100,7 +100,7 @@ Solo quedan 3 (los ~37 componentes shadcn/ui sin usar se eliminaron durante el r
 - ✅ **Servicios:** 48 registros en Supabase, 6 categorías (Cabello, Tratamiento, Micropigmentación, Maquillaje, Uñas, Depilación).
 - ✅ **Horarios:** Lun-Sáb 8:00 am–12:00 pm · 2:00 pm–6:00 pm (en `CONTACT_INFO`, contacto.tsx, Footer).
 - ✅ **Usuario admin:** `adrianitachavezmoncada@gmail.com`, rol `admin`, contraseña temporal compartida por WhatsApp.
-- ⚠️ **Aún placeholder:** productos tienda (16), testimonios (8), galería (18), imágenes (`placehold.co`), teléfono (`+57 300 000 0000` pendiente confirmar con Adriana).
+- ⚠️ **Aún placeholder:** productos tienda (16), testimonios (8), galería (18), imágenes (`placehold.co`), teléfono (`+57 310 268 0814` pendiente confirmar con Adriana).
 
 ---
 

@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Youtube, MapPin, Phone, Mail } from "lucide-react";
+import { Instagram, Facebook, MapPin, Phone, Mail } from "lucide-react";
 import { NAV_LINKS, SOCIAL_LINKS, CONTACT_INFO } from "@/constants";
 
 const linkStyle: React.CSSProperties = {
@@ -63,15 +63,6 @@ export function Footer() {
           </p>
           <div className="flex gap-4">
             <a
-              href={SOCIAL_LINKS.instagram}
-              aria-label="Instagram"
-              target="_blank"
-              rel="noreferrer"
-              className="text-[rgba(247,245,240,0.6)] hover:text-[var(--color-accent)] transition-colors"
-            >
-              <Instagram size={20} />
-            </a>
-            <a
               href={SOCIAL_LINKS.facebook}
               aria-label="Facebook"
               target="_blank"
@@ -81,13 +72,13 @@ export function Footer() {
               <Facebook size={20} />
             </a>
             <a
-              href={SOCIAL_LINKS.tiktok}
-              aria-label="TikTok"
+              href={SOCIAL_LINKS.instagram}
+              aria-label="Instagram"
               target="_blank"
               rel="noreferrer"
               className="text-[rgba(247,245,240,0.6)] hover:text-[var(--color-accent)] transition-colors"
             >
-              <Youtube size={20} />
+              <Instagram size={20} />
             </a>
           </div>
         </div>
@@ -168,7 +159,7 @@ export function Footer() {
             letterSpacing: "var(--tracking-wide)",
           }}
         >
-          <span>© 2024 Adriana Chávez · Todos los derechos reservados</span>
+          <span>© {new Date().getFullYear()} Adriana Chávez · Todos los derechos reservados</span>
           <a
             href="/privacidad"
             className="hover:text-[var(--color-accent)] transition-colors"
