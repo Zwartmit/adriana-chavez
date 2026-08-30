@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 
-export const Route = createFileRoute("/admin/mensajes/")({
+export const Route = createFileRoute("/admin/mensajes/" as any)({
   component: MensajesPage,
 });
 

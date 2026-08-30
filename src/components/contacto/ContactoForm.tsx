@@ -78,6 +78,7 @@ export function ContactoForm() {
       email: formState.email || null,
       servicio: formState.servicio || null,
       mensaje: formState.mensaje,
+      leido: false,
     });
 
     if (error) {
@@ -168,7 +169,7 @@ export function ContactoForm() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <Label required>Nombre completo</Label>
+            <Label required>Nombre</Label>
             <input
               type="text"
               required

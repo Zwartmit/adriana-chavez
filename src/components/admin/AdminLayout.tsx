@@ -1,15 +1,8 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { Menu } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { getSession } from "@/lib/supabase/auth";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-
-const HOY = new Date();
-const FECHA_HOY = HOY.toLocaleDateString("es-CO", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
 
 const SIDEBAR_COLLAPSED_KEY = "admin-sidebar-collapsed";
 const SIDEBAR_WIDTH_EXPANDED = 240;
@@ -42,6 +35,46 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
     window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(isCollapsed));
   }, [isCollapsed]);
 
+  useEffect(() => {
+    document.title = `${pageTitle} | Centro de belleza Adriana Chávez`;
+  }, [pageTitle]);
+
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsCollapsed(true);
+    }
+  }, [pathname]);
+
+  const [fechas, setFechas] = useState(() => {
+    const d = new Date();
+    return {
+      fecha: d.toLocaleDateString("es-CO", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+      hora: d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }),
+    };
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const d = new Date();
+      setFechas({
+        fecha: d.toLocaleDateString("es-CO", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }),
+        hora: d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }),
+      });
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
   if (checking) {
     return (
       <div
@@ -71,47 +104,65 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--color-bg-light)" }}>
+      {/* Overlay para móvil cuando el sidebar está expandido */}
+      {!isCollapsed && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setIsCollapsed(true)}
+          aria-hidden="true"
+        />
+      )}
       <AdminSidebar isCollapsed={isCollapsed} onToggleCollapsed={() => setIsCollapsed((c) => !c)} />
       <div
+        className="ml-0 md:ml-[var(--sidebar-width)] transition-[margin] duration-250 ease"
         style={{
-          marginLeft: `${sidebarWidth}px`,
+          "--sidebar-width": `${sidebarWidth}px`,
           minHeight: "100vh",
           backgroundColor: "var(--color-bg-light)",
-          transition: "margin-left 250ms ease",
-        }}
+        } as React.CSSProperties}
       >
         <header
-          className="flex items-center justify-between"
+          className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4"
           style={{
             backgroundColor: "var(--color-surface-light)",
             borderBottom: "1px solid var(--color-border-light)",
-            padding: "1.5rem 2rem",
+            padding: "1.5rem",
           }}
         >
-          <h1
-            style={{
-              fontFamily: "var(--font-display)",
-              fontStyle: "italic",
-              fontWeight: 600,
-              fontSize: "var(--text-2xl)",
-              color: "var(--color-text-on-light)",
-              textTransform: "capitalize",
-            }}
-          >
-            {pageTitle}
-          </h1>
-          <span
-            className="capitalize"
+          <div className="flex items-center gap-3">
+            <button
+              className="md:hidden"
+              onClick={() => setIsCollapsed(false)}
+              style={{ background: "transparent", border: "none", color: "var(--color-text-on-light)", cursor: "pointer", padding: 0 }}
+            >
+              <Menu size={24} />
+            </button>
+            <h1
+              style={{
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontWeight: 600,
+                fontSize: "var(--text-2xl)",
+                color: "var(--color-text-on-light)",
+                textTransform: "capitalize",
+              }}
+            >
+              {pageTitle}
+            </h1>
+          </div>
+          <div
+            className="capitalize flex flex-col items-start md:items-end"
             style={{
               fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-sm)",
-              color: "var(--color-text-on-light-faint)",
+              fontSize: "var(--text-xs)",
+              color: "var(--color-text-on-light-muted)",
             }}
           >
-            {FECHA_HOY}
-          </span>
+            <span>{fechas.fecha}</span>
+            <span style={{ fontSize: "11px", opacity: 0.8 }}>{fechas.hora}</span>
+          </div>
         </header>
-        <div style={{ padding: "2rem" }}>{children}</div>
+        <div className="p-4 md:p-8 overflow-hidden w-full" style={{ maxWidth: "100%" }}>{children}</div>
       </div>
     </div>
   );

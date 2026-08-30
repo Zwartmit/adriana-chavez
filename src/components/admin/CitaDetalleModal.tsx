@@ -42,7 +42,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
 
   const handleUpdateEstado = async (estado: EstadoCita) => {
     setUpdating(true);
-    const { error } = await supabase.from("citas").update({ estado }).eq("id", cita.id);
+    const { error } = await supabase.from("citas").update({ estado } as any).eq("id", cita.id);
     setUpdating(false);
 
     if (error) {
@@ -126,7 +126,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div>
-            <p style={rowLabel}>Cliente</p>
+            <p style={rowLabel}>Clienta</p>
             <p style={rowValue}>{cita.clienteNombre}</p>
             {cita.clienteTelefono && (
               <p style={{ ...rowValue, fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>

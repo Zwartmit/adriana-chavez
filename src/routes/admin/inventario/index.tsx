@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronDown, Edit, Minus, Package, Plus, Search } from "lucide-react";
+import { ChevronDown, Edit, ArrowRightLeft, Package, Search } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { MovimientoPanel } from "@/components/admin/inventario/MovimientoPanel";
@@ -210,21 +210,12 @@ function InventarioPage() {
 
   return (
     <AdminLayout pageTitle="Inventario">
-      <div className="flex items-center justify-between" style={{ marginBottom: "1.5rem" }}>
-        <h2
-          style={{
-            fontFamily: "var(--font-display)",
-            fontStyle: "italic",
-            fontWeight: 600,
-            fontSize: "var(--text-2xl)",
-            color: "var(--color-text-on-light)",
-          }}
-        >
-          Inventario
-        </h2>
-        <Button variant="accent" size="md" onClick={() => openMovimiento("entrada")}>
-          Registrar entrada +
-        </Button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4" style={{ marginBottom: "1.5rem" }}>
+        <div className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto" variant="accent" size="md" onClick={() => openMovimiento("entrada")}>
+            Registrar movimiento
+          </Button>
+        </div>
       </div>
 
       {loading ? (
@@ -292,8 +283,8 @@ function InventarioPage() {
           </div>
 
           {/* Filtros */}
-          <div className="flex flex-wrap items-center gap-3" style={{ marginBottom: "1.25rem" }}>
-            <select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} style={selectStyle}>
+          <div className="flex flex-col sm:flex-row flex-wrap sm:items-center gap-3" style={{ marginBottom: "1.25rem" }}>
+            <select className="w-full sm:w-auto" value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} style={selectStyle}>
               <option value="">Todas las categorías</option>
               {categorias.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -301,13 +292,13 @@ function InventarioPage() {
                 </option>
               ))}
             </select>
-            <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value as "todos" | EstadoStock)} style={selectStyle}>
+            <select className="w-full sm:w-auto" value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value as "todos" | EstadoStock)} style={selectStyle}>
               <option value="todos">Todos los estados</option>
               <option value="disponible">Disponible</option>
               <option value="critico">Crítico</option>
               <option value="agotado">Agotado</option>
             </select>
-            <div className="relative" style={{ maxWidth: 280 }}>
+            <div className="relative w-full sm:w-auto sm:max-w-[280px]">
               <Search size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-on-light-faint)" }} />
               <input
                 type="text"
@@ -320,8 +311,8 @@ function InventarioPage() {
           </div>
 
           {/* Tabla */}
-          <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border-light)", backgroundColor: "var(--color-surface-light)" }}>
-            <table className="w-full" style={{ borderCollapse: "collapse" }}>
+          <div className="overflow-x-auto w-full" style={{ borderRadius: "var(--radius-xl)", border: "1px solid var(--color-border-light)", backgroundColor: "var(--color-surface-light)" }}>
+            <table className="w-full min-w-[900px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#0A0A0B" }}>
                   {["Producto", "Marca", "Categoría", "Stock virtual", "Stock físico", "Stock total", "Umbral alerta", "Estado", "Acciones"].map((h) => (
@@ -362,8 +353,8 @@ function InventarioPage() {
                       r.estado_stock === "critico"
                         ? { backgroundColor: "rgba(212,175,107,0.06)", borderLeft: "2px solid var(--color-primary)" }
                         : r.estado_stock === "agotado"
-                        ? { backgroundColor: "rgba(224,82,82,0.06)", borderLeft: "2px solid var(--color-error)", opacity: 0.7 }
-                        : { borderLeft: "2px solid transparent" };
+                          ? { backgroundColor: "rgba(224,82,82,0.06)", borderLeft: "2px solid var(--color-error)", opacity: 0.7 }
+                          : { borderLeft: "2px solid transparent" };
                     return (
                       <tr key={r.id} style={rowStyle}>
                         <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
@@ -418,23 +409,13 @@ function InventarioPage() {
                             </button>
                             <button
                               type="button"
-                              aria-label="Registrar entrada"
+                              aria-label="Registrar movimiento"
                               onClick={() => openMovimiento("entrada", r)}
-                              style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
+                              style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer", marginLeft: "4px" }}
                               onMouseEnter={(e) => (e.currentTarget.style.color = "#4CAF80")}
                               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
                             >
-                              <Plus size={16} />
-                            </button>
-                            <button
-                              type="button"
-                              aria-label="Registrar salida"
-                              onClick={() => openMovimiento("salida", r)}
-                              style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
-                              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-error)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
-                            >
-                              <Minus size={16} />
+                              <ArrowRightLeft size={16} />
                             </button>
                           </div>
                         </td>
@@ -471,11 +452,11 @@ function InventarioPage() {
             </button>
 
             {historialOpen && (
-              <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border-light)", marginTop: "1rem" }}>
+              <div className="overflow-x-auto w-full" style={{ borderRadius: "var(--radius-xl)", border: "1px solid var(--color-border-light)", marginTop: "1rem" }}>
                 {movimientosLoading ? (
                   <LoadingState variant="light" />
                 ) : (
-                  <table className="w-full" style={{ borderCollapse: "collapse" }}>
+                  <table className="w-full min-w-[800px]" style={{ borderCollapse: "collapse" }}>
                     <thead>
                       <tr style={{ backgroundColor: "#0A0A0B" }}>
                         {["Fecha", "Producto", "Tipo", "Origen", "Cantidad", "Stock antes → después", "Notas"].map((h) => (

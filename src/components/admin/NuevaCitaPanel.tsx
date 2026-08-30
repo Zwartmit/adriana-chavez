@@ -162,8 +162,13 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
       fecha_hora: fechaHora.toISOString(),
       duracion_min: servicio?.duracion_min ?? 60,
       estado: "pendiente",
+      precio_cobrado: null,
       notas_cliente: notas || null,
+      notas_internas: null,
       canal_origen: "presencial",
+      recordatorio_24h_enviado: false,
+      recordatorio_2h_enviado: false,
+      seguimiento_enviado: false,
     });
     setSubmitting(false);
 
@@ -195,27 +200,15 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
       />
 
       <aside
-        style={{
-          position: "fixed",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: "min(440px, 95vw)",
-          backgroundColor: "var(--color-surface)",
-          zIndex: 70,
-          display: "flex",
-          flexDirection: "column",
-          transform: isOpen ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)",
-        }}
+        className={`fixed top-0 right-0 bottom-0 z-70 flex flex-col bg-[var(--color-surface)] w-full sm:w-[440px] transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         <div
-          className="flex items-center justify-between"
+          className="flex items-center justify-between p-4 sm:p-6 shrink-0"
           style={{
             background: "linear-gradient(135deg, rgba(232,201,122,0.1) 0%, rgba(26,24,32,0.95) 100%)",
             borderBottom: "0.5px solid rgba(232,201,122,0.25)",
-            padding: "1.25rem 1.5rem",
-            flexShrink: 0,
           }}
         >
           <h2
@@ -228,25 +221,18 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
           >
             Nueva cita
           </h2>
-          <button type="button" aria-label="Cerrar" onClick={handleClose} style={{ color: "white" }}>
+          <button type="button" className="cursor-pointer" aria-label="Cerrar" onClick={handleClose} style={{ color: "white" }}>
             <X size={22} />
           </button>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "1.5rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1.25rem",
-          }}
+          className="flex-1 overflow-y-auto flex flex-col gap-5 p-4 sm:p-6"
         >
           {/* Cliente */}
           <div style={{ position: "relative" }}>
-            <label style={labelStyle}>Cliente *</label>
+            <label style={labelStyle}>Clienta *</label>
             <input
               type="text"
               placeholder="Buscar por nombre o apellido..."
@@ -343,10 +329,10 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
             </select>
           </div>
 
-          {/* Fecha */}
           <div>
             <label style={labelStyle}>Fecha *</label>
             <div
+              className="flex justify-center overflow-x-auto w-full"
               style={{
                 border: "1px solid var(--color-border)",
                 borderRadius: "var(--radius-lg)",

@@ -84,7 +84,6 @@ function EstadoBadge({ estado }: { estado: EstadoCita }) {
 
 const cardStyle: React.CSSProperties = {
   borderRadius: "var(--radius-2xl)",
-  padding: "1.75rem",
 };
 
 function ClienteDetallePage() {
@@ -255,7 +254,7 @@ function ClienteDetallePage() {
   const historialTotal = historial.reduce((sum, c) => sum + (c.precioCobrado ?? 0), 0);
 
   return (
-    <AdminLayout pageTitle={cliente ? `${cliente.nombre} ${cliente.apellido ?? ""}`.trim() : "Cliente"}>
+    <AdminLayout pageTitle={cliente ? `${cliente.nombre} ${cliente.apellido ?? ""}`.trim() : "Clienta"}>
       <button
         type="button"
         onClick={() => navigate({ to: "/admin/clientes" })}
@@ -271,7 +270,7 @@ function ClienteDetallePage() {
         onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
         onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
       >
-        ← Volver a clientes
+        ← Volver a clientas
       </button>
 
       {loading ? (
@@ -283,6 +282,7 @@ function ClienteDetallePage() {
           {/* Columna izquierda — datos */}
           <div className="flex flex-col gap-6">
             <div
+              className="p-5 md:p-7"
               style={{
                 ...cardStyle,
                 backgroundColor: "var(--color-surface-light)",
@@ -345,19 +345,26 @@ function ClienteDetallePage() {
                 />
               </div>
 
-              <div className="flex items-center gap-3" style={{ marginTop: "1.75rem" }}>
-                <Button variant="accent" size="sm" disabled={savingDatos} onClick={handleGuardarDatos}>
+              <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4" style={{ marginTop: "1.75rem" }}>
+                <Button className="w-full sm:w-auto" variant="accent" size="sm" disabled={savingDatos} onClick={handleGuardarDatos}>
                   {savingDatos ? "Guardando..." : "Guardar cambios"}
                 </Button>
                 {cliente.activo && (
-                  <Button variant="ghost" size="sm" onClick={() => setShowDesactivarConfirm(true)}>
-                    Desactivar cliente
+                  <Button
+                    className="w-full sm:w-auto hover:bg-[var(--color-error)] hover:text-white hover:border-[var(--color-error)]"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setShowDesactivarConfirm(true)}
+                    style={{ borderColor: "rgba(224,82,82,0.3)", color: "var(--color-error)" }}
+                  >
+                    Desactivar clienta
                   </Button>
                 )}
               </div>
             </div>
 
             <div
+              className="p-5 md:p-7"
               style={{
                 ...cardStyle,
                 backgroundColor: "var(--color-surface-light)",
@@ -418,7 +425,7 @@ function ClienteDetallePage() {
                 ))}
               </div>
 
-              <Button variant="accent" size="sm" disabled={savingFicha} onClick={handleGuardarFicha} style={{ marginTop: "1.5rem" }}>
+              <Button className="w-full sm:w-auto" variant="accent" size="sm" disabled={savingFicha} onClick={handleGuardarFicha} style={{ marginTop: "1.5rem" }}>
                 {savingFicha ? "Guardando..." : "Guardar ficha"}
               </Button>
             </div>
@@ -426,7 +433,7 @@ function ClienteDetallePage() {
 
           {/* Columna derecha — historial */}
           <div className="flex flex-col gap-6">
-            <div style={{ ...cardStyle, backgroundColor: "var(--color-surface-light)", border: "1px solid var(--color-border-light)", boxShadow: "0 2px 12px rgba(10,10,11,0.08)" }}>
+            <div className="p-5 md:p-7" style={{ ...cardStyle, backgroundColor: "var(--color-surface-light)", border: "1px solid var(--color-border-light)", boxShadow: "0 2px 12px rgba(10,10,11,0.08)" }}>
               <h3
                 style={{
                   fontFamily: "var(--font-display)",
@@ -478,7 +485,7 @@ function ClienteDetallePage() {
               )}
             </div>
 
-            <div style={{ ...cardStyle, backgroundColor: "var(--color-surface-light)", border: "1px solid var(--color-border-light)", boxShadow: "0 2px 12px rgba(10,10,11,0.08)" }}>
+            <div className="p-5 md:p-7" style={{ ...cardStyle, backgroundColor: "var(--color-surface-light)", border: "1px solid var(--color-border-light)", boxShadow: "0 2px 12px rgba(10,10,11,0.08)" }}>
               <h3
                 style={{
                   fontFamily: "var(--font-display)",
@@ -550,7 +557,7 @@ function ClienteDetallePage() {
 
       {showDesactivarConfirm && (
         <ConfirmModal
-          title="Desactivar cliente"
+          title="Desactivar clienta"
           message="¿Deseas desactivar esta clienta? Podrás reactivarla más adelante desde la base de datos."
           confirmLabel="Desactivar"
           loading={desactivando}

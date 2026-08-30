@@ -16,7 +16,7 @@ import { supabase } from "@/lib/supabase/client";
 
 const NAV_ITEMS = [
   { label: "Calendario", href: "/admin", icon: Calendar },
-  { label: "Clientes", href: "/admin/clientes", icon: Users },
+  { label: "Clientas", href: "/admin/clientes", icon: Users },
   { label: "Inventario", href: "/admin/inventario", icon: Package },
   { label: "Reportes", href: "/admin/reportes", icon: BarChart3 },
 ];
@@ -151,19 +151,13 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
   return (
     <>
       <aside
+        className={`fixed top-0 left-0 bottom-0 z-40 flex flex-col transition-all duration-250 ease-in-out ${
+          isCollapsed ? "-translate-x-full md:translate-x-0 w-[240px] md:w-[64px]" : "translate-x-0 w-[240px]"
+        }`}
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          bottom: 0,
-          width: isCollapsed ? "64px" : "240px",
           backgroundColor: "var(--color-bg-alt)",
           borderRight: "1px solid var(--color-border)",
-          display: "flex",
-          flexDirection: "column",
           padding: "1.75rem 1rem",
-          zIndex: 40,
-          transition: "width 250ms ease",
         }}
       >
         {/* Logo */}

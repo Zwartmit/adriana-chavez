@@ -56,7 +56,7 @@ function mapCita(row: CitaRow): CitaUI {
     duracionMin: row.duracion_min,
     estado: row.estado,
     notasCliente: row.notas_cliente,
-    clienteNombre: cliente ? `${cliente.nombre} ${cliente.apellido ?? ""}`.trim() : "Cliente",
+    clienteNombre: cliente ? `${cliente.nombre} ${cliente.apellido ?? ""}`.trim() : "Clienta",
     clienteTelefono: cliente?.telefono ?? null,
     estilistaNombre: row.estilistas?.nombre ?? "Sin asignar",
     estilistaColor: row.estilistas?.color_calendario ?? "#E8C97A",
@@ -130,65 +130,67 @@ export function CalendarioCitas() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between" style={{ marginBottom: "1.5rem" }}>
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4" style={{ marginBottom: "1.5rem" }}>
+        <div className="flex items-center justify-between w-full md:w-auto md:justify-start gap-2 md:gap-4">
+          <button
+            type="button"
+            aria-label="Mes anterior"
+            onClick={() => setCurrentMonth((m) => subMonths(m, 1))}
+            style={{
+              width: 36,
+              height: 36,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px solid var(--color-border-light)",
+              borderRadius: "var(--radius-full)",
+              background: "transparent",
+              color: "var(--color-text-on-light-muted)",
+              cursor: "pointer",
+            }}
+          >
+            <ChevronLeft size={18} />
+          </button>
+
           <h2
-            className="capitalize"
+            className="capitalize text-center"
             style={{
               fontFamily: "var(--font-display)",
               fontStyle: "italic",
               fontWeight: 600,
-              fontSize: "var(--text-2xl)",
+              fontSize: "var(--text-xl)",
               color: "var(--color-text-on-light)",
-              minWidth: "220px",
+              minWidth: "150px",
             }}
           >
             {format(currentMonth, "MMMM yyyy", { locale: es })}
           </h2>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Mes anterior"
-              onClick={() => setCurrentMonth((m) => subMonths(m, 1))}
-              style={{
-                width: 36,
-                height: 36,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "1px solid var(--color-border-light)",
-                borderRadius: "var(--radius-full)",
-                background: "transparent",
-                color: "var(--color-text-on-light-muted)",
-                cursor: "pointer",
-              }}
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <button
-              type="button"
-              aria-label="Mes siguiente"
-              onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
-              style={{
-                width: 36,
-                height: 36,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "1px solid var(--color-border-light)",
-                borderRadius: "var(--radius-full)",
-                background: "transparent",
-                color: "var(--color-text-on-light-muted)",
-                cursor: "pointer",
-              }}
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
+
+          <button
+            type="button"
+            aria-label="Mes siguiente"
+            onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
+            style={{
+              width: 36,
+              height: 36,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px solid var(--color-border-light)",
+              borderRadius: "var(--radius-full)",
+              background: "transparent",
+              color: "var(--color-text-on-light-muted)",
+              cursor: "pointer",
+            }}
+          >
+            <ChevronRight size={18} />
+          </button>
         </div>
-        <Button variant="accent" size="md" onClick={() => openNuevaCita(undefined)}>
-          Nueva cita +
-        </Button>
+        <div className="w-full md:w-auto">
+          <Button variant="accent" size="md" className="w-full md:w-auto" onClick={() => openNuevaCita(undefined)}>
+            Nueva cita +
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -228,9 +230,8 @@ export function CalendarioCitas() {
           {Array.from({ length: 42 }).map((_, i) => (
             <div
               key={i}
-              className="animate-pulse"
+              className="animate-pulse min-h-[70px] md:min-h-[110px]"
               style={{
-                minHeight: "110px",
                 backgroundColor: "var(--color-surface-light)",
                 border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-md)",
@@ -249,9 +250,9 @@ export function CalendarioCitas() {
               <div
                 key={day.toISOString()}
                 onClick={() => openNuevaCita(day)}
+                className="min-h-[70px] md:min-h-[110px]"
                 style={{
-                  minHeight: "110px",
-                  padding: "0.5rem",
+                  padding: "0.25rem",
                   backgroundColor: "var(--color-surface-light)",
                   border: "1px solid var(--color-border-light)",
                   borderRadius: "var(--radius-md)",

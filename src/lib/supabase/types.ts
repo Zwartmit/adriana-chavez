@@ -10,11 +10,7 @@ export type CanalOrigen = "web" | "whatsapp" | "telefono" | "presencial";
 export type TipoMovimiento = "entrada" | "salida" | "ajuste";
 export type CategoriaGaleria = "antes-despues" | "coloracion" | "corte" | "tratamiento" | "unas" | "peinado";
 
-export interface Database {
-  public: {
-    Tables: {
-      perfiles: {
-        Row: {
+export interface PerfilesRow {
           id: string;
           rol: Rol;
           nombre: string | null;
@@ -22,12 +18,8 @@ export interface Database {
           avatar_url: string | null;
           created_at: string;
           updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["perfiles"]["Row"], "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["perfiles"]["Insert"]>;
-      };
-      estilistas: {
-        Row: {
+        }
+export interface EstilistasRow {
           id: string;
           perfil_id: string | null;
           nombre: string;
@@ -41,22 +33,14 @@ export interface Database {
           orden: number;
           created_at: string;
           updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["estilistas"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["estilistas"]["Insert"]>;
-      };
-      categorias_servicios: {
-        Row: {
+        }
+export interface Categorias_serviciosRow {
           id: string;
           nombre: string;
           slug: string;
           orden: number;
-        };
-        Insert: Omit<Database["public"]["Tables"]["categorias_servicios"]["Row"], "id">;
-        Update: Partial<Database["public"]["Tables"]["categorias_servicios"]["Insert"]>;
-      };
-      servicios: {
-        Row: {
+        }
+export interface ServiciosRow {
           id: string;
           categoria_id: string | null;
           nombre: string;
@@ -72,12 +56,8 @@ export interface Database {
           orden: number;
           created_at: string;
           updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["servicios"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["servicios"]["Insert"]>;
-      };
-      clientes: {
-        Row: {
+        }
+export interface ClientesRow {
           id: string;
           perfil_id: string | null;
           nombre: string;
@@ -94,12 +74,8 @@ export interface Database {
           activo: boolean;
           created_at: string;
           updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["clientes"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["clientes"]["Insert"]>;
-      };
-      citas: {
-        Row: {
+        }
+export interface CitasRow {
           id: string;
           cliente_id: string;
           estilista_id: string | null;
@@ -116,12 +92,8 @@ export interface Database {
           seguimiento_enviado: boolean;
           created_at: string;
           updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["citas"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["citas"]["Insert"]>;
-      };
-      bloqueos_horario: {
-        Row: {
+        }
+export interface Bloqueos_horarioRow {
           id: string;
           estilista_id: string | null;
           fecha_inicio: string;
@@ -129,22 +101,14 @@ export interface Database {
           motivo: string | null;
           created_by: string | null;
           created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["bloqueos_horario"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["bloqueos_horario"]["Insert"]>;
-      };
-      categorias_productos: {
-        Row: {
+        }
+export interface Categorias_productosRow {
           id: string;
           nombre: string;
           slug: string;
           orden: number;
-        };
-        Insert: Omit<Database["public"]["Tables"]["categorias_productos"]["Row"], "id">;
-        Update: Partial<Database["public"]["Tables"]["categorias_productos"]["Insert"]>;
-      };
-      productos: {
-        Row: {
+        }
+export interface ProductosRow {
           id: string;
           categoria_id: string | null;
           nombre: string;
@@ -164,12 +128,8 @@ export interface Database {
           orden: number;
           created_at: string;
           updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["productos"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["productos"]["Insert"]>;
-      };
-      inventario: {
-        Row: {
+        }
+export interface InventarioRow {
           id: string;
           producto_id: string;
           stock_virtual: number;
@@ -179,12 +139,8 @@ export interface Database {
           ultima_entrada: string | null;
           ultima_salida: string | null;
           updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["inventario"]["Row"], "id" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["inventario"]["Insert"]>;
-      };
-      movimientos_inventario: {
-        Row: {
+        }
+export interface Movimientos_inventarioRow {
           id: string;
           producto_id: string;
           tipo: TipoMovimiento;
@@ -196,12 +152,8 @@ export interface Database {
           referencia_id: string | null;
           created_by: string | null;
           created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["movimientos_inventario"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["movimientos_inventario"]["Insert"]>;
-      };
-      ordenes: {
-        Row: {
+        }
+export interface OrdenesRow {
           id: string;
           cliente_id: string | null;
           estado: EstadoOrden;
@@ -220,12 +172,8 @@ export interface Database {
           notas_internas: string | null;
           created_at: string;
           updated_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["ordenes"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["ordenes"]["Insert"]>;
-      };
-      items_orden: {
-        Row: {
+        }
+export interface Items_ordenRow {
           id: string;
           orden_id: string;
           producto_id: string | null;
@@ -233,12 +181,8 @@ export interface Database {
           precio: number;
           cantidad: number;
           subtotal: number;
-        };
-        Insert: Omit<Database["public"]["Tables"]["items_orden"]["Row"], "id">;
-        Update: Partial<Database["public"]["Tables"]["items_orden"]["Insert"]>;
-      };
-      testimonios: {
-        Row: {
+        }
+export interface TestimoniosRow {
           id: string;
           cliente_id: string | null;
           nombre: string;
@@ -249,12 +193,8 @@ export interface Database {
           aprobado: boolean;
           orden: number;
           created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["testimonios"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["testimonios"]["Insert"]>;
-      };
-      galeria: {
-        Row: {
+        }
+export interface GaleriaRow {
           id: string;
           titulo: string | null;
           categoria: CategoriaGaleria;
@@ -265,12 +205,8 @@ export interface Database {
           activo: boolean;
           orden: number;
           created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["galeria"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["galeria"]["Insert"]>;
-      };
-      reportes_caja: {
-        Row: {
+        }
+export interface Reportes_cajaRow {
           id: string;
           fecha: string;
           ingresos_servicios: number;
@@ -282,12 +218,8 @@ export interface Database {
           generado_por: string;
           notas: string | null;
           created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["reportes_caja"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["reportes_caja"]["Insert"]>;
-      };
-      mensajes_contacto: {
-        Row: {
+        }
+export interface Mensajes_contactoRow {
           id: string;
           nombre: string;
           telefono: string;
@@ -296,14 +228,8 @@ export interface Database {
           mensaje: string;
           leido: boolean;
           created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["mensajes_contacto"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["mensajes_contacto"]["Insert"]>;
-      };
-    };
-    Views: {
-      inventario_completo: {
-        Row: {
+        }
+export interface Inventario_completoViewRow {
           id: string;
           producto_id: string;
           stock_virtual: number;
@@ -316,12 +242,109 @@ export interface Database {
           categoria_id: string;
           categoria_nombre: string;
           updated_at: string;
-        };
+        }
+
+export interface Database {
+  public: {
+    Tables: {
+      perfiles: {
+        Row: PerfilesRow;
+        Insert: Omit<PerfilesRow, "created_at" | "updated_at">;
+        Update: Partial<Omit<PerfilesRow, "created_at" | "updated_at">>;
+      };
+      estilistas: {
+        Row: EstilistasRow;
+        Insert: Omit<EstilistasRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<EstilistasRow, "id" | "created_at" | "updated_at">>;
+      };
+      categorias_servicios: {
+        Row: Categorias_serviciosRow;
+        Insert: Omit<Categorias_serviciosRow, "id">;
+        Update: Partial<Omit<Categorias_serviciosRow, "id">>;
+      };
+      servicios: {
+        Row: ServiciosRow;
+        Insert: Omit<ServiciosRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<ServiciosRow, "id" | "created_at" | "updated_at">>;
+      };
+      clientes: {
+        Row: ClientesRow;
+        Insert: Omit<ClientesRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<ClientesRow, "id" | "created_at" | "updated_at">>;
+      };
+      citas: {
+        Row: CitasRow;
+        Insert: Omit<CitasRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<CitasRow, "id" | "created_at" | "updated_at">>;
+      };
+      bloqueos_horario: {
+        Row: Bloqueos_horarioRow;
+        Insert: Omit<Bloqueos_horarioRow, "id" | "created_at">;
+        Update: Partial<Omit<Bloqueos_horarioRow, "id" | "created_at">>;
+      };
+      categorias_productos: {
+        Row: Categorias_productosRow;
+        Insert: Omit<Categorias_productosRow, "id">;
+        Update: Partial<Omit<Categorias_productosRow, "id">>;
+      };
+      productos: {
+        Row: ProductosRow;
+        Insert: Omit<ProductosRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<ProductosRow, "id" | "created_at" | "updated_at">>;
+      };
+      inventario: {
+        Row: InventarioRow;
+        Insert: Omit<InventarioRow, "id" | "updated_at">;
+        Update: Partial<Omit<InventarioRow, "id" | "updated_at">>;
+      };
+      movimientos_inventario: {
+        Row: Movimientos_inventarioRow;
+        Insert: Omit<Movimientos_inventarioRow, "id" | "created_at">;
+        Update: Partial<Omit<Movimientos_inventarioRow, "id" | "created_at">>;
+      };
+      ordenes: {
+        Row: OrdenesRow;
+        Insert: Omit<OrdenesRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<OrdenesRow, "id" | "created_at" | "updated_at">>;
+      };
+      items_orden: {
+        Row: Items_ordenRow;
+        Insert: Omit<Items_ordenRow, "id">;
+        Update: Partial<Omit<Items_ordenRow, "id">>;
+      };
+      testimonios: {
+        Row: TestimoniosRow;
+        Insert: Omit<TestimoniosRow, "id" | "created_at">;
+        Update: Partial<Omit<TestimoniosRow, "id" | "created_at">>;
+      };
+      galeria: {
+        Row: GaleriaRow;
+        Insert: Omit<GaleriaRow, "id" | "created_at">;
+        Update: Partial<Omit<GaleriaRow, "id" | "created_at">>;
+      };
+      reportes_caja: {
+        Row: Reportes_cajaRow;
+        Insert: Omit<Reportes_cajaRow, "id" | "created_at">;
+        Update: Partial<Omit<Reportes_cajaRow, "id" | "created_at">>;
+      };
+      mensajes_contacto: {
+        Row: Mensajes_contactoRow;
+        Insert: Omit<Mensajes_contactoRow, "id" | "created_at">;
+        Update: Partial<Omit<Mensajes_contactoRow, "id" | "created_at">>;
+      };
+    };
+    Views: {
+      inventario_completo: {
+        Row: Inventario_completoViewRow;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
       };
     };
     Functions: {
       es_admin: { Args: Record<never, never>; Returns: boolean };
       es_staff: { Args: Record<never, never>; Returns: boolean };
     };
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }

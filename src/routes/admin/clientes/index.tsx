@@ -128,20 +128,9 @@ function ClientesPage() {
   };
 
   return (
-    <AdminLayout pageTitle="Clientes">
-      <div className="flex items-center justify-between" style={{ marginBottom: "0.5rem" }}>
+    <AdminLayout pageTitle="Clientas">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ marginBottom: "0.5rem" }}>
         <div>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontStyle: "italic",
-              fontWeight: 600,
-              fontSize: "var(--text-2xl)",
-              color: "var(--color-text-on-light)",
-            }}
-          >
-            Clientes
-          </h2>
           <p
             style={{
               fontFamily: "var(--font-mono)",
@@ -153,13 +142,15 @@ function ClientesPage() {
             {clientes.length} {clientes.length === 1 ? "clienta registrada" : "clientas registradas"}
           </p>
         </div>
-        <Button variant="accent" size="md" onClick={() => setPanelOpen(true)}>
-          Nueva clienta +
-        </Button>
+        <div className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto" variant="accent" size="md" onClick={() => setPanelOpen(true)}>
+            Nueva clienta +
+          </Button>
+        </div>
       </div>
 
       {/* Buscador */}
-      <div className="relative" style={{ maxWidth: 360, margin: "1.5rem 0" }}>
+      <div className="relative w-full sm:w-auto sm:max-w-[360px]" style={{ margin: "1.5rem 0" }}>
         <Search
           size={18}
           style={{
@@ -193,12 +184,17 @@ function ClientesPage() {
         <p style={{ fontFamily: "var(--font-body)", color: "var(--color-error)", marginBottom: "1rem" }}>{error}</p>
       )}
 
-      {/* Tabla */}
-      <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--color-border-light)" }}>
-        <table className="w-full" style={{ borderCollapse: "collapse" }}>
+      <div
+        className="overflow-x-auto w-full"
+        style={{
+          borderRadius: "var(--radius-xl)",
+          border: "1px solid var(--color-border-light)",
+        }}
+      >
+        <table className="w-full min-w-[800px]" style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ backgroundColor: "#0A0A0B" }}>
-              {["Nombre completo", "Teléfono", "Email", "Estilista preferida", "Última cita", "Total citas", "Acciones"].map(
+              {["Nombre", "Teléfono", "Email", "Estilista preferida", "Última cita", "Total citas", "Acciones"].map(
                 (h) => (
                   <th
                     key={h}
@@ -307,17 +303,7 @@ function ClientesPage() {
                     {c.totalCitas}
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        aria-label="Ver ficha"
-                        onClick={() => navigate({ to: "/admin/clientes/$clienteId", params: { clienteId: c.id } })}
-                        style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
-                      >
-                        <Eye size={16} />
-                      </button>
+                    <div className="flex items-center justify-start gap-3">
                       <button
                         type="button"
                         aria-label="Editar"

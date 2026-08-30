@@ -111,7 +111,7 @@ const sectionCardStyle: React.CSSProperties = {
 
 const th: React.CSSProperties = {
   textAlign: "left",
-  padding: "10px 14px",
+  padding: "12px 16px",
   fontFamily: "var(--font-mono)",
   fontSize: "var(--text-xs)",
   textTransform: "uppercase",
@@ -120,7 +120,7 @@ const th: React.CSSProperties = {
   whiteSpace: "nowrap",
 };
 const td: React.CSSProperties = {
-  padding: "10px 14px",
+  padding: "12px 16px",
   fontFamily: "var(--font-body)",
   fontSize: "var(--text-sm)",
   color: "var(--color-text-on-light-muted)",
@@ -328,7 +328,7 @@ function ReportesPage() {
 
   // ── Exportar CSV ──
   const handleExportarCSV = () => {
-    const headers = ["Fecha", "Hora", "Cliente", "Servicio", "Estilista", "Estado", "Precio cobrado"];
+    const headers = ["Fecha", "Hora", "Clienta", "Servicio", "Estilista", "Estado", "Precio cobrado"];
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
     const rows = citas.map((c) => {
       const fecha = new Date(c.fecha_hora);
@@ -423,21 +423,35 @@ function ReportesPage() {
 
   return (
     <AdminLayout pageTitle="Reportes">
-      <div className="flex items-center justify-between flex-wrap gap-4" style={{ marginBottom: "1.75rem" }}>
-        <h2
-          style={{
-            fontFamily: "var(--font-display)",
-            fontStyle: "italic",
-            fontWeight: 600,
-            fontSize: "var(--text-2xl)",
-            color: "var(--color-text-on-light)",
-          }}
-        >
-          Reportes
-        </h2>
+      <div className="flex flex-col md:flex-row md:items-center justify-end gap-4" style={{ marginBottom: "1.75rem" }}>
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          {/* Vista móvil: Select */}
+          <div className="w-full md:hidden">
+            <select
+              value={periodo}
+              onChange={(e) => setPeriodo(e.target.value as any)}
+              style={{
+                width: "100%",
+                padding: "10px 14px",
+                borderRadius: "var(--radius-lg)",
+                border: "1px solid var(--color-border-light)",
+                backgroundColor: "var(--color-surface)",
+                color: "var(--color-text-primary)",
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+              }}
+            >
+              {PERIODOS.map((p) => (
+                <option key={p.value} value={p.value}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Vista Desktop: Botones */}
+          <div className="hidden md:flex items-center gap-2 overflow-x-auto pb-1 w-full sm:w-auto" style={{ WebkitOverflowScrolling: "touch" }}>
             {PERIODOS.map((p) => {
               const active = p.value === periodo;
               return (
@@ -462,7 +476,7 @@ function ReportesPage() {
               );
             })}
           </div>
-          <Button variant="secondary" size="sm" onClick={handleExportarCSV} disabled={loading || citas.length === 0}>
+          <Button className="w-full sm:w-auto shrink-0" variant="accent" size="sm" onClick={handleExportarCSV} disabled={loading || citas.length === 0}>
             <Download size={14} style={{ marginRight: 6 }} />
             Exportar CSV
           </Button>
@@ -478,10 +492,10 @@ function ReportesPage() {
           {/* Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: "1.75rem" }}>
             <div style={cardStyle}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-muted)" }}>
                 Ingresos totales
               </p>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary-dim)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-text-on-light)", marginTop: "0.4rem" }}>
                 {formatPrice(ingresosTotales)}
               </p>
               <p
@@ -499,10 +513,10 @@ function ReportesPage() {
             </div>
 
             <div style={cardStyle}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-muted)" }}>
                 Citas completadas
               </p>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary-dim)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-text-on-light)", marginTop: "0.4rem" }}>
                 {completadas.length}
               </p>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", marginTop: "0.4rem" }}>
@@ -511,10 +525,10 @@ function ReportesPage() {
             </div>
 
             <div style={cardStyle}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-muted)" }}>
                 Ticket promedio
               </p>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-primary-dim)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-text-on-light)", marginTop: "0.4rem" }}>
                 {formatPrice(ticketPromedio)}
               </p>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", marginTop: "0.4rem" }}>
@@ -523,10 +537,10 @@ function ReportesPage() {
             </div>
 
             <div style={cardStyle}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-faint)" }}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)", color: "var(--color-text-on-light-muted)" }}>
                 Tasa de cancelación
               </p>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: colorCancelacion, marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-4xl)", color: "var(--color-text-on-light)", marginTop: "0.4rem" }}>
                 {tasaCancelacion.toFixed(1)}%
               </p>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", marginTop: "0.4rem" }}>
@@ -566,7 +580,8 @@ function ReportesPage() {
             >
               Servicios más vendidos
             </h3>
-            <table className="w-full" style={{ borderCollapse: "collapse" }}>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-[600px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#0A0A0B" }}>
                   <th style={th}>Servicio</th>
@@ -585,8 +600,14 @@ function ReportesPage() {
                   </tr>
                 ) : (
                   <>
-                    {serviciosStats.map((s) => (
-                      <tr key={s.id}>
+                    {serviciosStats.map((s, i) => (
+                      <tr
+                        key={s.id}
+                        style={{
+                          backgroundColor: i % 2 === 0 ? "transparent" : "rgba(10,10,11,0.02)",
+                          borderBottom: "1px solid var(--color-border-light)",
+                        }}
+                      >
                         <td style={{ ...td, color: "var(--color-text-on-light)", fontWeight: 500 }}>{s.nombre}</td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{s.citas}</td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(s.ingresos)}</td>
@@ -609,6 +630,7 @@ function ReportesPage() {
                 )}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Rendimiento por estilista */}
@@ -625,7 +647,8 @@ function ReportesPage() {
             >
               Rendimiento por estilista
             </h3>
-            <table className="w-full" style={{ borderCollapse: "collapse" }}>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-[500px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#0A0A0B" }}>
                   <th style={th}>Estilista</th>
@@ -643,8 +666,14 @@ function ReportesPage() {
                     </td>
                   </tr>
                 ) : (
-                  estilistasStats.map((e) => (
-                    <tr key={e.id}>
+                  estilistasStats.map((e, i) => (
+                    <tr
+                      key={e.id}
+                      style={{
+                        backgroundColor: i % 2 === 0 ? "transparent" : "rgba(10,10,11,0.02)",
+                        borderBottom: i === estilistasStats.length - 1 ? "none" : "1px solid var(--color-border-light)",
+                      }}
+                    >
                       <td style={{ ...td, color: "var(--color-text-on-light)", fontWeight: 500 }}>{e.nombre}</td>
                       <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{e.citas}</td>
                       <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(e.ingresos)}</td>
@@ -657,6 +686,7 @@ function ReportesPage() {
                 )}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Cierre de caja diario */}
@@ -686,7 +716,8 @@ function ReportesPage() {
             {cierresLoading ? (
               <LoadingState variant="light" />
             ) : (
-              <table className="w-full" style={{ borderCollapse: "collapse" }}>
+              <div className="overflow-x-auto w-full">
+                <table className="w-full min-w-[800px]" style={{ borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#0A0A0B" }}>
                     <th style={th}>Fecha</th>
@@ -706,8 +737,14 @@ function ReportesPage() {
                       </td>
                     </tr>
                   ) : (
-                    cierres.map((c) => (
-                      <tr key={c.id}>
+                    cierres.map((c, i) => (
+                      <tr
+                        key={c.id}
+                        style={{
+                          backgroundColor: i % 2 === 0 ? "transparent" : "rgba(10,10,11,0.02)",
+                          borderBottom: i === cierres.length - 1 ? "none" : "1px solid var(--color-border-light)",
+                        }}
+                      >
                         <td style={{ ...td, fontFamily: "var(--font-mono)", color: "var(--color-text-on-light)" }}>
                           {format(new Date(c.fecha + "T00:00:00"), "d MMM yyyy", { locale: es })}
                         </td>
@@ -724,6 +761,7 @@ function ReportesPage() {
                   )}
                 </tbody>
               </table>
+              </div>
             )}
           </div>
         </>
