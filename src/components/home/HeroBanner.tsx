@@ -1,8 +1,18 @@
+import { useEffect, useState } from "react";
 import { ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { HeroModel3D } from "./HeroModel3D";
 
 export function HeroBanner() {
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   return (
     <section
       data-navbar-dark
@@ -34,7 +44,7 @@ export function HeroBanner() {
           paddingRight: "1.5rem",
         }}
       >
-        <div className="flex flex-col items-start gap-6">
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left gap-6">
           <span
             className="animate-fade-in-up uppercase"
             style={{
@@ -80,8 +90,22 @@ export function HeroBanner() {
             Profesionalismo, calidad y atención personalizada.
           </p>
 
+          {/* Modelo 3D en Móvil/Tablet (se muestra aquí) */}
+          {!isDesktop && (
+            <div className="flex w-full items-center justify-center my-8 animate-fade-in-up" style={{ animationDelay: "0.7s" }}>
+              <div style={{ position: "relative", width: 260, height: 260 }}>
+                <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(232,201,122,0.2)" }} />
+                <div style={{ position: "absolute", inset: "25px", borderRadius: "50%", border: "1px solid rgba(232,201,122,0.15)" }} />
+                <div style={{ position: "absolute", inset: "50px", borderRadius: "50%", border: "1px solid rgba(232,201,122,0.3)", backgroundColor: "rgba(232,201,122,0.06)" }} />
+                <div style={{ position: "absolute", inset: "-40px", zIndex: 10 }}>
+                  <HeroModel3D scale={2.8} positionY={-1.6} />
+                </div>
+              </div>
+            </div>
+          )}
+
           <div
-            className="animate-fade-in-up flex flex-wrap gap-4"
+            className="animate-fade-in-up flex flex-wrap justify-center lg:justify-start gap-4"
             style={{ animationDelay: "0.8s", marginTop: "2.5rem" }}
           >
             <a href="/contacto" style={{ display: "inline-block" }}>
@@ -97,7 +121,7 @@ export function HeroBanner() {
           </div>
 
           <div
-            className="animate-scale-in-x"
+            className="animate-scale-in-x mx-auto lg:mx-0"
             style={{
               animationDelay: "0.8s",
               width: "80px",
@@ -108,14 +132,14 @@ export function HeroBanner() {
           />
         </div>
 
-        {/* Columna derecha — decoración geométrica */}
+        {/* Columna derecha — decoración geométrica (Solo Desktop) */}
         <div className="hidden lg:flex items-center justify-center">
           <div style={{ position: "relative", width: 320, height: 320 }}>
             <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(232,201,122,0.2)" }} />
             <div style={{ position: "absolute", inset: "40px", borderRadius: "50%", border: "1px solid rgba(232,201,122,0.15)" }} />
             <div style={{ position: "absolute", inset: "80px", borderRadius: "50%", border: "1px solid rgba(232,201,122,0.3)", backgroundColor: "rgba(232,201,122,0.06)" }} />
             <div style={{ position: "absolute", inset: "-100px", zIndex: 10 }}>
-              <HeroModel3D />
+              {isDesktop && <HeroModel3D />}
             </div>
           </div>
         </div>

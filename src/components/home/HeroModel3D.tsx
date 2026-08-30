@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
 import * as THREE from "three";
 
-function AcModel() {
+function AcModel({ scale, positionY }: { scale: number; positionY: number }) {
   const { scene } = useGLTF("/ac.glb");
   const modelRef = useRef<THREE.Group>(null);
 
@@ -14,13 +14,13 @@ function AcModel() {
   });
 
   return (
-    <group ref={modelRef} position={[0, -2.0, 0]}>
-      <primitive object={scene} scale={3.5} />
+    <group ref={modelRef} position={[0, positionY, 0]}>
+      <primitive object={scene} scale={scale} />
     </group>
   );
 }
 
-export function HeroModel3D() {
+export function HeroModel3D({ scale = 3.5, positionY = -2.0 }: { scale?: number; positionY?: number }) {
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", cursor: "grab" }} title="Arrastra para rotar">
       <Canvas
@@ -37,7 +37,7 @@ export function HeroModel3D() {
           <directionalLight position={[10, 10, 5]} intensity={2} color="#ffeedd" />
           {/* Luz de relleno desde abajo/atrás */}
           <directionalLight position={[-10, -10, -5]} intensity={2} />
-          <AcModel />
+          <AcModel scale={scale} positionY={positionY} />
           <OrbitControls 
             enableZoom={false} 
             enablePan={false}
