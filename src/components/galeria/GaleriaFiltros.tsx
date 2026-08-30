@@ -79,6 +79,8 @@ export function GaleriaFiltros({
               </button>
             );
           })}
+          {/* Spacer para que el último elemento no quede pegado al borde en móviles */}
+          <div className="w-4 shrink-0" aria-hidden="true" />
         </div>
 
         <p

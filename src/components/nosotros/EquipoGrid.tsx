@@ -1,28 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Star } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 
-// Array local original — comentado por si hay que hacer rollback rápido.
-// const EQUIPO = [
-//   {
-//     id: "e1",
-//     name: "Adriana Chávez",
-//     role: "Fundadora & Directora Creativa",
-//     experience: 14,
-//     specialties: ["Coloración", "Balayage", "Dirección artística"],
-//     photo: "https://placehold.co/120x120/1A1820/D4AF6B?text=AC",
-//     bio: "Fundadora del centro con más de 14 años de experiencia. Formada en Colombia, México y España.",
-//   },
-//   // ... ver historial de git para el array completo de 4 estilistas
-// ];
-
 interface EstilistaUI {
   id: string;
   name: string;
-  role: string;
   experience: number;
   specialties: string[];
   photo: string;
@@ -31,13 +15,12 @@ interface EstilistaUI {
 
 interface EstilistaCardProps {
   name: string;
-  role: string;
   experience: number;
   specialties: string[];
   photo: string;
 }
 
-function EstilistaCard({ name, role, experience, specialties, photo }: EstilistaCardProps) {
+function EstilistaCard({ name, experience, specialties, photo }: EstilistaCardProps) {
   return (
     <div
       className="text-center"
@@ -81,23 +64,24 @@ function EstilistaCard({ name, role, experience, specialties, photo }: Estilista
       >
         {name}
       </h3>
-      <p
-        className="uppercase mt-1"
-        style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: "var(--text-xs)",
-          letterSpacing: "var(--tracking-wider)",
-          color: "var(--color-primary-dim)",
-        }}
-      >
-        {role}
-      </p>
+
 
       <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1rem 0" }} />
 
-      <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
         {specialties.slice(0, 3).map((s) => (
-          <Badge key={s}>{s}</Badge>
+          <span
+            key={s}
+            className="uppercase"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "var(--text-xs)",
+              letterSpacing: "var(--tracking-wider)",
+              color: "var(--color-primary-dim)",
+            }}
+          >
+            {s}
+          </span>
         ))}
       </div>
 
@@ -142,7 +126,6 @@ export function EquipoGrid() {
       data.map((e) => ({
         id: e.id,
         name: e.nombre,
-        role: e.cargo,
         experience: e.anos_experiencia,
         specialties: e.especialidades,
         photo: e.foto_url ?? "",

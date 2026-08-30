@@ -30,7 +30,7 @@ const FAQS = [
 ];
 
 export function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <section
@@ -60,7 +60,7 @@ export function FAQ() {
           eyebrowColor="var(--color-primary-dim)"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <div className="max-w-3xl mx-auto grid grid-cols-1 gap-4 items-start">
           {FAQS.map((f, i) => {
             const isOpen = openIndex === i;
             return (

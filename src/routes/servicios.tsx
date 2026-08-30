@@ -97,6 +97,17 @@ function ServiciosPage() {
           >
             Cada servicio está diseñado para realzar tu belleza con técnicas
             de vanguardia y atención completamente personalizada.
+            <span
+              style={{
+                display: "block",
+                marginTop: "0.5rem",
+                fontSize: "var(--text-sm)",
+                color: "rgba(247,245,240,0.45)",
+                lineHeight: "var(--leading-relaxed)",
+              }}
+            >
+              * Los precios son aproximados y pueden variar según la técnica, el largo, la cantidad de cabello o los productos requeridos. Para algunos servicios se recomienda una valoración previa.
+            </span>
           </p>
         </div>
       </section>

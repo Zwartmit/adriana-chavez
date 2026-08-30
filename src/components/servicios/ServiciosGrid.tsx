@@ -111,6 +111,12 @@ export function ServiciosGrid({
     return matchesCategory && matchesSearch;
   });
 
+  const [displayCount, setDisplayCount] = useState(6);
+
+  useEffect(() => {
+    setDisplayCount(6);
+  }, [activeCategory, searchQuery]);
+
   return (
     <section
       style={{
@@ -148,16 +154,74 @@ export function ServiciosGrid({
 
             {serviciosFiltrados.length > 0 ? (
               <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 style={{
                   backgroundColor: "var(--color-bg-light-alt)",
                   borderRadius: "var(--radius-2xl)",
                   padding: "2rem",
                 }}
               >
-                {serviciosFiltrados.map((s) => (
-                  <ServiceCard key={s.id} {...s} theme="light" />
-                ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {serviciosFiltrados.slice(0, displayCount).map((s) => (
+                    <ServiceCard key={s.id} {...s} theme="light" />
+                  ))}
+                </div>
+
+                {(displayCount < serviciosFiltrados.length || displayCount > 6) && (
+                  <div className="flex justify-center mt-12 gap-4">
+                    {displayCount > 6 && (
+                      <button
+                        onClick={() => setDisplayCount((prev) => Math.max(6, prev - 6))}
+                        style={{
+                          backgroundColor: "transparent",
+                          color: "var(--color-primary-dim)",
+                          border: "1px solid var(--color-primary-dim)",
+                          padding: "10px 24px",
+                          borderRadius: "var(--radius-full)",
+                          fontFamily: "var(--font-body)",
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "var(--color-primary-dim)";
+                          e.currentTarget.style.color = "white";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                          e.currentTarget.style.color = "var(--color-primary-dim)";
+                        }}
+                      >
+                        Mostrar menos
+                      </button>
+                    )}
+                    {displayCount < serviciosFiltrados.length && (
+                      <button
+                        onClick={() => setDisplayCount((prev) => prev + 6)}
+                        style={{
+                          backgroundColor: "transparent",
+                          color: "var(--color-primary-dim)",
+                          border: "1px solid var(--color-primary-dim)",
+                          padding: "10px 24px",
+                          borderRadius: "var(--radius-full)",
+                          fontFamily: "var(--font-body)",
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "var(--color-primary-dim)";
+                          e.currentTarget.style.color = "white";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                          e.currentTarget.style.color = "var(--color-primary-dim)";
+                        }}
+                      >
+                        Cargar más (6)
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4 py-20">

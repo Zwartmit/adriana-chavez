@@ -551,7 +551,7 @@ function ClienteDetallePage() {
       {showDesactivarConfirm && (
         <ConfirmModal
           title="Desactivar cliente"
-          message="¿Estás seguro que deseas desactivar esta clienta? Podrás reactivarla más adelante desde la base de datos."
+          message="¿Deseas desactivar esta clienta? Podrás reactivarla más adelante desde la base de datos."
           confirmLabel="Desactivar"
           loading={desactivando}
           onConfirm={handleDesactivar}

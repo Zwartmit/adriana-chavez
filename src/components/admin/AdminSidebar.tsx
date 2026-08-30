@@ -436,7 +436,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
                 marginBottom: "1.75rem",
               }}
             >
-              ¿Estás seguro que deseas cerrar la sesión?
+              ¿Deseas cerrar sesión?
             </p>
             <div className="flex items-center justify-center gap-3">
               <button

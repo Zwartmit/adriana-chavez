@@ -129,7 +129,7 @@ export function Navbar() {
           </a>
 
           {/* Desktop links */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
@@ -159,7 +159,7 @@ export function Navbar() {
             {/* Desktop CTA */}
             <a
               href="/contacto"
-              className="hidden md:inline-flex items-center justify-center transition-colors"
+              className="hidden lg:inline-flex items-center justify-center transition-colors"
               style={{
                 backgroundColor: "#E8C97A",
                 color: "#0A0A0B",
@@ -188,7 +188,7 @@ export function Navbar() {
             <button
               type="button"
               aria-label="Abrir menú"
-              className="md:hidden p-2"
+              className="lg:hidden p-2"
               onClick={() => setOpen(true)}
               style={{ color: isDark ? "#F5F2EB" : "#0A0A0B", transition: "color 300ms ease" }}
             >
@@ -202,7 +202,7 @@ export function Navbar() {
       <div
         aria-hidden={!open}
         className={cn(
-          "fixed inset-0 z-[60] md:hidden transition-opacity duration-300",
+          "fixed inset-0 z-[60] lg:hidden transition-opacity duration-300",
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         )}
       >

@@ -37,6 +37,7 @@ const selectStyle: React.CSSProperties = {
   fontSize: "var(--text-base)",
   color: "var(--color-text-primary)",
   minWidth: "180px",
+  width: "100%",
   appearance: "none",
   transition: "border var(--transition-base)",
 };
@@ -110,8 +111,8 @@ export function TiendaFiltros({
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <div className="relative w-full sm:w-auto">
               <select
                 value={activeCategory}
                 onChange={(e) => onCategoryChange(e.target.value)}
@@ -138,7 +139,7 @@ export function TiendaFiltros({
               />
             </div>
 
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <select
                 value={sortOrder}
                 onChange={(e) => onSortChange(e.target.value)}

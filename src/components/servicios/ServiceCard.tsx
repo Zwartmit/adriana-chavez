@@ -22,6 +22,18 @@ function formatCOP(n: number) {
   }).format(n);
 }
 
+const REQUIRES_APPOINTMENT_SERVICES = [
+  "balayage",
+  "baby lights",
+  "morena iluminada",
+  "contour",
+  "mechas clásicas",
+  "decoloración parcial",
+  "corrección de color",
+  "micropigmentación de cejas",
+  "micropigmentación de labios",
+];
+
 export function ServiceCard({
   name,
   category,
@@ -33,6 +45,9 @@ export function ServiceCard({
   theme = "dark",
 }: ServiceCardProps) {
   const isLight = theme === "light";
+  
+  const normalizedName = name.toLowerCase();
+  const requiresAppointment = REQUIRES_APPOINTMENT_SERVICES.some(s => normalizedName.includes(s));
 
   return (
     <article
@@ -88,8 +103,38 @@ export function ServiceCard({
       </div>
 
       <div className="flex flex-col gap-3 p-5 flex-1">
-
-        {category && <Badge>{category}</Badge>}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          {category && (
+            <span
+              className="uppercase"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "var(--text-xs)",
+                letterSpacing: "var(--tracking-wider)",
+                color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
+              }}
+            >
+              {category}
+            </span>
+          )}
+          {requiresAppointment && (
+            <span
+              className="uppercase"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "10px",
+                letterSpacing: "var(--tracking-wider)",
+                color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
+                border: isLight ? "1px solid var(--color-primary-dim)" : "1px solid rgba(232,201,122,0.3)",
+                padding: "2px 8px",
+                borderRadius: "var(--radius-full)",
+                opacity: 0.8,
+              }}
+            >
+              Requiere cita previa
+            </span>
+          )}
+        </div>
         <h3
           style={{
             fontFamily: "var(--font-display)",
