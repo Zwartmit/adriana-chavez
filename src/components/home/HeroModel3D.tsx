@@ -1,6 +1,6 @@
 import { Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
+import { OrbitControls, useGLTF, Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 
 function AcModel({ scale, positionY }: { scale: number; positionY: number }) {
@@ -26,22 +26,34 @@ export function HeroModel3D({ scale = 3.5, positionY = -2.0 }: { scale?: number;
       <Canvas
         camera={{ position: [0, 1, 5], fov: 45 }}
         style={{ width: "100%", height: "100%" }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        dpr={[1, 1.5]}
       >
         <Suspense fallback={null}>
           <Environment preset="city" />
           <ambientLight intensity={2} />
-          {/* Luz principal directa de frente para sacarle el brillo */}
+          {/* Luz principal simplificada para ahorrar rendimiento en móviles */}
           <directionalLight position={[0, 5, 10]} intensity={4} />
-          {/* Luz lateral cálida */}
-          <directionalLight position={[10, 10, 5]} intensity={2} color="#ffeedd" />
-          {/* Luz de relleno desde abajo/atrás */}
-          <directionalLight position={[-10, -10, -5]} intensity={2} />
+          
           <AcModel scale={scale} positionY={positionY} />
+          
+          {/* Sombra "cocinada" estática: de altísimo rendimiento */}
+          <ContactShadows 
+            position={[0, positionY - 0.5, 0]} 
+            opacity={0.4} 
+            scale={10} 
+            blur={2} 
+            resolution={256} 
+            frames={1} 
+          />
+          
           <OrbitControls 
             enableZoom={false} 
             enablePan={false}
             autoRotate={false}
+            /* Limitar rotación para no atravesar el modelo */
+            minPolarAngle={Math.PI / 3}
+            maxPolarAngle={Math.PI / 1.5}
           />
         </Suspense>
       </Canvas>
