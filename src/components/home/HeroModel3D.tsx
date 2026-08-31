@@ -4,7 +4,7 @@ import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
 import * as THREE from "three";
 
 function AcModel({ scale, positionY }: { scale: number; positionY: number }) {
-  const { scene } = useGLTF("/ac.glb");
+  const { scene } = useGLTF("/ac-v2.glb");
   const modelRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -49,4 +49,4 @@ export function HeroModel3D({ scale = 3.5, positionY = -2.0 }: { scale?: number;
   );
 }
 
-useGLTF.preload("/ac.glb");
+useGLTF.preload("/ac-v2.glb");

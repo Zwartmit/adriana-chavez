@@ -68,20 +68,24 @@ function EstilistaCard({ name, experience, specialties, photo }: EstilistaCardPr
 
       <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1rem 0" }} />
 
-      <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-        {specialties.slice(0, 3).map((s) => (
-          <span
-            key={s}
-            className="uppercase"
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-xs)",
-              letterSpacing: "var(--tracking-wider)",
-              color: "var(--color-primary-dim)",
-            }}
-          >
-            {s}
-          </span>
+      <div className="flex flex-col items-center justify-center gap-y-1">
+        {specialties
+          .flatMap((s) => s.split(/\s+/))
+          .filter(Boolean)
+          .slice(0, 4)
+          .map((s, idx) => (
+            <span
+              key={`${s}-${idx}`}
+              className="uppercase text-center"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "var(--text-xs)",
+                letterSpacing: "var(--tracking-wider)",
+                color: "var(--color-primary-dim)",
+              }}
+            >
+              {s}
+            </span>
         ))}
       </div>
 
