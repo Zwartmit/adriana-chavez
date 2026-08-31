@@ -1,4 +1,4 @@
-import { Suspense, useRef } from "react";
+import { Suspense, useRef, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
@@ -20,43 +20,91 @@ function AcModel({ scale, positionY }: { scale: number; positionY: number }) {
   );
 }
 
+/** Spinner dorado puro CSS — sin Three.js */
+function LoadingSpinner() {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1,
+      }}
+    >
+      <div
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          border: "2.5px solid rgba(232,201,122,0.2)",
+          borderTopColor: "var(--color-primary)",
+          animation: "spin 0.8s linear infinite",
+        }}
+      />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+}
+
 export function HeroModel3D({ scale = 3.5, positionY = -2.0 }: { scale?: number; positionY?: number }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", cursor: "grab" }} title="Arrastra para rotar">
       <Canvas
         camera={{ position: [0, 1, 5], fov: 45 }}
         style={{ width: "100%", height: "100%" }}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        dpr={[1, 1.5]}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: "high-performance" }}
+        dpr={isMobile ? 1 : [1, 1.5]}
+        /**
+         * frameloop="demand" — en móvil solo renderiza cuando hay input del usuario.
+         * Evita que el bucle de renderizado 60fps bloquee el scroll y la UI.
+         */
+        frameloop={isMobile ? "demand" : "always"}
       >
         <Suspense fallback={null}>
           <Environment preset="city" />
-          <ambientLight intensity={2} />
-          {/* Luz principal simplificada para ahorrar rendimiento en móviles */}
+          <ambientLight intensity={isMobile ? 3 : 2} />
+          {/* Única luz direccional — el entorno hace el trabajo pesado */}
           <directionalLight position={[0, 5, 10]} intensity={4} />
-          
+
           <AcModel scale={scale} positionY={positionY} />
-          
-          {/* Sombra "cocinada" estática: de altísimo rendimiento */}
-          <ContactShadows 
-            position={[0, positionY - 0.5, 0]} 
-            opacity={0.4} 
-            scale={10} 
-            blur={2} 
-            resolution={256} 
-            frames={1} 
-          />
-          
-          <OrbitControls 
-            enableZoom={false} 
+
+          {/* Sombra "cocinada" estática: se calcula una sola vez */}
+          {!isMobile && (
+            <ContactShadows
+              position={[0, positionY - 0.5, 0]}
+              opacity={0.4}
+              scale={10}
+              blur={2}
+              resolution={256}
+              frames={1}
+            />
+          )}
+
+          <OrbitControls
+            enableZoom={false}
             enablePan={false}
             autoRotate={false}
-            /* Limitar rotación para no atravesar el modelo */
             minPolarAngle={Math.PI / 3}
             maxPolarAngle={Math.PI / 1.5}
           />
         </Suspense>
       </Canvas>
+
+      {/* Spinner visible mientras carga el Canvas/modelo */}
+      <Suspense fallback={<LoadingSpinner />}>
+        <div style={{ display: "none" }} />
+      </Suspense>
     </div>
   );
 }
