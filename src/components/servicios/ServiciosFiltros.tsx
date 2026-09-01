@@ -31,19 +31,15 @@ export function ServiciosFiltros({
       }}
     >
       <div
+        className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-4 mx-auto"
         style={{
           maxWidth: "1200px",
-          marginLeft: "auto",
-          marginRight: "auto",
           paddingLeft: "1.5rem",
           paddingRight: "1.5rem",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem",
         }}
       >
-        {/* Búsqueda — ancho fijo compacto */}
-        <div className="relative shrink-0" style={{ width: 300 }}>
+        {/* Búsqueda — ancho fijo compacto en desktop, full width en móvil */}
+        <div className="relative shrink-0 w-full lg:w-[300px]">
           <Search
             size={15}
             style={{
@@ -75,26 +71,21 @@ export function ServiciosFiltros({
           />
         </div>
 
-        {/* Separador vertical */}
+        {/* Separador vertical - Oculto en móvil */}
         <div
+          className="hidden lg:block shrink-0"
           style={{
             width: 1,
             height: 28,
             backgroundColor: "var(--color-border)",
-            flexShrink: 0,
           }}
         />
 
         {/* Filtros — scroll horizontal, ocupa el resto del espacio */}
         <div
+          className="flex items-center gap-2 overflow-x-auto flex-1 min-w-0 pb-2 lg:pb-0"
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            overflowX: "auto",
-            scrollbarWidth: "none",
-            flex: 1,
-            minWidth: 0,
+            scrollbarWidth: "none", // Firefox
           }}
         >
           {CATEGORIAS.map((cat) => {

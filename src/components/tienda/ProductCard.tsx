@@ -39,36 +39,23 @@ export function ProductCard(props: ProductCardProps) {
   const isLight = theme === "light";
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       <a
         href={`/tienda/${slug}`}
-        className="group block relative"
-        style={{
-          position: "relative",
-          aspectRatio: "1 / 1",
-          overflow: "hidden",
-          borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-        }}
+        className="group block relative w-full overflow-hidden rounded-t-[var(--radius-xl)] aspect-square"
       >
         <img
           src={image}
           alt={name}
-          className="transition-transform duration-500 group-hover:scale-105"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          className="transition-transform duration-500 group-hover:scale-105 w-full h-full object-cover"
         />
         {isNew && !isAgotado && (
           <span
-            className="uppercase"
+            className="uppercase absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs"
             style={{
-              position: "absolute",
-              top: 12,
-              right: 12,
               backgroundColor: "var(--color-primary)",
               color: "var(--color-text-inverse)",
               fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-xs)",
-              padding: "4px 10px",
-              borderRadius: "var(--radius-full)",
             }}
           >
             Nuevo
@@ -76,17 +63,11 @@ export function ProductCard(props: ProductCardProps) {
         )}
         {isAgotado && (
           <span
-            className="uppercase"
+            className="uppercase absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs"
             style={{
-              position: "absolute",
-              top: 12,
-              right: 12,
               backgroundColor: "var(--color-text-muted)",
               color: "var(--color-text-inverse)",
               fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-xs)",
-              padding: "4px 10px",
-              borderRadius: "var(--radius-full)",
             }}
           >
             Agotado
@@ -95,127 +76,65 @@ export function ProductCard(props: ProductCardProps) {
       </a>
 
       <div
-        className="flex flex-col gap-1"
-        style={
+        className={`flex flex-col gap-1 p-3 sm:p-5 flex-1 rounded-b-[var(--radius-xl)] transition-all duration-300 items-center sm:items-start text-center sm:text-left ${
           isLight
-            ? {
-                backgroundColor: "var(--color-surface-light)",
-                border: "1px solid var(--color-border-light)",
-                borderTop: "none",
-                boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
-                borderRadius: "0 0 var(--radius-xl) var(--radius-xl)",
-                padding: "1.25rem",
-                flex: 1,
-                transition: "box-shadow var(--transition-slow), transform var(--transition-slow)",
-              }
-            : {
-                backgroundColor: "var(--color-surface)",
-                borderLeft: "1px solid var(--color-border)",
-                borderRight: "1px solid var(--color-border)",
-                borderBottom: "1px solid var(--color-border)",
-                borderRadius: "0 0 var(--radius-xl) var(--radius-xl)",
-                padding: "1.25rem",
-                flex: 1,
-              }
-        }
-        onMouseEnter={(e) => {
-          if (!isLight) return;
-          e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,10,11,0.12)";
-          e.currentTarget.style.transform = "translateY(-3px)";
-        }}
-        onMouseLeave={(e) => {
-          if (!isLight) return;
-          e.currentTarget.style.boxShadow = "0 2px 12px rgba(10,10,11,0.08)";
-          e.currentTarget.style.transform = "translateY(0)";
-        }}
+            ? "bg-[var(--color-surface-light)] border border-t-0 border-[var(--color-border-light)] shadow-sm hover:shadow-md hover:-translate-y-1"
+            : "bg-[var(--color-surface)] border border-t-0 border-[var(--color-border)]"
+        }`}
       >
         <span
-          className="uppercase"
+          className="uppercase text-[10px] sm:text-xs tracking-wider"
           style={{
             fontFamily: "var(--font-mono)",
-            fontSize: "var(--text-xs)",
-            letterSpacing: "var(--tracking-wider)",
             color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
           }}
         >
           {brand}
         </span>
+        
         <a href={`/tienda/${slug}`}>
           <h3
+            className="font-semibold italic line-clamp-2 text-sm sm:text-lg leading-tight"
             style={{
               fontFamily: "var(--font-display)",
-              fontStyle: "italic",
-              fontWeight: 600,
-              fontSize: "var(--text-lg)",
               color: isLight ? "var(--color-text-on-light)" : "var(--color-text-primary)",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
             }}
           >
             {name}
           </h3>
         </a>
+        
         <p
+          className="hidden sm:-webkit-box line-clamp-2 text-xs sm:text-sm mt-1"
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "var(--text-sm)",
             color: isLight ? "var(--color-text-on-light-muted)" : "var(--color-text-secondary)",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
           }}
         >
           {description}
         </p>
 
-        <div className="flex items-center gap-2 mt-1">
-          <span style={{ color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)" }}>
-            {"★".repeat(Math.round(rating))}
-          </span>
-          <span
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-xs)",
-              color: isLight ? "var(--color-text-on-light-faint)" : "var(--color-text-muted)",
-            }}
-          >
-            ({rating}) {reviews} reseñas
-          </span>
-        </div>
-
-        <div className="mt-2">
+        <div className="mt-auto pt-2 sm:pt-4 flex flex-col items-center sm:items-start w-full">
           {isAgotado ? (
-            <>
+            <div className="flex flex-col">
               <span
+                className="font-bold line-through text-base sm:text-xl"
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontWeight: 700,
-                  fontSize: "var(--text-xl)",
                   color: isLight ? "var(--color-text-on-light-faint)" : "var(--color-text-muted)",
-                  textDecoration: "line-through",
                 }}
               >
                 {formatPrice(price)}
               </span>
-              <div
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-sm)",
-                  color: "var(--color-error)",
-                }}
-              >
+              <span className="text-xs sm:text-sm text-[var(--color-error)]">
                 Agotado
-              </div>
-            </>
+              </span>
+            </div>
           ) : (
             <span
+              className="font-bold text-base sm:text-xl block"
               style={{
                 fontFamily: "var(--font-mono)",
-                fontWeight: 700,
-                fontSize: "var(--text-xl)",
                 color: isLight ? "var(--color-primary-dim)" : "var(--color-primary)",
               }}
             >
@@ -226,11 +145,12 @@ export function ProductCard(props: ProductCardProps) {
 
         <Button
           variant="accent"
-          className="w-full mt-3"
+          className="w-full mt-2 sm:mt-3 px-2 sm:px-4 text-xs sm:text-sm h-9 sm:h-10"
           disabled={isAgotado}
           onClick={() => onAddToCart?.(props)}
         >
-          Agregar al carrito →
+          <span className="hidden sm:inline">Agregar al carrito →</span>
+          <span className="sm:hidden">Agregar</span>
         </Button>
       </div>
     </div>

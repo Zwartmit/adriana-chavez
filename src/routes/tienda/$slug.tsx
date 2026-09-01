@@ -119,7 +119,7 @@ function ProductoPage() {
 
     if (error) {
       console.error("[ProductoPage] error al cargar:", error.message);
-      setError(error.message);
+      setError("Lo sentimos, no pudimos cargar los detalles del producto en este momento.");
       setLoading(false);
       return;
     }

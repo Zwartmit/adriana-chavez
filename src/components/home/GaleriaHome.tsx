@@ -49,7 +49,7 @@ export function GaleriaHome() {
 
     if (error) {
       console.error("[GaleriaHome] error al cargar:", error.message);
-      setError(error.message);
+      setError("Lo sentimos, en este momento tenemos problemas para cargar la galería. Intenta más tarde.");
       setLoading(false);
       return;
     }

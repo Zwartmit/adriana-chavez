@@ -60,7 +60,7 @@ export function ServiciosGrid({
 
     if (error) {
       console.error("[ServiciosGrid] error al cargar:", error.message);
-      setError(error.message);
+      setError("Lo sentimos, en este momento tenemos problemas para cargar los servicios. Intenta más tarde.");
       setLoading(false);
       return;
     }
@@ -153,14 +153,8 @@ export function ServiciosGrid({
             </p>
 
             {serviciosFiltrados.length > 0 ? (
-              <div
-                style={{
-                  backgroundColor: "var(--color-bg-light-alt)",
-                  borderRadius: "var(--radius-2xl)",
-                  padding: "2rem",
-                }}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mt-6">
                   {serviciosFiltrados.slice(0, displayCount).map((s) => (
                     <ServiceCard key={s.id} {...s} theme="light" />
                   ))}
@@ -222,7 +216,7 @@ export function ServiciosGrid({
                     )}
                   </div>
                 )}
-              </div>
+              </>
             ) : (
               <div className="flex flex-col items-center gap-4 py-20">
                 <span

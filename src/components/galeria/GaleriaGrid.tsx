@@ -112,7 +112,7 @@ export function GaleriaGrid({
 
     if (error) {
       console.error("[GaleriaGrid] error al cargar:", error.message);
-      setError(error.message);
+      setError("Lo sentimos, en este momento tenemos problemas para cargar la galería. Intenta más tarde.");
       setLoading(false);
       return;
     }
@@ -178,7 +178,7 @@ export function GaleriaGrid({
           <>
             <div
               key={activeCategory}
-              className="animate-in fade-in duration-300 columns-1 sm:columns-2 lg:columns-3 gap-x-4"
+              className="animate-in fade-in duration-300 columns-2 sm:columns-2 lg:columns-3 gap-x-3 sm:gap-x-4"
             >
               {itemsFiltrados.slice(0, displayCount).map((item) => (
                 <GaleriaCard key={item.id} item={item} onClick={() => onItemClick(item)} />

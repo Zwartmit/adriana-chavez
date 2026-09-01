@@ -1,5 +1,6 @@
 import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
 export interface ServiceCardProps {
   id: string;
@@ -50,166 +51,100 @@ export function ServiceCard({
   const requiresAppointment = REQUIRES_APPOINTMENT_SERVICES.some(s => normalizedName.includes(s));
 
   return (
-    <article
-      className={isLight ? "flex flex-col group" : "service-card-nc flex flex-col group"}
-      style={
-        isLight
-          ? {
-              backgroundColor: "var(--color-surface-light)",
-              border: "1px solid var(--color-border-light)",
-              boxShadow: "0 2px 12px rgba(10,10,11,0.08)",
-              borderRadius: "var(--radius-xl)",
-              overflow: "hidden",
-              transition: "box-shadow var(--transition-slow), transform var(--transition-slow)",
-              position: "relative",
-            }
-          : {
-              background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
-              border: "0.5px solid rgba(255,255,255,0.08)",
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)",
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
-              borderRadius: "var(--radius-xl)",
-              overflow: "hidden",
-              transition: "border-color var(--transition-slow), box-shadow var(--transition-slow)",
-              position: "relative",
-            }
-      }
-      onMouseEnter={(e) => {
-        if (isLight) {
-          e.currentTarget.style.boxShadow = "0 8px 24px rgba(10,10,11,0.12)";
-          e.currentTarget.style.transform = "translateY(-3px)";
-        } else {
-          e.currentTarget.style.borderColor = "rgba(232,201,122,0.35)";
-          e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.5)";
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (isLight) {
-          e.currentTarget.style.boxShadow = "0 2px 12px rgba(10,10,11,0.08)";
-          e.currentTarget.style.transform = "translateY(0)";
-        } else {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-          e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)";
-        }
-      }}
-    >
-      <div className="relative" style={{ height: "180px", overflow: "hidden" }}>
+    <article className="flex flex-col h-full group">
+      <div className="relative w-full overflow-hidden rounded-t-[var(--radius-xl)] aspect-square">
         <img
-          src={image}
+          src={image || "https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=400&auto=format&fit=crop"}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="transition-transform duration-500 group-hover:scale-105 w-full h-full object-cover"
         />
+        {requiresAppointment && (
+          <span
+            className="uppercase absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs"
+            style={{
+              backgroundColor: "var(--color-primary)",
+              color: "var(--color-text-inverse)",
+              fontFamily: "var(--font-mono)",
+            }}
+          >
+            Requiere cita
+          </span>
+        )}
       </div>
 
-      <div className="flex flex-col gap-3 p-5 flex-1">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          {category && (
-            <span
-              className="uppercase"
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "var(--text-xs)",
-                letterSpacing: "var(--tracking-wider)",
-                color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
-              }}
-            >
-              {category}
-            </span>
-          )}
-          {requiresAppointment && (
-            <span
-              className="uppercase"
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "10px",
-                letterSpacing: "var(--tracking-wider)",
-                color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
-                border: isLight ? "1px solid var(--color-primary-dim)" : "1px solid rgba(232,201,122,0.3)",
-                padding: "2px 8px",
-                borderRadius: "var(--radius-full)",
-                opacity: 0.8,
-              }}
-            >
-              Requiere cita previa
-            </span>
-          )}
-        </div>
-        <h3
+      <div
+        className={`flex flex-col gap-1 p-3 sm:p-5 flex-1 rounded-b-[var(--radius-xl)] transition-all duration-300 items-center sm:items-start text-center sm:text-left ${
+          isLight
+            ? "bg-[var(--color-surface-light)] border border-t-0 border-[var(--color-border-light)] shadow-sm hover:shadow-md hover:-translate-y-1"
+            : "bg-[var(--color-surface)] border border-t-0 border-[var(--color-border)]"
+        }`}
+      >
+        <span
+          className="uppercase text-[10px] sm:text-xs tracking-wider"
           style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 600,
-            fontSize: "var(--text-2xl)",
-            color: isLight ? "var(--color-text-on-light)" : "var(--color-text-primary)",
-            lineHeight: "var(--leading-tight)",
+            fontFamily: "var(--font-mono)",
+            color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
           }}
         >
-          {name}
-        </h3>
+          {category}
+        </span>
+        
+        <a href={href}>
+          <h3
+            className="font-semibold italic line-clamp-2 text-sm sm:text-lg leading-tight"
+            style={{
+              fontFamily: "var(--font-display)",
+              color: isLight ? "var(--color-text-on-light)" : "var(--color-text-primary)",
+            }}
+          >
+            {name}
+          </h3>
+        </a>
+        
         <p
+          className="hidden sm:-webkit-box line-clamp-2 text-xs sm:text-sm mt-1"
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "var(--text-sm)",
-            color: isLight ? "var(--color-text-on-light-muted)" : "rgba(247, 245, 240, 0.7)",
-            lineHeight: "var(--leading-relaxed)",
+            color: isLight ? "var(--color-text-on-light-muted)" : "var(--color-text-secondary)",
           }}
         >
           {description}
         </p>
 
-        <div
-          className="flex items-center justify-between mt-auto pt-4"
-          style={{ borderTop: isLight ? "1px solid var(--color-border-light)" : "1px solid rgba(255,255,255,0.08)" }}
-        >
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-1 sm:gap-x-2 mt-auto pt-2 w-full">
           <div
-            className="flex items-center gap-2"
+            className="flex items-center justify-center sm:justify-start gap-1 text-[10px] sm:text-xs"
             style={{
               fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-xs)",
               color: isLight ? "var(--color-text-on-light-muted)" : "rgba(247, 245, 240, 0.6)",
             }}
           >
-            <Clock size={14} />
-            {duration}min/aprox.
-          </div>
-          <div
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontWeight: 600,
-              fontSize: "var(--text-lg)",
-              color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
-            }}
-          >
-            {formatCOP(price)}
+            <Clock size={12} className="sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">{duration} min/aprox.</span>
+            <span className="sm:hidden">{duration} min/aprox.</span>
           </div>
         </div>
 
-        <a
-          href={href}
-          className="inline-flex items-center justify-center mt-2"
-          style={{
-            backgroundColor: "var(--color-accent)",
-            color: "var(--color-text-inverse)",
-            fontFamily: "var(--font-body)",
-            fontWeight: 600,
-            fontSize: "var(--text-sm)",
-            letterSpacing: "var(--tracking-wide)",
-            padding: "12px 28px",
-            minHeight: "44px",
-            whiteSpace: "nowrap",
-            borderRadius: "var(--radius-full)",
-            transition: "background-color var(--transition-base)",
-          }}
+        <div className="mt-1 sm:mt-2 flex flex-col items-center sm:items-start w-full">
+          <span
+            className="font-bold text-base sm:text-xl block"
+            style={{
+              fontFamily: "var(--font-mono)",
+              color: isLight ? "var(--color-primary-dim)" : "var(--color-primary)",
+            }}
+          >
+            {formatCOP(price)}
+          </span>
+        </div>
 
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = "var(--color-accent-dim)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "var(--color-accent)")
-          }
+        <Button
+          variant="accent"
+          className="w-full mt-2 sm:mt-3 px-2 sm:px-4 text-xs sm:text-sm h-9 sm:h-10"
+          onClick={() => window.location.href = href}
         >
-          Reservar →
-        </a>
+          <span className="hidden sm:inline">Reservar cita →</span>
+          <span className="sm:hidden">Reservar</span>
+        </Button>
       </div>
     </article>
   );

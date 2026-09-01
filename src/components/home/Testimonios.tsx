@@ -90,7 +90,7 @@ export function Testimonios() {
 
     if (error) {
       console.error("[Testimonios] error al cargar:", error.message);
-      setError(error.message);
+      setError("Lo sentimos, en este momento tenemos problemas para cargar los testimonios. Intenta más tarde.");
       setLoading(false);
       return;
     }

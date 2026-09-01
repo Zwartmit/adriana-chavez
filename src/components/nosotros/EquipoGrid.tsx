@@ -120,7 +120,7 @@ export function EquipoGrid() {
 
     if (error) {
       console.error("[EquipoGrid] error al cargar:", error.message);
-      setError(error.message);
+      setError("Lo sentimos, en este momento tenemos problemas para cargar el equipo. Intenta más tarde.");
       setLoading(false);
       return;
     }

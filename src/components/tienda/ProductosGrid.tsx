@@ -90,7 +90,7 @@ export function ProductosGrid({
 
     if (error) {
       console.error("[ProductosGrid] error al cargar:", error.message);
-      setError(error.message);
+      setError("Lo sentimos, en este momento tenemos problemas para cargar los productos. Intenta más tarde.");
       setLoading(false);
       return;
     }
@@ -180,7 +180,7 @@ export function ProductosGrid({
           <ErrorState message={error} onRetry={fetchProductos} variant="light" />
         ) : productosFiltrados.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {productosFiltrados.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map((p) => (
                 <ProductCard key={p.id} {...p} theme="light" onAddToCart={handleAddToCart} />
               ))}
