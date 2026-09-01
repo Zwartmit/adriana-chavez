@@ -60,7 +60,7 @@ function MensajesPage() {
 
     if (error) {
       console.error("[MensajesPage] error al cargar mensajes:", error.message);
-      setError(error.message);
+      setError("No se pudieron cargar los mensajes. Intenta de nuevo más tarde.");
       setLoading(false);
       return;
     }

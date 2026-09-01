@@ -54,8 +54,12 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
       .select("id, nombre, cargo, color_calendario, activo")
       .order("nombre", { ascending: true });
     
-    if (error) setError(error.message);
-    else setEstilistas(data ?? []);
+    if (error) {
+      console.error("Error fetching estilistas:", error);
+      setError("No pudimos cargar la lista de estilistas. Intenta de nuevo más tarde.");
+    } else {
+      setEstilistas(data ?? []);
+    }
     setLoading(false);
   };
 
@@ -79,7 +83,8 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
     setSubmitting(false);
 
     if (insertError) {
-      setError(insertError.message);
+      console.error("Error creating estilista:", insertError);
+      setError("Ocurrió un error al guardar la estilista. Verifica los datos e intenta de nuevo.");
     } else {
       setNombre("");
       setCargo("Estilista");
@@ -92,7 +97,10 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
 
   const handleToggleActivo = async (id: string, currentActivo: boolean) => {
     const { error } = await supabase.from("estilistas").update({ activo: !currentActivo }).eq("id", id);
-    if (!error) {
+    if (error) {
+      console.error("Error toggling estilista status:", error);
+      setError("No se pudo actualizar el estado de la estilista.");
+    } else {
       fetchEstilistas();
       onUpdated();
     }

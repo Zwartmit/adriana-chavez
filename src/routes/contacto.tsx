@@ -17,7 +17,7 @@ export const Route = createFileRoute("/contacto")({
   component: ContactoPage,
   head: () => ({
     meta: [
-      { title: "Contacto | Centro de belleza Adriana Chávez" },
+      { title: "Contacto | Centro de Belleza Adriana Chávez" },
       {
         name: "description",
         content:

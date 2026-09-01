@@ -567,7 +567,7 @@ function ReportesPage() {
           </div>
 
           {/* Servicios más vendidos */}
-          <div style={{ ...sectionCardStyle, marginBottom: "1.75rem", padding: 0, overflow: "hidden" }}>
+          {/* <div style={{ ...sectionCardStyle, marginBottom: "1.75rem", padding: 0, overflow: "hidden" }}>
             <h3
               style={{
                 fontFamily: "var(--font-display)",
@@ -631,10 +631,10 @@ function ReportesPage() {
               </tbody>
             </table>
             </div>
-          </div>
+          </div> */}
 
           {/* Rendimiento por estilista */}
-          <div style={{ ...sectionCardStyle, marginBottom: "1.75rem", padding: 0, overflow: "hidden" }}>
+          {/* <div style={{ ...sectionCardStyle, marginBottom: "1.75rem", padding: 0, overflow: "hidden" }}>
             <h3
               style={{
                 fontFamily: "var(--font-display)",
@@ -687,7 +687,7 @@ function ReportesPage() {
               </tbody>
             </table>
             </div>
-          </div>
+          </div> */}
 
           {/* Cierre de caja diario */}
           <div style={{ ...sectionCardStyle, padding: 0, overflow: "hidden" }}>

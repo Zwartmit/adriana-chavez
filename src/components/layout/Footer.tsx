@@ -164,7 +164,7 @@ export function Footer() {
             href="/privacidad"
             className="hover:text-[var(--color-accent)] transition-colors"
           >
-            Política de privacidad
+            Política de Privacidad y Tratamiento de Datos
           </a>
         </div>
       </div>

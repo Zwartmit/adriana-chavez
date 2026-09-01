@@ -36,7 +36,7 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
   }, [isCollapsed]);
 
   useEffect(() => {
-    document.title = `${pageTitle} | Centro de belleza Adriana Chávez`;
+    document.title = `${pageTitle} | Centro de Belleza Adriana Chávez`;
   }, [pageTitle]);
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });

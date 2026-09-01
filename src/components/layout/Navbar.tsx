@@ -50,6 +50,7 @@ function CartIcon({ isDark }: { isDark: boolean }) {
 
 export function Navbar() {
   const [isDark, setIsDark] = useState(true);
+  const [isSolid, setIsSolid] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
@@ -57,8 +58,12 @@ export function Navbar() {
     const sections = document.querySelectorAll<HTMLElement>("[data-navbar-dark]");
     if (sections.length === 0) {
       setIsDark(false);
+      setIsSolid(false);
       return;
     }
+
+    const solidSections = document.querySelectorAll<HTMLElement>("[data-navbar-solid]");
+    setIsSolid(solidSections.length > 0);
 
     const intersecting = new Map<Element, boolean>();
     const observer = new IntersectionObserver(
@@ -92,10 +97,10 @@ export function Navbar() {
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease",
         )}
         style={{
-          backgroundColor: isDark ? "rgba(10,10,11,0.85)" : "rgba(245,240,232,0.92)",
-          borderBottom: isDark ? "0.5px solid rgba(232,201,122,0.15)" : "0.5px solid rgba(10,10,11,0.08)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
+          backgroundColor: isSolid ? "#0A0A0B" : (isDark ? "rgba(10,10,11,0.85)" : "rgba(245,240,232,0.92)"),
+          borderBottom: isSolid ? "0.5px solid rgba(232,201,122,0.15)" : (isDark ? "0.5px solid rgba(232,201,122,0.15)" : "0.5px solid rgba(10,10,11,0.08)"),
+          backdropFilter: isSolid ? "none" : "blur(16px)",
+          WebkitBackdropFilter: isSolid ? "none" : "blur(16px)",
           color: textColor,
         }}
       >

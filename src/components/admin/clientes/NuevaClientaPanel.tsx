@@ -266,7 +266,16 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
                 color: "var(--color-text-secondary)",
               }}
             >
-              Acepta tratamiento de datos personales (Ley 1581) *
+              Acepta tratamiento de datos personales (
+              <a 
+                href="/privacidad" 
+                target="_blank" 
+                rel="noreferrer"
+                style={{ textDecoration: "underline", color: "var(--color-primary-dim)" }}
+              >
+                Ley 1581
+              </a>
+              ) *
             </span>
           </label>
 

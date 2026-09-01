@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as ServiciosRouteImport } from './routes/servicios'
 import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
@@ -36,6 +37,11 @@ const ContactoRoute = ContactoRouteImport.update({
 const GaleriaRoute = GaleriaRouteImport.update({
   id: '/galeria',
   path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServiciosRoute = ServiciosRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/galeria': typeof GaleriaRoute
+  '/privacidad': typeof PrivacidadRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/login': typeof AdminLoginRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/galeria': typeof GaleriaRoute
+  '/privacidad': typeof PrivacidadRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/login': typeof AdminLoginRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/galeria': typeof GaleriaRoute
+  '/privacidad': typeof PrivacidadRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/login': typeof AdminLoginRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contacto'
     | '/galeria'
+    | '/privacidad'
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/login'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contacto'
     | '/galeria'
+    | '/privacidad'
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/login'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contacto'
     | '/galeria'
+    | '/privacidad'
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/login'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContactoRoute: typeof ContactoRoute
   GaleriaRoute: typeof GaleriaRoute
+  PrivacidadRoute: typeof PrivacidadRoute
   ServiciosRoute: typeof ServiciosRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/galeria'
       fullPath: '/galeria'
       preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/servicios': {
@@ -299,6 +319,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContactoRoute: ContactoRoute,
   GaleriaRoute: GaleriaRoute,
+  PrivacidadRoute: PrivacidadRoute,
   ServiciosRoute: ServiciosRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,
   AdminLoginRoute: AdminLoginRoute,

@@ -58,7 +58,7 @@ export const Route = createFileRoute("/tienda/$slug")({
     const producto = PRODUCTOS.find((p) => p.slug === params.slug);
     return {
       meta: [
-        { title: producto ? `${producto.name} | Centro de belleza Adriana Chávez` : "Producto | Centro de belleza Adriana Chávez" },
+        { title: producto ? `${producto.name} | Centro de Belleza Adriana Chávez` : "Producto | Centro de Belleza Adriana Chávez" },
         {
           name: "description",
           content: producto?.description ?? "Producto de la tienda Adriana Chávez.",

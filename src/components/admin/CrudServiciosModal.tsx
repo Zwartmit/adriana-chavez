@@ -53,8 +53,12 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
       .select("id, nombre, duracion_min, precio, activo")
       .order("nombre", { ascending: true });
     
-    if (error) setError(error.message);
-    else setServicios(data ?? []);
+    if (error) {
+      console.error("Error fetching servicios:", error);
+      setError("No pudimos cargar la lista de servicios. Intenta de nuevo más tarde.");
+    } else {
+      setServicios(data ?? []);
+    }
     setLoading(false);
   };
 
@@ -82,7 +86,8 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
     setSubmitting(false);
 
     if (insertError) {
-      setError(insertError.message);
+      console.error("Error creating servicio:", insertError);
+      setError("Ocurrió un error al guardar el servicio. Verifica los datos e intenta de nuevo.");
     } else {
       setNombre("");
       setPrecio("");
@@ -94,7 +99,10 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
 
   const handleToggleActivo = async (id: string, currentActivo: boolean) => {
     const { error } = await supabase.from("servicios").update({ activo: !currentActivo }).eq("id", id);
-    if (!error) {
+    if (error) {
+      console.error("Error toggling servicio status:", error);
+      setError("No se pudo actualizar el estado del servicio.");
+    } else {
       fetchServicios();
       onUpdated();
     }
