@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronDown, Edit, ArrowRightLeft, Package, Search } from "lucide-react";
+import { ChevronDown, Edit, ArrowRightLeft, Package, Search, Settings } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { MovimientoPanel } from "@/components/admin/inventario/MovimientoPanel";
@@ -84,6 +84,7 @@ const selectStyle: React.CSSProperties = {
 };
 
 function InventarioPage() {
+  const navigate = useNavigate();
   const [inventario, setInventario] = useState<InventarioRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -406,6 +407,16 @@ function InventarioPage() {
                               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
                             >
                               <Edit size={16} />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label="Editar catálogo"
+                              onClick={() => navigate({ to: "/admin/productos/$productoId", params: { productoId: r.producto_id } })}
+                              style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer", marginLeft: "4px" }}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
+                            >
+                              <Settings size={16} />
                             </button>
                             <button
                               type="button"

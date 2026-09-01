@@ -144,7 +144,6 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
                 fontWeight: 600,
                 fontSize: "var(--text-2xl)",
                 color: "var(--color-text-on-light)",
-                textTransform: "capitalize",
               }}
             >
               {pageTitle}

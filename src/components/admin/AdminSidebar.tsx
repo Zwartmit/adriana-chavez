@@ -9,6 +9,7 @@ import {
   LogOut,
   MessageSquare,
   Package,
+  ShoppingBag,
   Users,
 } from "lucide-react";
 import { signOut } from "@/lib/supabase/auth";
@@ -18,6 +19,7 @@ const NAV_ITEMS = [
   { label: "Calendario", href: "/admin", icon: Calendar },
   { label: "Clientas", href: "/admin/clientes", icon: Users },
   { label: "Inventario", href: "/admin/inventario", icon: Package },
+  { label: "Productos", href: "/admin/productos", icon: ShoppingBag },
   { label: "Reportes", href: "/admin/reportes", icon: BarChart3 },
 ];
 
@@ -187,6 +189,8 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
                   whiteSpace: "nowrap",
                 }}
               >
+                Centro de Belleza
+                <br />
                 Adriana Chávez
               </p>
               <p
