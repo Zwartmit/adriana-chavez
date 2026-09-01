@@ -5,6 +5,8 @@ import { es } from "react-day-picker/locale";
 import "react-day-picker/style.css";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
+import { CrudServiciosModal } from "./CrudServiciosModal";
+import { CrudEstilistasModal } from "./CrudEstilistasModal";
 
 interface ClienteResult {
   id: string;
@@ -82,24 +84,27 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  const [isServiciosModalOpen, setIsServiciosModalOpen] = useState(false);
+  const [isEstilistasModalOpen, setIsEstilistasModalOpen] = useState(false);
+
   useEffect(() => {
     if (!isOpen) return;
     setSelectedDate(defaultDate ?? new Date());
   }, [isOpen, defaultDate]);
 
+  const fetchOptions = useCallback(async () => {
+    const [{ data: serviciosData }, { data: estilistasData }] = await Promise.all([
+      supabase.from("servicios").select("id, nombre, duracion_min").eq("activo", true).order("orden", { ascending: true }),
+      supabase.from("estilistas").select("id, nombre").eq("activo", true).order("orden", { ascending: true }),
+    ]);
+    setServicios(serviciosData ?? []);
+    setEstilistas(estilistasData ?? []);
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
-
-    async function fetchOptions() {
-      const [{ data: serviciosData }, { data: estilistasData }] = await Promise.all([
-        supabase.from("servicios").select("id, nombre, duracion_min").eq("activo", true).order("orden", { ascending: true }),
-        supabase.from("estilistas").select("id, nombre").eq("activo", true).order("orden", { ascending: true }),
-      ]);
-      setServicios(serviciosData ?? []);
-      setEstilistas(estilistasData ?? []);
-    }
     fetchOptions();
-  }, [isOpen]);
+  }, [isOpen, fetchOptions]);
 
   useEffect(() => {
     if (clienteQuery.trim().length < 2) {
@@ -297,7 +302,17 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
           {/* Servicio */}
           <div>
-            <label style={labelStyle}>Servicio *</label>
+            <div className="flex items-center justify-between mb-[6px]">
+              <label style={{ ...labelStyle, marginBottom: 0 }}>Servicio *</label>
+              <button
+                type="button"
+                onClick={() => setIsServiciosModalOpen(true)}
+                className="text-xs font-semibold hover:underline"
+                style={{ color: "var(--color-primary-dim)" }}
+              >
+                + Gestionar
+              </button>
+            </div>
             <select
               value={selectedServicioId}
               onChange={(e) => setSelectedServicioId(e.target.value)}
@@ -314,7 +329,17 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
           {/* Estilista */}
           <div>
-            <label style={labelStyle}>Estilista *</label>
+            <div className="flex items-center justify-between mb-[6px]">
+              <label style={{ ...labelStyle, marginBottom: 0 }}>Estilista *</label>
+              <button
+                type="button"
+                onClick={() => setIsEstilistasModalOpen(true)}
+                className="text-xs font-semibold hover:underline"
+                style={{ color: "var(--color-primary-dim)" }}
+              >
+                + Gestionar
+              </button>
+            </div>
             <select
               value={selectedEstilistaId}
               onChange={(e) => setSelectedEstilistaId(e.target.value)}
@@ -392,6 +417,17 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
           </Button>
         </form>
       </aside>
+
+      <CrudServiciosModal
+        isOpen={isServiciosModalOpen}
+        onClose={() => setIsServiciosModalOpen(false)}
+        onUpdated={fetchOptions}
+      />
+      <CrudEstilistasModal
+        isOpen={isEstilistasModalOpen}
+        onClose={() => setIsEstilistasModalOpen(false)}
+        onUpdated={fetchOptions}
+      />
     </>
   );
 }
