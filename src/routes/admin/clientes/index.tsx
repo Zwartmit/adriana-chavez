@@ -116,15 +116,36 @@ function ClientesPage() {
   }, [searchQuery, fetchClientes]);
 
   const handleDeleteCliente = async (id: string, nombre: string) => {
-    if (!window.confirm(`¿Seguro que deseas eliminar definitivamente a ${nombre}?\n\nSi tiene citas registradas, la base de datos podría bloquear la eliminación. En ese caso, te recomendamos desactivarla editando su perfil.`)) {
+    if (!window.confirm(`¿Seguro que deseas eliminar definitivamente a ${nombre}?\n\nSi tiene citas registradas, no podrás eliminarla. En ese caso, te recomendamos desactivarla editando su perfil.`)) {
       return;
     }
 
     setLoading(true);
+    
+    // 1. Verificar si tiene citas para evitar el borrado en cascada
+    const { count, error: countError } = await supabase
+      .from("citas")
+      .select("*", { count: "exact", head: true })
+      .eq("cliente_id", id);
+
+    if (countError) {
+      console.error("Error al verificar citas:", countError);
+      showToast("Error al verificar el historial de la clienta.", "error");
+      setLoading(false);
+      return;
+    }
+
+    if (count && count > 0) {
+      showToast("No se puede eliminar porque tiene citas asociadas. Desactívala en su perfil.", "error");
+      setLoading(false);
+      return;
+    }
+
+    // 2. Si no tiene citas, procedemos a borrar
     const { error } = await supabase.from("clientes").delete().eq("id", id);
     if (error) {
       console.error("Error al eliminar clienta:", error);
-      if (error.code === "23503") { // Foreign key violation
+      if (error.code === "23503") { // Por si acaso la base de datos lo bloquea
         showToast("No se puede eliminar porque tiene citas asociadas. Desactívala en su lugar.", "error");
       } else {
         showToast("Error al eliminar la clienta.", "error");
