@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 interface CategoriaOption {
   id: string;
@@ -165,6 +166,21 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
             <textarea name="descripcion_larga" value={formData.descripcion_larga} onChange={handleChange} style={{ ...inputStyle, minHeight: 150 }} placeholder="Descripción completa del producto..." />
           </div>
         </div>
+      </section>
+
+      <div style={{ height: "1px", backgroundColor: "var(--color-border-light)", margin: "2rem 0" }} />
+
+      {/* Imágenes */}
+      <section>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+          Imágenes del Producto
+        </h3>
+        <ImageUploader
+          bucket="productos"
+          value={formData.imagenes}
+          onChange={(urls) => setFormData((prev) => ({ ...prev, imagenes: urls }))}
+          maxImages={4}
+        />
       </section>
 
       <div style={{ height: "1px", backgroundColor: "var(--color-border-light)", margin: "2rem 0" }} />
