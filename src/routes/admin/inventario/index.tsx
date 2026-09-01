@@ -372,7 +372,7 @@ function InventarioPage() {
                         <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                           {r.stock_fisico}
                         </td>
-                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontWeight: 600, fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
+                        <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                           {r.stock_total}
                         </td>
                         <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
