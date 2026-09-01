@@ -47,6 +47,13 @@ function generarSlots(): string[] {
 
 const SLOTS = generarSlots();
 
+function format12h(time24: string) {
+  const [h, m] = time24.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 14px",
@@ -76,8 +83,13 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
   const [servicios, setServicios] = useState<ServicioOption[]>([]);
   const [selectedServicioId, setSelectedServicioId] = useState("");
+  const [servicioQuery, setServicioQuery] = useState("");
+  const [showServicioResults, setShowServicioResults] = useState(false);
+
   const [estilistas, setEstilistas] = useState<EstilistaOption[]>([]);
   const [selectedEstilistaId, setSelectedEstilistaId] = useState("");
+  const [estilistaQuery, setEstilistaQuery] = useState("");
+  const [showEstilistaResults, setShowEstilistaResults] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(defaultDate ?? new Date());
   const [selectedHora, setSelectedHora] = useState("");
   const [notas, setNotas] = useState("");
@@ -107,19 +119,19 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
   }, [isOpen, fetchOptions]);
 
   useEffect(() => {
-    if (clienteQuery.trim().length < 2) {
-      setClienteResults([]);
-      return;
-    }
     let cancelled = false;
     const timeout = setTimeout(async () => {
       const q = clienteQuery.trim();
-      const { data } = await supabase
+      let query = supabase
         .from("clientes")
         .select("id, nombre, apellido, telefono")
-        .or(`nombre.ilike.%${q}%,apellido.ilike.%${q}%`)
-        .eq("activo", true)
-        .limit(8);
+        .eq("activo", true);
+        
+      if (q.length >= 2) {
+        query = query.or(`nombre.ilike.%${q}%,apellido.ilike.%${q}%`);
+      }
+      
+      const { data } = await query.order("created_at", { ascending: false }).limit(8);
       if (!cancelled) setClienteResults(data ?? []);
     }, 250);
     return () => {
@@ -133,7 +145,11 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
     setClienteResults([]);
     setSelectedCliente(null);
     setSelectedServicioId("");
+    setServicioQuery("");
+    setShowServicioResults(false);
     setSelectedEstilistaId("");
+    setEstilistaQuery("");
+    setShowEstilistaResults(false);
     setSelectedDate(defaultDate ?? new Date());
     setSelectedHora("");
     setNotas("");
@@ -248,6 +264,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
                 setShowResults(true);
               }}
               onFocus={() => setShowResults(true)}
+              onBlur={() => setTimeout(() => setShowResults(false), 200)}
               style={inputStyle}
             />
             {showResults && clienteResults.length > 0 && !selectedCliente && (
@@ -263,6 +280,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
                   backgroundColor: "var(--color-bg-alt)",
                   maxHeight: "200px",
                   overflowY: "auto",
+                  border: "1px solid var(--color-border)",
                 }}
               >
                 {clienteResults.map((c) => (
@@ -301,7 +319,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
           </div>
 
           {/* Servicio */}
-          <div>
+          <div style={{ position: "relative" }}>
             <div className="flex items-center justify-between mb-[6px]">
               <label style={{ ...labelStyle, marginBottom: 0 }}>Servicio *</label>
               <button
@@ -313,22 +331,71 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
                 + Gestionar
               </button>
             </div>
-            <select
-              value={selectedServicioId}
-              onChange={(e) => setSelectedServicioId(e.target.value)}
+            <input
+              type="text"
+              placeholder="Buscar servicio..."
+              value={selectedServicioId ? (servicios.find(s => s.id === selectedServicioId)?.nombre ?? "") : servicioQuery}
+              onChange={(e) => {
+                setSelectedServicioId("");
+                setServicioQuery(e.target.value);
+                setShowServicioResults(true);
+              }}
+              onFocus={() => setShowServicioResults(true)}
+              onBlur={() => setTimeout(() => setShowServicioResults(false), 200)}
               style={inputStyle}
-            >
-              <option value="">Selecciona un servicio</option>
-              {servicios.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.nombre} ({s.duracion_min} min)
-                </option>
-              ))}
-            </select>
+            />
+            {showServicioResults && !selectedServicioId && (
+              <div
+                className="glass-obsidian"
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 4px)",
+                  left: 0,
+                  right: 0,
+                  zIndex: 10,
+                  borderRadius: "var(--radius-lg)",
+                  backgroundColor: "var(--color-bg-alt)",
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                  border: "1px solid var(--color-border)",
+                }}
+              >
+                {servicios.filter(s => s.nombre.toLowerCase().includes(servicioQuery.toLowerCase())).length === 0 ? (
+                  <div style={{ padding: "10px 14px", color: "var(--color-text-muted)", fontSize: "var(--text-sm)" }}>No hay coincidencias</div>
+                ) : (
+                  servicios.filter(s => s.nombre.toLowerCase().includes(servicioQuery.toLowerCase())).map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedServicioId(s.id);
+                        setShowServicioResults(false);
+                      }}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "10px 14px",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-sm)",
+                        color: "var(--color-text-primary)",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--glass-champagne-bg)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                    >
+                      {s.nombre} <span style={{ color: "var(--color-text-muted)", fontSize: "var(--text-xs)", marginLeft: 4 }}>({s.duracion_min} min)</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* Estilista */}
-          <div>
+          <div style={{ position: "relative" }}>
             <div className="flex items-center justify-between mb-[6px]">
               <label style={{ ...labelStyle, marginBottom: 0 }}>Estilista *</label>
               <button
@@ -340,18 +407,67 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
                 + Gestionar
               </button>
             </div>
-            <select
-              value={selectedEstilistaId}
-              onChange={(e) => setSelectedEstilistaId(e.target.value)}
+            <input
+              type="text"
+              placeholder="Buscar estilista..."
+              value={selectedEstilistaId ? (estilistas.find(e => e.id === selectedEstilistaId)?.nombre ?? "") : estilistaQuery}
+              onChange={(e) => {
+                setSelectedEstilistaId("");
+                setEstilistaQuery(e.target.value);
+                setShowEstilistaResults(true);
+              }}
+              onFocus={() => setShowEstilistaResults(true)}
+              onBlur={() => setTimeout(() => setShowEstilistaResults(false), 200)}
               style={inputStyle}
-            >
-              <option value="">Selecciona un estilista</option>
-              {estilistas.map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.nombre}
-                </option>
-              ))}
-            </select>
+            />
+            {showEstilistaResults && !selectedEstilistaId && (
+              <div
+                className="glass-obsidian"
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 4px)",
+                  left: 0,
+                  right: 0,
+                  zIndex: 10,
+                  borderRadius: "var(--radius-lg)",
+                  backgroundColor: "var(--color-bg-alt)",
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                  border: "1px solid var(--color-border)",
+                }}
+              >
+                {estilistas.filter(e => e.nombre.toLowerCase().includes(estilistaQuery.toLowerCase())).length === 0 ? (
+                  <div style={{ padding: "10px 14px", color: "var(--color-text-muted)", fontSize: "var(--text-sm)" }}>No hay coincidencias</div>
+                ) : (
+                  estilistas.filter(e => e.nombre.toLowerCase().includes(estilistaQuery.toLowerCase())).map((est) => (
+                    <button
+                      key={est.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedEstilistaId(est.id);
+                        setShowEstilistaResults(false);
+                      }}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "10px 14px",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-sm)",
+                        color: "var(--color-text-primary)",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--glass-champagne-bg)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                    >
+                      {est.nombre}
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           <div>
@@ -383,7 +499,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
               <option value="">Selecciona una hora</option>
               {SLOTS.map((slot) => (
                 <option key={slot} value={slot}>
-                  {slot}
+                  {format12h(slot)}
                 </option>
               ))}
             </select>
@@ -391,7 +507,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
           {/* Notas */}
           <div>
-            <label style={labelStyle}>Notas (opcional)</label>
+            <label style={labelStyle}>Notas <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
             <textarea
               value={notas}
               onChange={(e) => setNotas(e.target.value)}

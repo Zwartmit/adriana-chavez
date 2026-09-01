@@ -390,7 +390,7 @@ export function MovimientoPanel({
 
           {/* Notas */}
           <div>
-            <label style={labelStyle}>Notas (opcional)</label>
+            <label style={labelStyle}>Notas <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
             <textarea
               value={notas}
               onChange={(e) => setNotas(e.target.value)}

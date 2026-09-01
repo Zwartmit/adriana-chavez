@@ -136,7 +136,6 @@ function ClienteDetallePage() {
     }
 
     const row = data as unknown as ClienteRow;
-    console.log("[ClienteDetalle] cliente cargado desde Supabase");
     setCliente(row);
     setEmail(row.email ?? "");
     setTelefono(row.telefono ?? "");
@@ -162,7 +161,6 @@ function ClienteDetallePage() {
       return;
     }
 
-    console.log(`[ClienteDetalle] ${data.length} citas cargadas desde Supabase`);
     const mapped: CitaHistUI[] = (data as unknown as CitaRow[]).map((c) => ({
       id: c.id,
       fechaHora: new Date(c.fecha_hora),
@@ -351,11 +349,11 @@ function ClienteDetallePage() {
                 </Button>
                 {cliente.activo && (
                   <Button
-                    className="w-full sm:w-auto hover:bg-[var(--color-error)] hover:text-white hover:border-[var(--color-error)]"
+                    className="w-full sm:w-auto !text-[var(--color-error)] hover:!bg-[var(--color-error)] hover:!text-white hover:!border-[var(--color-error)]"
                     variant="secondary"
                     size="sm"
                     onClick={() => setShowDesactivarConfirm(true)}
-                    style={{ borderColor: "rgba(224,82,82,0.3)", color: "var(--color-error)" }}
+                    style={{ borderColor: "rgba(224,82,82,0.3)" }}
                   >
                     Desactivar clienta
                   </Button>
@@ -469,7 +467,7 @@ function ClienteDetallePage() {
                         <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-primary-dim)" }}>
                           {c.fechaHora.toLocaleDateString("es-CO", { day: "numeric", month: "short" })}
                           {" · "}
-                          {c.fechaHora.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}
+                          {c.fechaHora.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true })}
                         </p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                           {c.servicioNombre}

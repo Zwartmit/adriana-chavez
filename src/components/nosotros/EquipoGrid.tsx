@@ -125,7 +125,6 @@ export function EquipoGrid() {
       return;
     }
 
-    console.log(`[EquipoGrid] ${data.length} registros cargados desde Supabase`);
     setEquipo(
       data.map((e) => ({
         id: e.id,

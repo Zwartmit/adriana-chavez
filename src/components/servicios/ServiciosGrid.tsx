@@ -65,7 +65,6 @@ export function ServiciosGrid({
       return;
     }
 
-    console.log(`[ServiciosGrid] ${data.length} registros cargados desde Supabase`);
 
     const mapped: ServicioUI[] = data.map((s) => {
       const cat = (s as unknown as {

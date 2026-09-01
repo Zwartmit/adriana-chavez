@@ -117,7 +117,6 @@ export function GaleriaGrid({
       return;
     }
 
-    console.log(`[GaleriaGrid] ${data.length} registros cargados desde Supabase`);
     setGaleriaItems(
       data.map((g, i) => ({
         id: g.id,

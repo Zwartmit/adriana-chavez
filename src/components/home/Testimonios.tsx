@@ -95,7 +95,6 @@ export function Testimonios() {
       return;
     }
 
-    console.log(`[Testimonios] ${data.length} registros cargados desde Supabase`);
     setTestimonios(
       data.map((t) => ({
         id: t.id,

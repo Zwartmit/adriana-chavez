@@ -132,7 +132,6 @@ function InventarioPage() {
       return;
     }
 
-    console.log(`[InventarioPage] ${data.length} registros de inventario cargados desde Supabase`);
     setInventario(data as unknown as InventarioRow[]);
     setLoading(false);
   }, []);
@@ -151,7 +150,6 @@ function InventarioPage() {
       return;
     }
 
-    console.log(`[InventarioPage] ${data.length} movimientos cargados desde Supabase`);
     setMovimientos(
       (data as unknown as MovimientoRow[]).map((m) => ({
         id: m.id,
@@ -504,7 +502,7 @@ function InventarioPage() {
                               <td style={{ padding: "10px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", whiteSpace: "nowrap" }}>
                                 {m.createdAt.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
                                 {" "}
-                                {m.createdAt.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}
+                                {m.createdAt.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true })}
                               </td>
                               <td style={{ padding: "10px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                                 {m.productoNombre}

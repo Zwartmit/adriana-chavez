@@ -65,7 +65,6 @@ function MensajesPage() {
       return;
     }
 
-    console.log(`[MensajesPage] ${data.length} mensajes cargados desde Supabase`);
     setMensajes(
       data.map((m) => ({
         id: m.id,
@@ -326,7 +325,7 @@ function MensajesPage() {
                 <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-primary)" }}>
                   {seleccionado.createdAt.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" })}
                   {" · "}
-                  {seleccionado.createdAt.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}
+                  {seleccionado.createdAt.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true })}
                 </span>
               </div>
 

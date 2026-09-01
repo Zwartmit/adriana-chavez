@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Edit, Eye, Search, Users } from "lucide-react";
+import { Edit, Eye, Search, Users, Trash2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { NuevaClientaPanel } from "@/components/admin/clientes/NuevaClientaPanel";
@@ -83,7 +83,6 @@ function ClientesPage() {
       console.error("[ClientesPage] error al cargar citas:", citasError.message);
     }
 
-    console.log(`[ClientesPage] ${clientesData.length} clientes cargados desde Supabase`);
 
     const citasPorCliente = new Map<string, { total: number; ultima: Date | null }>();
     for (const c of citasData ?? []) {
@@ -115,6 +114,27 @@ function ClientesPage() {
   useEffect(() => {
     fetchClientes(searchQuery);
   }, [searchQuery, fetchClientes]);
+
+  const handleDeleteCliente = async (id: string, nombre: string) => {
+    if (!window.confirm(`¿Seguro que deseas eliminar definitivamente a ${nombre}?\n\nSi tiene citas registradas, la base de datos podría bloquear la eliminación. En ese caso, te recomendamos desactivarla editando su perfil.`)) {
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await supabase.from("clientes").delete().eq("id", id);
+    if (error) {
+      console.error("Error al eliminar clienta:", error);
+      if (error.code === "23503") { // Foreign key violation
+        showToast("No se puede eliminar porque tiene citas asociadas. Desactívala en su lugar.", "error");
+      } else {
+        showToast("Error al eliminar la clienta.", "error");
+      }
+      setLoading(false);
+    } else {
+      showToast("Clienta eliminada con éxito");
+      fetchClientes(searchQuery);
+    }
+  };
 
   const totalPages = Math.max(1, Math.ceil(clientes.length / PAGE_SIZE));
   const clientesPagina = useMemo(
@@ -313,6 +333,16 @@ function ClientesPage() {
                         onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
                       >
                         <Edit size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Eliminar"
+                        onClick={() => handleDeleteCliente(c.id, c.nombreCompleto)}
+                        style={{ color: "var(--color-error)", background: "transparent", border: "none", cursor: "pointer", opacity: 0.8 }}
+                        onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+                        onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>

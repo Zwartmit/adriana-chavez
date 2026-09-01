@@ -95,7 +95,6 @@ export function ProductosGrid({
       return;
     }
 
-    console.log(`[ProductosGrid] ${data.length} registros cargados desde Supabase`);
     const mapped = (data as unknown as ProductoRow[]).map(mapProducto);
     PRODUCTOS = mapped;
     setProductos(mapped);

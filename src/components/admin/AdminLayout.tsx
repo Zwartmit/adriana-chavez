@@ -55,7 +55,7 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
         month: "long",
         year: "numeric",
       }),
-      hora: d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }),
+      hora: d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true }),
     };
   });
 
@@ -69,7 +69,7 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
           month: "long",
           year: "numeric",
         }),
-        hora: d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }),
+        hora: d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true }),
       });
     }, 60000);
     return () => clearInterval(timer);

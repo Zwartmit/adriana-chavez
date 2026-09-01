@@ -178,7 +178,6 @@ function ReportesPage() {
       console.error("[ReportesPage] error al cargar período anterior:", previasError.message);
     }
 
-    console.log(`[ReportesPage] ${citasData.length} citas cargadas desde Supabase para el período "${p}"`);
     setCitas(citasData as unknown as CitaReporteRow[]);
     setIngresosPrevios((previasData ?? []).reduce((sum, c) => sum + (c.precio_cobrado ?? 0), 0));
     setLoading(false);
@@ -192,7 +191,6 @@ function ReportesPage() {
       setCierresLoading(false);
       return;
     }
-    console.log(`[ReportesPage] ${data.length} cierres de caja cargados desde Supabase`);
     setCierres(data as unknown as ReporteCajaRow[]);
     setCierresLoading(false);
   }, []);

@@ -54,7 +54,6 @@ export function GaleriaHome() {
       return;
     }
 
-    console.log(`[GaleriaHome] ${data.length} registros cargados desde Supabase`);
     setGaleria(
       data.map((g, i) => ({
         id: g.id,

@@ -130,7 +130,6 @@ function ProductoPage() {
       return;
     }
 
-    console.log("[ProductoPage] producto cargado desde Supabase");
     setProducto(mapProductoDetalle(data as unknown as ProductoDetalleRow));
     setLoading(false);
   }, [slug]);
@@ -215,7 +214,6 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
         .map(mapProductoDetalle)
         .filter((p) => p.category === producto.category)
         .slice(0, 4);
-      console.log(`[ProductoPage] ${mapped.length} productos relacionados cargados desde Supabase`);
       setRelacionados(mapped);
     }
     fetchRelacionados();

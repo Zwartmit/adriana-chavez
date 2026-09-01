@@ -192,13 +192,13 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
               <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} style={inputStyle} />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>Apellido</label>
+              <label style={labelStyle}>Apellido <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
               <input type="text" value={apellido} onChange={(e) => setApellido(e.target.value)} style={inputStyle} />
             </div>
           </div>
 
           <div>
-            <label style={labelStyle}>Email</label>
+            <label style={labelStyle}>Email <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
             <input
               type="email"
               value={email}
@@ -221,7 +221,7 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
           </div>
 
           <div>
-            <label style={labelStyle}>Fecha de nacimiento</label>
+            <label style={labelStyle}>Fecha de nacimiento <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
             <input
               type="date"
               value={fechaNacimiento}
@@ -231,7 +231,7 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
           </div>
 
           <div>
-            <label style={labelStyle}>Estilista preferida</label>
+            <label style={labelStyle}>Estilista preferida <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
             <select value={estilistaId} onChange={(e) => setEstilistaId(e.target.value)} style={inputStyle}>
               <option value="">Sin preferencia</option>
               {estilistas.map((e) => (
@@ -243,7 +243,7 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
           </div>
 
           <div>
-            <label style={labelStyle}>Notas iniciales</label>
+            <label style={labelStyle}>Notas iniciales <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
             <textarea
               value={notas}
               onChange={(e) => setNotas(e.target.value)}

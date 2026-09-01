@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { supabase } from "@/lib/supabase/client";
 import type { EstadoCita } from "@/lib/supabase/types";
 import type { CitaUI } from "@/components/admin/CalendarioCitas";
@@ -26,17 +27,18 @@ const rowLabel: React.CSSProperties = {
   fontSize: "var(--text-xs)",
   textTransform: "uppercase",
   letterSpacing: "var(--tracking-wider)",
-  color: "var(--color-text-muted)",
+  color: "var(--color-text-on-light-faint)",
 };
 
 const rowValue: React.CSSProperties = {
   fontFamily: "var(--font-body)",
   fontSize: "var(--text-base)",
-  color: "var(--color-text-primary)",
+  color: "var(--color-text-on-light)",
 };
 
 export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDetalleModalProps) {
   const [updating, setUpdating] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<EstadoCita | null>(null);
 
   if (!cita) return null;
 
@@ -44,6 +46,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
     setUpdating(true);
     const { error } = await supabase.from("citas").update({ estado } as any).eq("id", cita.id);
     setUpdating(false);
+    setConfirmAction(null);
 
     if (error) {
       console.error("[CitaDetalleModal] error al actualizar:", error.message);
@@ -73,13 +76,15 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="glass-frosted"
+        className="bg-[var(--color-surface-light)]"
         style={{
           width: "100%",
           maxWidth: "440px",
           borderRadius: "var(--radius-2xl)",
           padding: "2rem",
           position: "relative",
+          boxShadow: "var(--shadow-xl)",
+          border: "1px solid var(--color-border-light)",
         }}
       >
         <button
@@ -90,7 +95,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             position: "absolute",
             top: "1.25rem",
             right: "1.25rem",
-            color: "var(--color-text-muted)",
+            color: "var(--color-text-on-light-muted)",
           }}
         >
           <X size={20} />
@@ -103,7 +108,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
               fontStyle: "italic",
               fontWeight: 600,
               fontSize: "var(--text-2xl)",
-              color: "var(--color-text-primary)",
+              color: "var(--color-text-on-light)",
             }}
           >
             Detalle de cita
@@ -129,13 +134,13 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             <p style={rowLabel}>Clienta</p>
             <p style={rowValue}>{cita.clienteNombre}</p>
             {cita.clienteTelefono && (
-              <p style={{ ...rowValue, fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+              <p style={{ ...rowValue, fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                 {cita.clienteTelefono}
               </p>
             )}
           </div>
 
-          <div style={{ borderTop: "1px solid var(--color-border)" }} />
+          <div style={{ borderTop: "1px solid var(--color-border-light)" }} />
 
           <div className="flex justify-between gap-4">
             <div>
@@ -159,7 +164,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             </div>
           </div>
 
-          <div style={{ borderTop: "1px solid var(--color-border)" }} />
+          <div style={{ borderTop: "1px solid var(--color-border-light)" }} />
 
           <div className="flex justify-between gap-4">
             <div>
@@ -167,7 +172,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
               <p style={rowValue}>
                 {cita.fechaHora.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" })}
                 {" · "}
-                {cita.fechaHora.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}
+                {cita.fechaHora.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true })}
               </p>
             </div>
             <div>
@@ -178,10 +183,10 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
 
           {cita.notasCliente && (
             <>
-              <div style={{ borderTop: "1px solid var(--color-border)" }} />
+              <div style={{ borderTop: "1px solid var(--color-border-light)" }} />
               <div>
                 <p style={rowLabel}>Notas</p>
-                <p style={{ ...rowValue, fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                <p style={{ ...rowValue, fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                   {cita.notasCliente}
                 </p>
               </div>
@@ -189,33 +194,66 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2" style={{ marginTop: "2rem" }}>
+        <div className="flex gap-2 w-full" style={{ marginTop: "2rem" }}>
           <Button
             variant="accent"
             size="sm"
-            disabled={updating || cita.estado === "confirmada"}
-            onClick={() => handleUpdateEstado("confirmada")}
+            className="flex-1"
+            disabled={updating || cita.estado === "confirmada" || cita.estado === "completada" || cita.estado === "cancelada"}
+            onClick={() => setConfirmAction("confirmada")}
           >
             Confirmar
           </Button>
           <Button
             variant="secondary"
             size="sm"
-            disabled={updating || cita.estado === "completada"}
-            onClick={() => handleUpdateEstado("completada")}
+            className="flex-1 !text-[var(--color-text-on-light)]"
+            disabled={updating || cita.estado === "completada" || cita.estado === "cancelada"}
+            onClick={() => setConfirmAction("completada")}
           >
-            Marcar completada
+            Completar
           </Button>
           <Button
-            variant="ghost"
+            variant="secondary"
             size="sm"
-            disabled={updating || cita.estado === "cancelada"}
-            onClick={() => handleUpdateEstado("cancelada")}
+            className="flex-1 !text-[var(--color-error)] hover:!bg-[var(--color-error)] hover:!text-white hover:!border-[var(--color-error)]"
+            disabled={updating || cita.estado === "completada" || cita.estado === "cancelada"}
+            onClick={() => setConfirmAction("cancelada")}
+            style={{ borderColor: "rgba(224,82,82,0.3)" }}
           >
-            Cancelar cita
+            Cancelar
           </Button>
         </div>
       </div>
+
+      {confirmAction && (
+        <ConfirmModal
+          title={
+            confirmAction === "confirmada"
+              ? "Confirmar cita"
+              : confirmAction === "completada"
+                ? "Completar cita"
+                : "Cancelar cita"
+          }
+          message={
+            confirmAction === "confirmada"
+              ? "¿La clienta ha confirmado su asistencia a esta cita?"
+              : confirmAction === "completada"
+                ? "¿Deseas marcar esta cita como completada? Asegúrate de que el servicio ya finalizó."
+                : "¿Deseas cancelar esta cita? Quedará guardada en el historial."
+          }
+          confirmLabel={
+            confirmAction === "confirmada"
+              ? "Sí, confirmar"
+              : confirmAction === "completada"
+                ? "Sí, completar"
+                : "Sí, cancelar"
+          }
+          loading={updating}
+          onConfirm={() => handleUpdateEstado(confirmAction)}
+          onCancel={() => setConfirmAction(null)}
+        />
+      )}
     </div>
   );
 }

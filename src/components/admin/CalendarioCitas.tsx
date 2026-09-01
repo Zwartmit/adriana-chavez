@@ -20,6 +20,7 @@ import { supabase } from "@/lib/supabase/client";
 import type { EstadoCita } from "@/lib/supabase/types";
 import { NuevaCitaPanel } from "@/components/admin/NuevaCitaPanel";
 import { CitaDetalleModal } from "@/components/admin/CitaDetalleModal";
+import { DetalleDiaPanel } from "@/components/admin/DetalleDiaPanel";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 
 export interface CitaUI {
@@ -70,7 +71,8 @@ export function CalendarioCitas() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [panelOpen, setPanelOpen] = useState(false);
+  const [nuevaCitaOpen, setNuevaCitaOpen] = useState(false);
+  const [diaPanelOpen, setDiaPanelOpen] = useState(false);
   const [panelDate, setPanelDate] = useState<Date | undefined>(undefined);
   const [selectedCita, setSelectedCita] = useState<CitaUI | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -102,7 +104,6 @@ export function CalendarioCitas() {
       return;
     }
 
-    console.log(`[CalendarioCitas] ${data.length} citas cargadas desde Supabase`);
     setCitas((data as unknown as CitaRow[]).map(mapCita));
     setLoading(false);
   }, []);
@@ -122,9 +123,14 @@ export function CalendarioCitas() {
   const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
   const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
 
+  const openDiaPanel = (date: Date) => {
+    setPanelDate(date);
+    setDiaPanelOpen(true);
+  };
+
   const openNuevaCita = (date?: Date) => {
     setPanelDate(date);
-    setPanelOpen(true);
+    setNuevaCitaOpen(true);
   };
 
   return (
@@ -249,7 +255,7 @@ export function CalendarioCitas() {
             return (
               <div
                 key={day.toISOString()}
-                onClick={() => openNuevaCita(day)}
+                onClick={() => openDiaPanel(day)}
                 className="min-h-[70px] md:min-h-[110px]"
                 style={{
                   padding: "0.25rem",
@@ -294,7 +300,7 @@ export function CalendarioCitas() {
                         e.stopPropagation();
                         setSelectedCita(cita);
                       }}
-                      title={`${format(cita.fechaHora, "HH:mm")} · ${cita.clienteNombre}`}
+                      title={`${format(cita.fechaHora, "hh:mm a")} · ${cita.clienteNombre}`}
                       style={{
                         backgroundColor: cita.estilistaColor,
                         color: "var(--color-text-inverse)",
@@ -312,7 +318,7 @@ export function CalendarioCitas() {
                         opacity: cita.estado === "cancelada" ? 0.5 : 1,
                       }}
                     >
-                      {format(cita.fechaHora, "HH:mm")} {cita.clienteNombre}
+                      {format(cita.fechaHora, "hh:mm a")} {cita.clienteNombre}
                     </button>
                   ))}
                 </div>
@@ -322,9 +328,21 @@ export function CalendarioCitas() {
         </div>
       )}
 
+      <DetalleDiaPanel
+        isOpen={diaPanelOpen}
+        date={panelDate}
+        citas={panelDate ? citas.filter((c) => isSameDay(c.fechaHora, panelDate)) : []}
+        onClose={() => setDiaPanelOpen(false)}
+        onNuevaCita={() => {
+          setDiaPanelOpen(false);
+          openNuevaCita(panelDate);
+        }}
+        onCitaClick={(cita) => setSelectedCita(cita)}
+      />
+
       <NuevaCitaPanel
-        isOpen={panelOpen}
-        onClose={() => setPanelOpen(false)}
+        isOpen={nuevaCitaOpen}
+        onClose={() => setNuevaCitaOpen(false)}
         defaultDate={panelDate}
         onCreated={() => {
           fetchCitas(currentMonth);

@@ -139,7 +139,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "centro de belleza monterrey, coloración monterrey, corte de cabello monterrey, adriana chávez belleza, monterrey casanare, casanare",
       },
       { name: "theme-color", content: "#E8C97A" },
-      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "Adriana Chávez" },
     ],
