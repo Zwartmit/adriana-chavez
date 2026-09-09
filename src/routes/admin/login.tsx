@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { signIn } from "@/lib/supabase/auth";
+import { signIn, resetPassword } from "@/lib/supabase/auth";
 
 export const Route = createFileRoute("/admin/login")({
   component: AdminLoginPage,
@@ -12,6 +12,8 @@ function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isResetMode, setIsResetMode] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +28,32 @@ function AdminLoginPage() {
       return;
     }
 
+    // Guardar flag de sesión activa en la pestaña actual (sessionStorage)
+    window.sessionStorage.setItem("admin_session_tab", "active");
+
     navigate({ to: "/admin" });
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setError("Por favor ingresa tu correo electrónico.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    const { error } = await resetPassword(email, `${window.location.origin}/admin/actualizar-password`);
+    
+    setLoading(false);
+    
+    if (error) {
+      setError("Hubo un error al intentar enviar el correo. Por favor intenta más tarde.");
+      return;
+    }
+    
+    setSuccessMessage("Te hemos enviado un correo con un enlace para restablecer tu contraseña.");
   };
 
   return (
@@ -81,7 +108,7 @@ function AdminLoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <form onSubmit={isResetMode ? handleResetPassword : handleLogin} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           <div>
             <label
               style={{
@@ -116,40 +143,42 @@ function AdminLoginPage() {
               onBlur={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
             />
           </div>
-          <div>
-            <label
-              style={{
-                fontFamily: "var(--font-body)",
-                fontWeight: 600,
-                fontSize: "var(--text-sm)",
-                color: "var(--color-text-primary)",
-                display: "block",
-                marginBottom: "6px",
-              }}
-            >
-              Contraseña
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px 16px",
-                backgroundColor: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-lg)",
-                fontFamily: "var(--font-body)",
-                fontSize: "var(--text-base)",
-                color: "var(--color-text-primary)",
-                outline: "none",
-                transition: "border-color var(--transition-base)",
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--color-primary)")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
-            />
-          </div>
+          {!isResetMode && (
+            <div>
+              <label
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontWeight: 600,
+                  fontSize: "var(--text-sm)",
+                  color: "var(--color-text-primary)",
+                  display: "block",
+                  marginBottom: "6px",
+                }}
+              >
+                Contraseña
+              </label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  backgroundColor: "var(--color-surface)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-lg)",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-base)",
+                  color: "var(--color-text-primary)",
+                  outline: "none",
+                  transition: "border-color var(--transition-base)",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "var(--color-primary)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
+              />
+            </div>
+          )}
 
           {error && (
             <p
@@ -161,6 +190,22 @@ function AdminLoginPage() {
               }}
             >
               {error}
+            </p>
+          )}
+
+          {successMessage && (
+            <p
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+                color: "var(--color-success)",
+                textAlign: "center",
+                padding: "10px",
+                backgroundColor: "rgba(76, 175, 128, 0.1)",
+                borderRadius: "var(--radius-md)",
+              }}
+            >
+              {successMessage}
             </p>
           )}
 
@@ -184,8 +229,31 @@ function AdminLoginPage() {
               boxShadow: loading ? "none" : "var(--shadow-gold)",
             }}
           >
-            {loading ? "Iniciando sesión..." : "Iniciar sesión →"}
+            {loading ? "Procesando..." : (isResetMode ? "Enviar enlace" : "Iniciar sesión →")}
           </button>
+          
+          <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+            <button
+              type="button"
+              onClick={() => {
+                setIsResetMode(!isResetMode);
+                setError(null);
+                setSuccessMessage(null);
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--color-primary)",
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+                cursor: "pointer",
+                textDecoration: "underline",
+                textUnderlineOffset: "4px",
+              }}
+            >
+              {isResetMode ? "Volver al inicio de sesión" : "¿Olvidaste tu contraseña?"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

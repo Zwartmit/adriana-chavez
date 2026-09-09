@@ -16,6 +16,7 @@ import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as ServiciosRouteImport } from './routes/servicios'
 import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminActualizarPasswordRouteImport } from './routes/admin/actualizar-password'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as TiendaIndexRouteImport } from './routes/tienda/index'
 import { Route as TiendaSlugRouteImport } from './routes/tienda/$slug'
@@ -60,6 +61,11 @@ const SobreNosotrosRoute = SobreNosotrosRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminActualizarPasswordRoute = AdminActualizarPasswordRouteImport.update({
+  id: '/admin/actualizar-password',
+  path: '/admin/actualizar-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/privacidad': typeof PrivacidadRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
+  '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/privacidad': typeof PrivacidadRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
+  '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/privacidad': typeof PrivacidadRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
+  '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/servicios'
     | '/sobre-nosotros'
+    | '/admin/actualizar-password'
     | '/admin/login'
     | '/tienda/$slug'
     | '/admin/'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/servicios'
     | '/sobre-nosotros'
+    | '/admin/actualizar-password'
     | '/admin/login'
     | '/tienda/$slug'
     | '/admin'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/servicios'
     | '/sobre-nosotros'
+    | '/admin/actualizar-password'
     | '/admin/login'
     | '/tienda/$slug'
     | '/admin/'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   PrivacidadRoute: typeof PrivacidadRoute
   ServiciosRoute: typeof ServiciosRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
+  AdminActualizarPasswordRoute: typeof AdminActualizarPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
   TiendaSlugRoute: typeof TiendaSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -301,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/actualizar-password': {
+      id: '/admin/actualizar-password'
+      path: '/admin/actualizar-password'
+      fullPath: '/admin/actualizar-password'
+      preLoaderRoute: typeof AdminActualizarPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -383,6 +403,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadRoute: PrivacidadRoute,
   ServiciosRoute: ServiciosRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,
+  AdminActualizarPasswordRoute: AdminActualizarPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
   TiendaSlugRoute: TiendaSlugRoute,
   AdminIndexRoute: AdminIndexRoute,

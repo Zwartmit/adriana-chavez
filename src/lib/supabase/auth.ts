@@ -31,3 +31,13 @@ export async function signIn(email: string, password: string) {
 export async function signOut() {
   return supabase.auth.signOut();
 }
+
+export async function resetPassword(email: string, redirectTo: string) {
+  return supabase.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  });
+}
+
+export async function updatePassword(password: string) {
+  return supabase.auth.updateUser({ password });
+}

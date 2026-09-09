@@ -1,7 +1,7 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
-import { getSession } from "@/lib/supabase/auth";
+import { getSession, signOut } from "@/lib/supabase/auth";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 
 const SIDEBAR_COLLAPSED_KEY = "admin-sidebar-collapsed";
@@ -22,6 +22,15 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
   });
 
   useEffect(() => {
+    // 1. Verificación de tab cerrado
+    const isTabActive = window.sessionStorage.getItem("admin_session_tab");
+    if (!isTabActive) {
+      // Si la pestaña es nueva (duplicada) o se reabrió, se asume sesión cerrada.
+      signOut().then(() => navigate({ to: "/admin/login" }));
+      return;
+    }
+
+    // 2. Verificación de sesión de Supabase
     getSession().then((session) => {
       if (!session) {
         navigate({ to: "/admin/login" });
@@ -29,7 +38,36 @@ export function AdminLayout({ pageTitle, children }: AdminLayoutProps) {
       }
       setChecking(false);
     });
-  }, []);
+  }, [navigate]);
+
+  // 3. Temporizador de inactividad (1 hora)
+  useEffect(() => {
+    let inactivityTimer: NodeJS.Timeout;
+
+    const logout = async () => {
+      await signOut();
+      window.sessionStorage.removeItem("admin_session_tab");
+      navigate({ to: "/admin/login" });
+    };
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      // 3600000 ms = 1 hora
+      inactivityTimer = setTimeout(logout, 3600000);
+    };
+
+    // Eventos que resetean la inactividad
+    const events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
+    events.forEach((e) => document.addEventListener(e, resetTimer, { passive: true }));
+    
+    // Iniciar temporizador
+    resetTimer();
+
+    return () => {
+      clearTimeout(inactivityTimer);
+      events.forEach((e) => document.removeEventListener(e, resetTimer));
+    };
+  }, [navigate]);
 
   useEffect(() => {
     window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(isCollapsed));
