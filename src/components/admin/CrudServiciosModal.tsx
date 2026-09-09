@@ -205,7 +205,7 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
                       <span className="text-xs text-[#6B7280]">{s.duracion_min} min • ${s.precio}</span>
                     </div>
                     <Button 
-                      variant="outline" 
+                      variant="secondary" 
                       size="sm" 
                       onClick={() => handleToggleActivo(s.id, s.activo)}
                       style={{ padding: "4px 8px", height: "auto", borderColor: "#D1D5DB", color: "#111827", backgroundColor: "#FFFFFF" }}
@@ -222,3 +222,4 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
     </>
   );
 }
+

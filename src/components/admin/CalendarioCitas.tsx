@@ -31,8 +31,8 @@ export interface CitaUI {
   notasCliente: string | null;
   clienteNombre: string;
   clienteTelefono: string | null;
-  estilistaNombre: string;
-  estilistaColor: string;
+  profesionalNombre: string;
+  profesionalColor: string;
   servicioNombre: string;
 }
 
@@ -43,7 +43,7 @@ interface CitaRow {
   estado: EstadoCita;
   notas_cliente: string | null;
   clientes: { nombre: string; apellido: string | null; telefono: string | null } | null;
-  estilistas: { nombre: string; color_calendario: string } | null;
+  profesionales: { nombre: string; color_calendario: string } | null;
   servicios: { nombre: string; duracion_min: number } | null;
 }
 
@@ -51,16 +51,29 @@ const DIAS_SEMANA = ["L", "M", "X", "J", "V", "S", "D"];
 
 function mapCita(row: CitaRow): CitaUI {
   const cliente = row.clientes;
+  const fechaHora = parseISO(row.fecha_hora);
+
+  // Auto-complete: si la hora de finalización ya pasó y la cita no fue cancelada/no_asistio,
+  // la mostramos visualmente como "completada" sin tocar la BD.
+  let estadoVisual: EstadoCita = row.estado;
+  const estadosActivos: EstadoCita[] = ["pendiente", "confirmada", "en_proceso"];
+  if (estadosActivos.includes(row.estado)) {
+    const finalizacion = new Date(fechaHora.getTime() + row.duracion_min * 60_000);
+    if (finalizacion < new Date()) {
+      estadoVisual = "completada";
+    }
+  }
+
   return {
     id: row.id,
-    fechaHora: parseISO(row.fecha_hora),
+    fechaHora,
     duracionMin: row.duracion_min,
-    estado: row.estado,
+    estado: estadoVisual,
     notasCliente: row.notas_cliente,
     clienteNombre: cliente ? `${cliente.nombre} ${cliente.apellido ?? ""}`.trim() : "Clienta",
     clienteTelefono: cliente?.telefono ?? null,
-    estilistaNombre: row.estilistas?.nombre ?? "Sin asignar",
-    estilistaColor: row.estilistas?.color_calendario ?? "#E8C97A",
+    profesionalNombre: row.profesionales?.nombre ?? "Sin asignar",
+    profesionalColor: row.profesionales?.color_calendario ?? "#E8C97A",
     servicioNombre: row.servicios?.nombre ?? "Servicio",
   };
 }
@@ -89,7 +102,7 @@ export function CalendarioCitas() {
         `
         id, fecha_hora, duracion_min, estado, notas_cliente,
         clientes(nombre, apellido, telefono),
-        estilistas(nombre, color_calendario),
+        profesionales(nombre, color_calendario),
         servicios(nombre, duracion_min)
       `,
       )
@@ -302,7 +315,7 @@ export function CalendarioCitas() {
                       }}
                       title={`${format(cita.fechaHora, "hh:mm a")} · ${cita.clienteNombre}`}
                       style={{
-                        backgroundColor: cita.estilistaColor,
+                        backgroundColor: cita.profesionalColor,
                         color: "var(--color-text-inverse)",
                         border: "none",
                         borderRadius: "var(--radius-sm)",
@@ -365,3 +378,4 @@ export function CalendarioCitas() {
     </div>
   );
 }
+

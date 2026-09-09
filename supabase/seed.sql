@@ -5,15 +5,15 @@
 -- ══════════════════════════════════════════════════════════════════
 
 -- ──────────────────────────────────────────────────────────────────
--- ESTILISTAS (4 — mismos del Brief #5 / EquipoGrid.tsx)
+-- profesionales (4 — mismos del Brief #5 / EquipoGrid.tsx)
 -- ──────────────────────────────────────────────────────────────────
-INSERT INTO public.estilistas (nombre, cargo, especialidades, bio, foto_url, anos_experiencia, activo, orden) VALUES
+INSERT INTO public.profesionales (nombre, cargo, especialidades, bio, foto_url, anos_experiencia, activo, orden) VALUES
   ('Adriana Chávez', 'Fundadora & Directora Creativa',
     ARRAY['Coloración', 'Balayage', 'Dirección artística'],
     'Fundadora del centro con más de 14 años de experiencia. Formada en Colombia, México y España.',
     'https://placehold.co/120x120/1A1820/D4AF6B?text=AC', 14, TRUE, 1),
 
-  ('Valentina Mora', 'Estilista Senior',
+  ('Valentina Mora', 'profesional Senior',
     ARRAY['Corte', 'Peinado', 'Tratamientos'],
     'Especialista en cortes de precisión y peinados para eventos. Certificada por L''Oréal Professionnel.',
     'https://placehold.co/120x120/1A1820/D4AF6B?text=VM', 8, TRUE, 2),
@@ -280,8 +280,9 @@ INSERT INTO public.testimonios (nombre, servicio, texto, rating, desde_anio, apr
 --   DELETE FROM public.galeria CASCADE;
 --   DELETE FROM public.productos CASCADE;
 --   DELETE FROM public.servicios CASCADE;
---   DELETE FROM public.estilistas CASCADE;
+--   DELETE FROM public.profesionales CASCADE;
 --
 -- Este seed se ejecutó con la service role key (bypass de RLS) desde
 -- Claude Code el 18 de agosto de 2026 — ver PROJECT_STATUS.md §4 para
 -- el conteo de filas resultante por tabla.
+

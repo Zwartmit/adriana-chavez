@@ -5,7 +5,7 @@
 
 -- Habilitar RLS en todas las tablas
 ALTER TABLE public.perfiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.estilistas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profesionales ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.categorias_servicios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.servicios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.clientes ENABLE ROW LEVEL SECURITY;
@@ -22,7 +22,7 @@ ALTER TABLE public.galeria ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reportes_caja ENABLE ROW LEVEL SECURITY;
 
 -- ──────────────────────────────────────────────────────────────────
--- Helper: verificar si el usuario es admin o estilista
+-- Helper: verificar si el usuario es admin o profesional
 -- ──────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION public.es_admin()
 RETURNS BOOLEAN AS $$
@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION public.es_staff()
 RETURNS BOOLEAN AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.perfiles
-    WHERE id = auth.uid() AND rol IN ('admin', 'estilista')
+    WHERE id = auth.uid() AND rol IN ('admin', 'profesional')
   );
 $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
@@ -77,13 +77,13 @@ CREATE POLICY "Categorías productos son públicas"
   ON public.categorias_productos FOR SELECT
   USING (TRUE);
 
--- Estilistas activos — públicos
-CREATE POLICY "Estilistas activos son públicos"
-  ON public.estilistas FOR SELECT
+-- profesionales activos — públicos
+CREATE POLICY "profesionales activos son públicos"
+  ON public.profesionales FOR SELECT
   USING (activo = TRUE);
 
-CREATE POLICY "Admin gestiona estilistas"
-  ON public.estilistas FOR ALL
+CREATE POLICY "Admin gestiona profesionales"
+  ON public.profesionales FOR ALL
   USING (public.es_admin());
 
 -- Productos activos — públicos
@@ -222,3 +222,4 @@ CREATE POLICY "Solo admin lee mensajes"
 CREATE POLICY "Solo admin actualiza mensajes"
   ON public.mensajes_contacto FOR UPDATE
   USING (public.es_admin());
+

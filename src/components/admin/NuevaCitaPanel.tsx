@@ -6,7 +6,7 @@ import "react-day-picker/style.css";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
 import { CrudServiciosModal } from "./CrudServiciosModal";
-import { CrudEstilistasModal } from "./CrudEstilistasModal";
+import { CrudProfesionalesModal } from "./CrudProfesionalesModal";
 
 interface ClienteResult {
   id: string;
@@ -21,7 +21,7 @@ interface ServicioOption {
   duracion_min: number;
 }
 
-interface EstilistaOption {
+interface ProfesionalOption {
   id: string;
   nombre: string;
 }
@@ -36,9 +36,8 @@ interface NuevaCitaPanelProps {
 
 function generarSlots(): string[] {
   const slots: string[] = [];
-  for (let h = 8; h <= 19; h++) {
+  for (let h = 0; h <= 23; h++) {
     for (const m of [0, 30]) {
-      if (h === 19 && m === 30) continue;
       slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
     }
   }
@@ -86,10 +85,10 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
   const [servicioQuery, setServicioQuery] = useState("");
   const [showServicioResults, setShowServicioResults] = useState(false);
 
-  const [estilistas, setEstilistas] = useState<EstilistaOption[]>([]);
-  const [selectedEstilistaId, setSelectedEstilistaId] = useState("");
-  const [estilistaQuery, setEstilistaQuery] = useState("");
-  const [showEstilistaResults, setShowEstilistaResults] = useState(false);
+  const [profesionales, setProfesionals] = useState<ProfesionalOption[]>([]);
+  const [selectedProfesionalId, setSelectedProfesionalId] = useState("");
+  const [profesionalQuery, setProfesionalQuery] = useState("");
+  const [showProfesionalResults, setShowProfesionalResults] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(defaultDate ?? new Date());
   const [selectedHora, setSelectedHora] = useState("");
   const [notas, setNotas] = useState("");
@@ -97,7 +96,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
   const [formError, setFormError] = useState<string | null>(null);
 
   const [isServiciosModalOpen, setIsServiciosModalOpen] = useState(false);
-  const [isEstilistasModalOpen, setIsEstilistasModalOpen] = useState(false);
+  const [isProfesionalsModalOpen, setIsProfesionalsModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -105,12 +104,12 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
   }, [isOpen, defaultDate]);
 
   const fetchOptions = useCallback(async () => {
-    const [{ data: serviciosData }, { data: estilistasData }] = await Promise.all([
+    const [{ data: serviciosData }, { data: profesionalesData }] = await Promise.all([
       supabase.from("servicios").select("id, nombre, duracion_min").eq("activo", true).order("orden", { ascending: true }),
-      supabase.from("estilistas").select("id, nombre").eq("activo", true).order("orden", { ascending: true }),
+      supabase.from("profesionales").select("id, nombre").eq("activo", true).order("orden", { ascending: true }),
     ]);
     setServicios(serviciosData ?? []);
-    setEstilistas(estilistasData ?? []);
+    setProfesionals(profesionalesData ?? []);
   }, []);
 
   useEffect(() => {
@@ -147,9 +146,9 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
     setSelectedServicioId("");
     setServicioQuery("");
     setShowServicioResults(false);
-    setSelectedEstilistaId("");
-    setEstilistaQuery("");
-    setShowEstilistaResults(false);
+    setSelectedProfesionalId("");
+    setProfesionalQuery("");
+    setShowProfesionalResults(false);
     setSelectedDate(defaultDate ?? new Date());
     setSelectedHora("");
     setNotas("");
@@ -165,7 +164,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
     e.preventDefault();
     setFormError(null);
 
-    if (!selectedCliente || !selectedServicioId || !selectedEstilistaId || !selectedDate || !selectedHora) {
+    if (!selectedCliente || !selectedServicioId || !selectedProfesionalId || !selectedDate || !selectedHora) {
       setFormError("Completa todos los campos requeridos.");
       return;
     }
@@ -178,11 +177,11 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
     setSubmitting(true);
     const { error } = await supabase.from("citas").insert({
       cliente_id: selectedCliente.id,
-      estilista_id: selectedEstilistaId,
+      profesional_id: selectedProfesionalId,
       servicio_id: selectedServicioId,
       fecha_hora: fechaHora.toISOString(),
       duracion_min: servicio?.duracion_min ?? 60,
-      estado: "pendiente",
+      estado: "confirmada",
       precio_cobrado: null,
       notas_cliente: notas || null,
       notas_internas: null,
@@ -394,13 +393,13 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
             )}
           </div>
 
-          {/* Estilista */}
+          {/* Profesional */}
           <div style={{ position: "relative" }}>
             <div className="flex items-center justify-between mb-[6px]">
-              <label style={{ ...labelStyle, marginBottom: 0 }}>Estilista *</label>
+              <label style={{ ...labelStyle, marginBottom: 0 }}>Profesional *</label>
               <button
                 type="button"
-                onClick={() => setIsEstilistasModalOpen(true)}
+                onClick={() => setIsProfesionalsModalOpen(true)}
                 className="text-xs font-semibold hover:underline"
                 style={{ color: "var(--color-primary-dim)" }}
               >
@@ -409,18 +408,18 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
             </div>
             <input
               type="text"
-              placeholder="Buscar estilista..."
-              value={selectedEstilistaId ? (estilistas.find(e => e.id === selectedEstilistaId)?.nombre ?? "") : estilistaQuery}
+              placeholder="Buscar profesional..."
+              value={selectedProfesionalId ? (profesionales.find(e => e.id === selectedProfesionalId)?.nombre ?? "") : profesionalQuery}
               onChange={(e) => {
-                setSelectedEstilistaId("");
-                setEstilistaQuery(e.target.value);
-                setShowEstilistaResults(true);
+                setSelectedProfesionalId("");
+                setProfesionalQuery(e.target.value);
+                setShowProfesionalResults(true);
               }}
-              onFocus={() => setShowEstilistaResults(true)}
-              onBlur={() => setTimeout(() => setShowEstilistaResults(false), 200)}
+              onFocus={() => setShowProfesionalResults(true)}
+              onBlur={() => setTimeout(() => setShowProfesionalResults(false), 200)}
               style={inputStyle}
             />
-            {showEstilistaResults && !selectedEstilistaId && (
+            {showProfesionalResults && !selectedProfesionalId && (
               <div
                 className="glass-obsidian"
                 style={{
@@ -436,16 +435,16 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
                   border: "1px solid var(--color-border)",
                 }}
               >
-                {estilistas.filter(e => e.nombre.toLowerCase().includes(estilistaQuery.toLowerCase())).length === 0 ? (
+                {profesionales.filter(e => e.nombre.toLowerCase().includes(profesionalQuery.toLowerCase())).length === 0 ? (
                   <div style={{ padding: "10px 14px", color: "var(--color-text-muted)", fontSize: "var(--text-sm)" }}>No hay coincidencias</div>
                 ) : (
-                  estilistas.filter(e => e.nombre.toLowerCase().includes(estilistaQuery.toLowerCase())).map((est) => (
+                  profesionales.filter(e => e.nombre.toLowerCase().includes(profesionalQuery.toLowerCase())).map((est) => (
                     <button
                       key={est.id}
                       type="button"
                       onClick={() => {
-                        setSelectedEstilistaId(est.id);
-                        setShowEstilistaResults(false);
+                        setSelectedProfesionalId(est.id);
+                        setShowProfesionalResults(false);
                       }}
                       style={{
                         display: "block",
@@ -539,11 +538,12 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
         onClose={() => setIsServiciosModalOpen(false)}
         onUpdated={fetchOptions}
       />
-      <CrudEstilistasModal
-        isOpen={isEstilistasModalOpen}
-        onClose={() => setIsEstilistasModalOpen(false)}
+      <CrudProfesionalesModal
+        isOpen={isProfesionalsModalOpen}
+        onClose={() => setIsProfesionalsModalOpen(false)}
         onUpdated={fetchOptions}
       />
     </>
   );
 }
+

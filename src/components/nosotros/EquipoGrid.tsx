@@ -4,7 +4,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 
-interface EstilistaUI {
+interface ProfesionalUI {
   id: string;
   name: string;
   experience: number;
@@ -13,14 +13,14 @@ interface EstilistaUI {
   bio: string;
 }
 
-interface EstilistaCardProps {
+interface ProfesionalCardProps {
   name: string;
   experience: number;
   specialties: string[];
   photo: string;
 }
 
-function EstilistaCard({ name, experience, specialties, photo }: EstilistaCardProps) {
+function ProfesionalCard({ name, experience, specialties, photo }: ProfesionalCardProps) {
   return (
     <div
       className="text-center"
@@ -105,7 +105,7 @@ function EstilistaCard({ name, experience, specialties, photo }: EstilistaCardPr
 }
 
 export function EquipoGrid() {
-  const [equipo, setEquipo] = useState<EstilistaUI[]>([]);
+  const [equipo, setEquipo] = useState<ProfesionalUI[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -113,7 +113,7 @@ export function EquipoGrid() {
     setLoading(true);
     setError(null);
     const { data, error } = await supabase
-      .from("estilistas")
+      .from("profesionales")
       .select("*")
       .eq("activo", true)
       .order("orden", { ascending: true });
@@ -176,7 +176,7 @@ export function EquipoGrid() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {equipo.map((e) => (
-              <EstilistaCard key={e.id} {...e} />
+              <ProfesionalCard key={e.id} {...e} />
             ))}
           </div>
         )}
@@ -184,3 +184,4 @@ export function EquipoGrid() {
     </section>
   );
 }
+

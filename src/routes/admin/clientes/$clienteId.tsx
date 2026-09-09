@@ -24,12 +24,12 @@ interface ClienteRow {
   notas: string | null;
   alergias: string | null;
   preferencias: string | null;
-  estilista_preferido_id: string | null;
+  profesional_preferido_id: string | null;
   activo: boolean;
-  estilistas: { nombre: string } | null;
+  profesionales: { nombre: string } | null;
 }
 
-interface EstilistaOption {
+interface ProfesionalOption {
   id: string;
   nombre: string;
 }
@@ -39,7 +39,7 @@ interface CitaHistUI {
   fechaHora: Date;
   estado: EstadoCita;
   servicioNombre: string;
-  estilistaNombre: string;
+  profesionalNombre: string;
   precioCobrado: number | null;
 }
 
@@ -49,7 +49,7 @@ interface CitaRow {
   estado: EstadoCita;
   precio_cobrado: number | null;
   servicios: { nombre: string } | null;
-  estilistas: { nombre: string } | null;
+  profesionales: { nombre: string } | null;
 }
 
 const ESTADO_STYLES: Record<EstadoCita, { label: string; bg: string; color: string }> = {
@@ -94,7 +94,7 @@ function ClienteDetallePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [estilistas, setEstilistas] = useState<EstilistaOption[]>([]);
+  const [profesionales, setProfesionals] = useState<ProfesionalOption[]>([]);
 
   const [citas, setCitas] = useState<CitaHistUI[]>([]);
   const [citasLoading, setCitasLoading] = useState(true);
@@ -102,7 +102,7 @@ function ClienteDetallePage() {
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [estilistaPreferidoId, setEstilistaPreferidoId] = useState("");
+  const [profesionalPreferidoId, setProfesionalPreferidoId] = useState("");
   const [savingDatos, setSavingDatos] = useState(false);
 
   const [notas, setNotas] = useState("");
@@ -124,7 +124,7 @@ function ClienteDetallePage() {
     setError(null);
     const { data, error } = await supabase
       .from("clientes")
-      .select("*, estilistas(nombre)")
+      .select("*, profesionales(nombre)")
       .eq("id", clienteId)
       .single();
 
@@ -140,7 +140,7 @@ function ClienteDetallePage() {
     setEmail(row.email ?? "");
     setTelefono(row.telefono ?? "");
     setFechaNacimiento(row.fecha_nacimiento ?? "");
-    setEstilistaPreferidoId(row.estilista_preferido_id ?? "");
+    setProfesionalPreferidoId(row.profesional_preferido_id ?? "");
     setNotas(row.notas ?? "");
     setAlergias(row.alergias ?? "");
     setPreferencias(row.preferencias ?? "");
@@ -151,7 +151,7 @@ function ClienteDetallePage() {
     setCitasLoading(true);
     const { data, error } = await supabase
       .from("citas")
-      .select("id, fecha_hora, estado, precio_cobrado, servicios(nombre), estilistas(nombre)")
+      .select("id, fecha_hora, estado, precio_cobrado, servicios(nombre), profesionales(nombre)")
       .eq("cliente_id", clienteId)
       .order("fecha_hora", { ascending: false });
 
@@ -166,7 +166,7 @@ function ClienteDetallePage() {
       fechaHora: new Date(c.fecha_hora),
       estado: c.estado,
       servicioNombre: c.servicios?.nombre ?? "Servicio",
-      estilistaNombre: c.estilistas?.nombre ?? "Sin asignar",
+      profesionalNombre: c.profesionales?.nombre ?? "Sin asignar",
       precioCobrado: c.precio_cobrado,
     }));
     setCitas(mapped);
@@ -177,11 +177,11 @@ function ClienteDetallePage() {
     fetchCliente();
     fetchCitas();
     supabase
-      .from("estilistas")
+      .from("profesionales")
       .select("id, nombre")
       .eq("activo", true)
       .order("orden", { ascending: true })
-      .then(({ data }) => setEstilistas(data ?? []));
+      .then(({ data }) => setProfesionals(data ?? []));
   }, [fetchCliente, fetchCitas]);
 
   const handleGuardarDatos = async () => {
@@ -192,7 +192,7 @@ function ClienteDetallePage() {
         email: email.trim() || null,
         telefono: telefono.trim() || null,
         fecha_nacimiento: fechaNacimiento || null,
-        estilista_preferido_id: estilistaPreferidoId || null,
+        profesional_preferido_id: profesionalPreferidoId || null,
       })
       .eq("id", clienteId);
     setSavingDatos(false);
@@ -335,11 +335,11 @@ function ClienteDetallePage() {
                   }
                 />
                 <InlineEditField
-                  label="Estilista preferida"
-                  value={estilistaPreferidoId}
-                  onChange={setEstilistaPreferidoId}
-                  options={estilistas.map((e) => ({ value: e.id, label: e.nombre }))}
-                  displayValue={estilistas.find((e) => e.id === estilistaPreferidoId)?.nombre ?? "Sin preferencia"}
+                  label="Profesional preferida"
+                  value={profesionalPreferidoId}
+                  onChange={setProfesionalPreferidoId}
+                  options={profesionales.map((e) => ({ value: e.id, label: e.nombre }))}
+                  displayValue={profesionales.find((e) => e.id === profesionalPreferidoId)?.nombre ?? "Sin preferencia"}
                 />
               </div>
 
@@ -473,7 +473,7 @@ function ClienteDetallePage() {
                           {c.servicioNombre}
                         </p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
-                          {c.estilistaNombre}
+                          {c.profesionalNombre}
                         </p>
                       </div>
                       <EstadoBadge estado={c.estado} />
@@ -524,7 +524,7 @@ function ClienteDetallePage() {
                             {c.servicioNombre}
                           </p>
                           <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
-                            {c.estilistaNombre}
+                            {c.profesionalNombre}
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
@@ -568,3 +568,4 @@ function ClienteDetallePage() {
     </AdminLayout>
   );
 }
+

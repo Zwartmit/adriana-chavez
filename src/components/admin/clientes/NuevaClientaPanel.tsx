@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
 
-interface EstilistaOption {
+interface ProfesionalOption {
   id: string;
   nombre: string;
 }
@@ -44,10 +44,9 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [estilistas, setEstilistas] = useState<EstilistaOption[]>([]);
-  const [estilistaId, setEstilistaId] = useState("");
+  const [profesionales, setProfesionals] = useState<ProfesionalOption[]>([]);
+  const [profesionalId, setProfesionalId] = useState("");
   const [notas, setNotas] = useState("");
-  const [aceptaDatos, setAceptaDatos] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -55,11 +54,11 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
   useEffect(() => {
     if (!isOpen) return;
     supabase
-      .from("estilistas")
+      .from("profesionales")
       .select("id, nombre")
       .eq("activo", true)
       .order("orden", { ascending: true })
-      .then(({ data }) => setEstilistas(data ?? []));
+      .then(({ data }) => setProfesionals(data ?? []));
   }, [isOpen]);
 
   const resetForm = useCallback(() => {
@@ -68,9 +67,8 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
     setEmail("");
     setTelefono("");
     setFechaNacimiento("");
-    setEstilistaId("");
+    setProfesionalId("");
     setNotas("");
-    setAceptaDatos(false);
     setFormError(null);
     setEmailError(null);
   }, []);
@@ -85,7 +83,7 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
     setFormError(null);
     setEmailError(null);
 
-    if (!nombre.trim() || !telefono.trim() || !aceptaDatos) {
+    if (!nombre.trim() || !telefono.trim()) {
       setFormError("Completa todos los campos requeridos.");
       return;
     }
@@ -118,11 +116,12 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
       email: email.trim() || null,
       telefono: telefono.trim(),
       fecha_nacimiento: fechaNacimiento || null,
-      estilista_preferido_id: estilistaId || null,
+      profesional_preferido_id: profesionalId || null,
       notas: notas.trim() || null,
       alergias: null,
       preferencias: null,
-      acepta_datos: aceptaDatos,
+      // El sistema asume automáticamente la aceptación del tratamiento de datos
+      acepta_datos: true,
       fecha_acepta: new Date().toISOString(),
       activo: true,
     });
@@ -231,10 +230,10 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
           </div>
 
           <div>
-            <label style={labelStyle}>Estilista preferida <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
-            <select value={estilistaId} onChange={(e) => setEstilistaId(e.target.value)} style={inputStyle}>
+            <label style={labelStyle}>Profesional preferida <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
+            <select value={profesionalId} onChange={(e) => setProfesionalId(e.target.value)} style={inputStyle}>
               <option value="">Sin preferencia</option>
-              {estilistas.map((e) => (
+              {profesionales.map((e) => (
                 <option key={e.id} value={e.id}>
                   {e.nombre}
                 </option>
@@ -243,7 +242,7 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
           </div>
 
           <div>
-            <label style={labelStyle}>Notas iniciales <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
+            <label style={labelStyle}>Observaciones <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
             <textarea
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
@@ -251,33 +250,6 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
               style={{ ...inputStyle, resize: "vertical" }}
             />
           </div>
-
-          <label className="flex items-start gap-2" style={{ cursor: "pointer" }}>
-            <input
-              type="checkbox"
-              checked={aceptaDatos}
-              onChange={(e) => setAceptaDatos(e.target.checked)}
-              style={{ marginTop: 3 }}
-            />
-            <span
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "var(--text-sm)",
-                color: "var(--color-text-secondary)",
-              }}
-            >
-              Acepta tratamiento de datos personales (
-              <a 
-                href="/privacidad" 
-                target="_blank" 
-                rel="noreferrer"
-                style={{ textDecoration: "underline", color: "var(--color-primary-dim)" }}
-              >
-                Ley 1581
-              </a>
-              ) *
-            </span>
-          </label>
 
           {formError && (
             <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-error)" }}>
@@ -293,3 +265,4 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
     </>
   );
 }
+

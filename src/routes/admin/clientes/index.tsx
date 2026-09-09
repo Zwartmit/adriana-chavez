@@ -20,7 +20,7 @@ interface ClienteRow {
   email: string | null;
   telefono: string | null;
   activo: boolean;
-  estilistas: { nombre: string } | null;
+  profesionales: { nombre: string } | null;
 }
 
 interface ClienteUI {
@@ -28,7 +28,7 @@ interface ClienteUI {
   nombreCompleto: string;
   telefono: string | null;
   email: string | null;
-  estilistaNombre: string | null;
+  profesionalNombre: string | null;
   totalCitas: number;
   ultimaCita: Date | null;
   activo: boolean;
@@ -59,7 +59,7 @@ function ClientesPage() {
 
     let clientesQuery = supabase
       .from("clientes")
-      .select("id, nombre, apellido, email, telefono, activo, estilistas(nombre)")
+      .select("id, nombre, apellido, email, telefono, activo, profesionales(nombre)")
       .order("created_at", { ascending: false });
 
     if (query) {
@@ -100,7 +100,7 @@ function ClientesPage() {
         nombreCompleto: `${c.nombre} ${c.apellido ?? ""}`.trim(),
         telefono: c.telefono,
         email: c.email,
-        estilistaNombre: c.estilistas?.nombre ?? null,
+        profesionalNombre: c.profesionales?.nombre ?? null,
         totalCitas: stats?.total ?? 0,
         ultimaCita: stats?.ultima ?? null,
         activo: c.activo,
@@ -235,7 +235,7 @@ function ClientesPage() {
         <table className="w-full min-w-[800px]" style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ backgroundColor: "#0A0A0B" }}>
-              {["Nombre", "Teléfono", "Email", "Estilista preferida", "Última cita", "Total citas", "Acciones"].map(
+              {["Nombre", "Teléfono", "Email", "Profesional preferida", "Última cita", "Total citas", "Acciones"].map(
                 (h) => (
                   <th
                     key={h}
@@ -335,7 +335,7 @@ function ClientesPage() {
                     {c.email ?? "—"}
                   </td>
                   <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
-                    {c.estilistaNombre ?? "—"}
+                    {c.profesionalNombre ?? "—"}
                   </td>
                   <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                     {c.ultimaCita ? c.ultimaCita.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" }) : "—"}
@@ -438,3 +438,4 @@ function ClientesPage() {
     </AdminLayout>
   );
 }
+

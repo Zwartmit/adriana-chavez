@@ -13,7 +13,7 @@ CREATE EXTENSION IF NOT EXISTS "pg_trgm"; -- Para búsqueda de texto
 -- ──────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.perfiles (
   id          UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-  rol         TEXT NOT NULL DEFAULT 'cliente' CHECK (rol IN ('admin', 'estilista', 'cliente')),
+  rol         TEXT NOT NULL DEFAULT 'cliente' CHECK (rol IN ('admin', 'profesional', 'cliente')),
   nombre      TEXT,
   telefono    TEXT,
   avatar_url  TEXT,
@@ -38,13 +38,13 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- ──────────────────────────────────────────────────────────────────
--- TABLA: estilistas
+-- TABLA: profesionales
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS public.estilistas (
+CREATE TABLE IF NOT EXISTS public.profesionales (
   id              UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   perfil_id       UUID REFERENCES public.perfiles(id) ON DELETE SET NULL,
   nombre          TEXT NOT NULL,
-  cargo           TEXT NOT NULL DEFAULT 'Estilista',
+  cargo           TEXT NOT NULL DEFAULT 'profesional',
   especialidades  TEXT[] DEFAULT '{}',
   bio             TEXT,
   foto_url        TEXT,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS public.estilistas (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE public.estilistas IS 'Equipo de estilistas del centro';
+COMMENT ON TABLE public.profesionales IS 'Equipo de profesionales del centro';
 
 -- ──────────────────────────────────────────────────────────────────
 -- TABLA: categorias_servicios
@@ -111,10 +111,10 @@ CREATE TABLE IF NOT EXISTS public.clientes (
   telefono        TEXT,
   fecha_nacimiento DATE,
   -- Campos del CRM
-  notas           TEXT, -- Notas generales del estilista
+  notas           TEXT, -- Notas generales del profesional
   alergias        TEXT, -- Alergias o sensibilidades conocidas
   preferencias    TEXT, -- Preferencias de productos o técnicas
-  estilista_preferido_id UUID REFERENCES public.estilistas(id) ON DELETE SET NULL,
+  profesional_preferido_id UUID REFERENCES public.profesionales(id) ON DELETE SET NULL,
   -- Consentimiento Ley 1581
   acepta_datos    BOOLEAN DEFAULT FALSE,
   fecha_acepta    TIMESTAMPTZ,
@@ -131,7 +131,7 @@ COMMENT ON TABLE public.clientes IS 'CRM de clientes del centro. Incluye campos 
 CREATE TABLE IF NOT EXISTS public.citas (
   id              UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   cliente_id      UUID REFERENCES public.clientes(id) ON DELETE CASCADE NOT NULL,
-  estilista_id    UUID REFERENCES public.estilistas(id) ON DELETE SET NULL,
+  profesional_id    UUID REFERENCES public.profesionales(id) ON DELETE SET NULL,
   servicio_id     UUID REFERENCES public.servicios(id) ON DELETE SET NULL,
   fecha_hora      TIMESTAMPTZ NOT NULL,
   duracion_min    INTEGER NOT NULL DEFAULT 60,
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS public.citas (
                   CHECK (estado IN ('pendiente', 'confirmada', 'en_proceso', 'completada', 'cancelada', 'no_asistio')),
   precio_cobrado  NUMERIC(12, 0),
   notas_cliente   TEXT, -- Lo que el cliente solicitó
-  notas_internas  TEXT, -- Notas privadas del estilista
+  notas_internas  TEXT, -- Notas privadas del profesional
   canal_origen    TEXT DEFAULT 'web'
                   CHECK (canal_origen IN ('web', 'whatsapp', 'telefono', 'presencial')),
   recordatorio_24h_enviado  BOOLEAN DEFAULT FALSE,
@@ -153,7 +153,7 @@ COMMENT ON TABLE public.citas IS 'Calendario de citas. Los campos de recordatori
 
 -- Índices para el calendario
 CREATE INDEX IF NOT EXISTS idx_citas_fecha ON public.citas(fecha_hora);
-CREATE INDEX IF NOT EXISTS idx_citas_estilista ON public.citas(estilista_id);
+CREATE INDEX IF NOT EXISTS idx_citas_profesional ON public.citas(profesional_id);
 CREATE INDEX IF NOT EXISTS idx_citas_estado ON public.citas(estado);
 
 -- ──────────────────────────────────────────────────────────────────
@@ -161,7 +161,7 @@ CREATE INDEX IF NOT EXISTS idx_citas_estado ON public.citas(estado);
 -- ──────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.bloqueos_horario (
   id            UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  estilista_id  UUID REFERENCES public.estilistas(id) ON DELETE CASCADE,
+  profesional_id  UUID REFERENCES public.profesionales(id) ON DELETE CASCADE,
   fecha_inicio  TIMESTAMPTZ NOT NULL,
   fecha_fin     TIMESTAMPTZ NOT NULL,
   motivo        TEXT,
@@ -400,7 +400,7 @@ DECLARE
   t TEXT;
 BEGIN
   FOREACH t IN ARRAY ARRAY[
-    'perfiles', 'estilistas', 'servicios', 'clientes',
+    'perfiles', 'profesionales', 'servicios', 'clientes',
     'citas', 'productos', 'inventario', 'ordenes'
   ] LOOP
     EXECUTE format(
@@ -412,3 +412,4 @@ BEGIN
   END LOOP;
 END;
 $$;
+

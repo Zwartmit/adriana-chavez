@@ -110,7 +110,7 @@ export function DetalleDiaPanel({
                     border: "1px solid var(--color-border)",
                     borderRadius: "var(--radius-lg)",
                     backgroundColor: "var(--color-bg-alt)",
-                    borderLeft: `4px solid ${cita.estilistaColor}`,
+                    borderLeft: `4px solid ${cita.profesionalColor}`,
                     opacity: cita.estado === "cancelada" ? 0.6 : 1,
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-alt)")}
@@ -199,3 +199,4 @@ export function DetalleDiaPanel({
     </>
   );
 }
+

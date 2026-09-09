@@ -3,13 +3,13 @@ import { X, Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 
-interface CrudEstilistasModalProps {
+interface CrudProfesionalesModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpdated: () => void;
 }
 
-interface EstilistaItem {
+interface ProfesionalItem {
   id: string;
   nombre: string;
   cargo: string;
@@ -29,13 +29,13 @@ const inputStyle: React.CSSProperties = {
   outline: "none",
 };
 
-export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilistasModalProps) {
-  const [estilistas, setEstilistas] = useState<EstilistaItem[]>([]);
+export function CrudProfesionalesModal({ isOpen, onClose, onUpdated }: CrudProfesionalesModalProps) {
+  const [profesionales, setProfesionals] = useState<ProfesionalItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [nombre, setNombre] = useState("");
-  const [cargo, setCargo] = useState("Estilista");
+  const [cargo, setCargo] = useState("Profesional");
   const [anosExperiencia, setAnosExperiencia] = useState("1");
   const [colorCalendario, setColorCalendario] = useState("#E8C97A");
   const [submitting, setSubmitting] = useState(false);
@@ -44,21 +44,21 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
 
   useEffect(() => {
-    if (isOpen) fetchEstilistas();
+    if (isOpen) fetchProfesionals();
   }, [isOpen]);
 
-  const fetchEstilistas = async () => {
+  const fetchProfesionals = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("estilistas")
+      .from("profesionales")
       .select("id, nombre, cargo, color_calendario, activo")
       .order("nombre", { ascending: true });
     
     if (error) {
-      console.error("Error fetching estilistas:", error);
-      setError("No pudimos cargar la lista de estilistas. Intenta de nuevo más tarde.");
+      console.error("Error fetching profesionales:", error);
+      setError("No pudimos cargar la lista de profesionales. Intenta de nuevo más tarde.");
     } else {
-      setEstilistas(data ?? []);
+      setProfesionals(data ?? []);
     }
     setLoading(false);
   };
@@ -70,7 +70,7 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
     setSubmitting(true);
     setError(null);
 
-    const { error: insertError } = await supabase.from("estilistas").insert({
+    const { error: insertError } = await supabase.from("profesionales").insert({
       nombre,
       cargo,
       anos_experiencia: parseInt(anosExperiencia, 10) || 1,
@@ -83,32 +83,32 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
     setSubmitting(false);
 
     if (insertError) {
-      console.error("Error creating estilista:", insertError);
-      setError("Ocurrió un error al guardar la estilista. Verifica los datos e intenta de nuevo.");
+      console.error("Error creating profesional:", insertError);
+      setError("Ocurrió un error al guardar la profesional. Verifica los datos e intenta de nuevo.");
     } else {
       setNombre("");
-      setCargo("Estilista");
+      setCargo("Profesional");
       setAnosExperiencia("1");
       setColorCalendario("#E8C97A");
-      fetchEstilistas();
+      fetchProfesionals();
       onUpdated();
     }
   };
 
   const handleToggleActivo = async (id: string, currentActivo: boolean) => {
-    const { error } = await supabase.from("estilistas").update({ activo: !currentActivo }).eq("id", id);
+    const { error } = await supabase.from("profesionales").update({ activo: !currentActivo }).eq("id", id);
     if (error) {
-      console.error("Error toggling estilista status:", error);
-      setError("No se pudo actualizar el estado de la estilista.");
+      console.error("Error toggling profesional status:", error);
+      setError("No se pudo actualizar el estado de la profesional.");
     } else {
-      fetchEstilistas();
+      fetchProfesionals();
       onUpdated();
     }
   };
 
   if (!isOpen) return null;
 
-  const filteredEstilistas = estilistas.filter((e) => {
+  const filteredProfesionals = profesionales.filter((e) => {
     const matchesSearch = e.nombre.toLowerCase().includes(searchQuery.toLowerCase()) || e.cargo.toLowerCase().includes(searchQuery.toLowerCase());
     if (statusFilter === "active") return matchesSearch && e.activo;
     if (statusFilter === "inactive") return matchesSearch && !e.activo;
@@ -123,7 +123,7 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
         style={{ zIndex: 81, borderRadius: "var(--radius-xl)", border: "1px solid var(--color-border)", backgroundColor: "#F5F0E8" }}
       >
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#D1D5DB] shrink-0">
-          <h2 className="font-display italic text-2xl text-[#111827]">Gestionar estilistas</h2>
+          <h2 className="font-display italic text-2xl text-[#111827]">Gestionar profesionales</h2>
           <button onClick={onClose} className="text-[#6B7280] hover:text-[#111827]">
             <X size={20} />
           </button>
@@ -133,7 +133,7 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
           {error && <p className="text-red-500 text-sm">{error}</p>}
           
           <form onSubmit={handleCreate} className="flex flex-col gap-3 p-4 rounded-lg bg-[#FFFFFF] border border-[#D1D5DB] shadow-sm">
-            <h3 className="font-body font-semibold text-sm text-[#111827]">Añadir nueva estilista</h3>
+            <h3 className="font-body font-semibold text-sm text-[#111827]">Añadir nueva profesional</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <input
                 type="text"
@@ -177,7 +177,7 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
 
           <div className="flex flex-col gap-2">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-2">
-              <h3 className="font-body font-semibold text-sm text-[#4B5563]">Estilistas existentes</h3>
+              <h3 className="font-body font-semibold text-sm text-[#4B5563]">Profesionals existentes</h3>
               <div className="flex gap-2 w-full sm:w-auto">
                 <input
                   type="text"
@@ -199,11 +199,11 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
             </div>
             {loading ? (
               <p className="text-sm text-center py-4 text-[#4B5563]">Cargando...</p>
-            ) : filteredEstilistas.length === 0 ? (
-              <p className="text-sm text-center py-4 text-[#4B5563]">No se encontraron estilistas.</p>
+            ) : filteredProfesionals.length === 0 ? (
+              <p className="text-sm text-center py-4 text-[#4B5563]">No se encontraron profesionales.</p>
             ) : (
               <div className="grid grid-cols-1 gap-2">
-                {filteredEstilistas.map((e) => (
+                {filteredProfesionals.map((e) => (
                   <div key={e.id} className="flex items-center justify-between p-3 rounded-lg bg-[#FFFFFF] border border-[#E5E7EB] shadow-sm">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: e.color_calendario }} />
@@ -213,7 +213,7 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
                       </div>
                     </div>
                     <Button 
-                      variant="outline" 
+                      variant="secondary" 
                       size="sm" 
                       onClick={() => handleToggleActivo(e.id, e.activo)}
                       style={{ padding: "4px 8px", height: "auto", borderColor: "#D1D5DB", color: "#111827", backgroundColor: "#FFFFFF" }}
@@ -230,3 +230,5 @@ export function CrudEstilistasModal({ isOpen, onClose, onUpdated }: CrudEstilist
     </>
   );
 }
+
+

@@ -559,7 +559,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                     }}
                   >
                     {producto.description} Formulado con ingredientes de alta calidad
-                    seleccionados por nuestro equipo de estilistas para ofrecer resultados
+                    seleccionados por nuestro equipo de profesionales para ofrecer resultados
                     visibles desde las primeras aplicaciones.
                   </p>
                   <p
@@ -582,7 +582,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                       lineHeight: "var(--leading-relaxed)",
                     }}
                   >
-                    Recomendado por nuestro equipo de estilistas para uso regular en casa,
+                    Recomendado por nuestro equipo de profesionales para uso regular en casa,
                     complementando los tratamientos realizados en el centro.
                   </p>
                 </div>
@@ -750,3 +750,4 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
     </main>
   );
 }
+

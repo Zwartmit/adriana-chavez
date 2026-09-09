@@ -148,18 +148,18 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
               <p style={rowValue}>{cita.servicioNombre}</p>
             </div>
             <div>
-              <p style={rowLabel}>Estilista</p>
+              <p style={rowLabel}>Profesional</p>
               <div className="flex items-center gap-2">
                 <span
                   style={{
                     width: 10,
                     height: 10,
                     borderRadius: "50%",
-                    backgroundColor: cita.estilistaColor,
+                    backgroundColor: cita.profesionalColor,
                     display: "inline-block",
                   }}
                 />
-                <p style={rowValue}>{cita.estilistaNombre}</p>
+                <p style={rowValue}>{cita.profesionalNombre}</p>
               </div>
             </div>
           </div>
@@ -196,24 +196,6 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
 
         <div className="flex gap-2 w-full" style={{ marginTop: "2rem" }}>
           <Button
-            variant="accent"
-            size="sm"
-            className="flex-1"
-            disabled={updating || cita.estado === "confirmada" || cita.estado === "completada" || cita.estado === "cancelada"}
-            onClick={() => setConfirmAction("confirmada")}
-          >
-            Confirmar
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="flex-1 !text-[var(--color-text-on-light)]"
-            disabled={updating || cita.estado === "completada" || cita.estado === "cancelada"}
-            onClick={() => setConfirmAction("completada")}
-          >
-            Completar
-          </Button>
-          <Button
             variant="secondary"
             size="sm"
             className="flex-1 !text-[var(--color-error)] hover:!bg-[var(--color-error)] hover:!text-white hover:!border-[var(--color-error)]"
@@ -221,34 +203,16 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             onClick={() => setConfirmAction("cancelada")}
             style={{ borderColor: "rgba(224,82,82,0.3)" }}
           >
-            Cancelar
+            Cancelar cita
           </Button>
         </div>
       </div>
 
       {confirmAction && (
         <ConfirmModal
-          title={
-            confirmAction === "confirmada"
-              ? "Confirmar cita"
-              : confirmAction === "completada"
-                ? "Completar cita"
-                : "Cancelar cita"
-          }
-          message={
-            confirmAction === "confirmada"
-              ? "¿La clienta ha confirmado su asistencia a esta cita?"
-              : confirmAction === "completada"
-                ? "¿Deseas marcar esta cita como completada? Asegúrate de que el servicio ya finalizó."
-                : "¿Deseas cancelar esta cita? Quedará guardada en el historial."
-          }
-          confirmLabel={
-            confirmAction === "confirmada"
-              ? "Sí, confirmar"
-              : confirmAction === "completada"
-                ? "Sí, completar"
-                : "Sí, cancelar"
-          }
+          title="Cancelar cita"
+          message="¿Deseas cancelar esta cita? Quedará guardada en el historial."
+          confirmLabel="Sí, cancelar"
           loading={updating}
           onConfirm={() => handleUpdateEstado(confirmAction)}
           onCancel={() => setConfirmAction(null)}
@@ -257,3 +221,4 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
     </div>
   );
 }
+

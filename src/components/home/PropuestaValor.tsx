@@ -7,7 +7,7 @@ const VALORES = [
     icon: Award,
     title: "Experiencia certificada",
     description:
-      "Estilistas con formación internacional y actualización constante en técnicas premium.",
+      "Profesionals con formación internacional y actualización constante en técnicas premium.",
   },
   {
     icon: Heart,
@@ -182,3 +182,4 @@ export function PropuestaValor() {
     </section>
   );
 }
+

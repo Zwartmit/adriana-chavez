@@ -48,7 +48,7 @@ interface CitaReporteRow {
   precio_cobrado: number | null;
   fecha_hora: string;
   servicio_id: string | null;
-  estilista_id: string | null;
+  profesional_id: string | null;
   clientes: { nombre: string; apellido: string | null } | null;
 }
 
@@ -134,7 +134,7 @@ function ReportesPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [servicios, setServicios] = useState<NombreOption[]>([]);
-  const [estilistas, setEstilistas] = useState<NombreOption[]>([]);
+  const [profesionales, setProfesionals] = useState<NombreOption[]>([]);
 
   const [cierres, setCierres] = useState<ReporteCajaRow[]>([]);
   const [cierresLoading, setCierresLoading] = useState(true);
@@ -157,7 +157,7 @@ function ReportesPage() {
     const [{ data: citasData, error: citasError }, { data: previasData, error: previasError }] = await Promise.all([
       supabase
         .from("citas")
-        .select("id, estado, precio_cobrado, fecha_hora, servicio_id, estilista_id, clientes(nombre, apellido)")
+        .select("id, estado, precio_cobrado, fecha_hora, servicio_id, profesional_id, clientes(nombre, apellido)")
         .gte("fecha_hora", inicio.toISOString())
         .lte("fecha_hora", fin.toISOString()),
       supabase
@@ -206,9 +206,9 @@ function ReportesPage() {
       .select("id, nombre")
       .then(({ data }) => setServicios(data ?? []));
     supabase
-      .from("estilistas")
+      .from("profesionales")
       .select("id, nombre")
-      .then(({ data }) => setEstilistas(data ?? []));
+      .then(({ data }) => setProfesionals(data ?? []));
   }, [fetchCierres]);
 
   // ── Métricas principales ──
@@ -273,7 +273,7 @@ function ReportesPage() {
 
   // ── Servicios más vendidos ──
   const serviciosNombre = useMemo(() => new Map(servicios.map((s) => [s.id, s.nombre])), [servicios]);
-  const estilistasNombre = useMemo(() => new Map(estilistas.map((e) => [e.id, e.nombre])), [estilistas]);
+  const profesionalesNombre = useMemo(() => new Map(profesionales.map((e) => [e.id, e.nombre])), [profesionales]);
 
   const serviciosStats = useMemo(() => {
     const map = new Map<string, { citas: number; ingresos: number }>();
@@ -296,25 +296,25 @@ function ReportesPage() {
     return rows.slice(0, 10);
   }, [completadas, serviciosNombre, ingresosTotales]);
 
-  // ── Rendimiento por estilista ──
-  const estilistasStats = useMemo(() => {
+  // ── Rendimiento por profesional ──
+  const profesionalesStats = useMemo(() => {
     const map = new Map<string, { citas: number; ingresos: number; cancelaciones: number }>();
     for (const c of completadas) {
-      const key = c.estilista_id ?? "sin-estilista";
+      const key = c.profesional_id ?? "sin-profesional";
       const entry = map.get(key) ?? { citas: 0, ingresos: 0, cancelaciones: 0 };
       entry.citas += 1;
       entry.ingresos += c.precio_cobrado ?? 0;
       map.set(key, entry);
     }
     for (const c of canceladas) {
-      const key = c.estilista_id ?? "sin-estilista";
+      const key = c.profesional_id ?? "sin-profesional";
       const entry = map.get(key) ?? { citas: 0, ingresos: 0, cancelaciones: 0 };
       entry.cancelaciones += 1;
       map.set(key, entry);
     }
     const rows = Array.from(map.entries()).map(([id, stats]) => ({
       id,
-      nombre: estilistasNombre.get(id) ?? "Sin asignar",
+      nombre: profesionalesNombre.get(id) ?? "Sin asignar",
       citas: stats.citas,
       ingresos: stats.ingresos,
       ticketPromedio: stats.citas > 0 ? stats.ingresos / stats.citas : 0,
@@ -322,11 +322,11 @@ function ReportesPage() {
     }));
     rows.sort((a, b) => b.ingresos - a.ingresos);
     return rows;
-  }, [completadas, canceladas, estilistasNombre]);
+  }, [completadas, canceladas, profesionalesNombre]);
 
   // ── Exportar CSV ──
   const handleExportarCSV = () => {
-    const headers = ["Fecha", "Hora", "Clienta", "Servicio", "Estilista", "Estado", "Precio cobrado"];
+    const headers = ["Fecha", "Hora", "Clienta", "Servicio", "Profesional", "Estado", "Precio cobrado"];
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
     const rows = citas.map((c) => {
       const fecha = new Date(c.fecha_hora);
@@ -336,7 +336,7 @@ function ReportesPage() {
         format(fecha, "HH:mm"),
         escape(clienteNombre),
         escape(c.servicio_id ? serviciosNombre.get(c.servicio_id) ?? "" : ""),
-        escape(c.estilista_id ? estilistasNombre.get(c.estilista_id) ?? "" : ""),
+        escape(c.profesional_id ? profesionalesNombre.get(c.profesional_id) ?? "" : ""),
         c.estado,
         String(c.precio_cobrado ?? ""),
       ].join(",");
@@ -631,7 +631,7 @@ function ReportesPage() {
             </div>
           </div> */}
 
-          {/* Rendimiento por estilista */}
+          {/* Rendimiento por profesional */}
           {/* <div style={{ ...sectionCardStyle, marginBottom: "1.75rem", padding: 0, overflow: "hidden" }}>
             <h3
               style={{
@@ -643,13 +643,13 @@ function ReportesPage() {
                 padding: "1.75rem 1.75rem 1rem",
               }}
             >
-              Rendimiento por estilista
+              Rendimiento por profesional
             </h3>
             <div className="overflow-x-auto w-full">
               <table className="w-full min-w-[500px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#0A0A0B" }}>
-                  <th style={th}>Estilista</th>
+                  <th style={th}>Profesional</th>
                   <th style={th}>Citas completadas</th>
                   <th style={th}>Ingresos</th>
                   <th style={th}>Ticket promedio</th>
@@ -657,19 +657,19 @@ function ReportesPage() {
                 </tr>
               </thead>
               <tbody>
-                {estilistasStats.length === 0 ? (
+                {profesionalesStats.length === 0 ? (
                   <tr>
                     <td colSpan={5} style={{ ...td, textAlign: "center", padding: "2rem" }}>
                       Sin datos en este período.
                     </td>
                   </tr>
                 ) : (
-                  estilistasStats.map((e, i) => (
+                  profesionalesStats.map((e, i) => (
                     <tr
                       key={e.id}
                       style={{
                         backgroundColor: i % 2 === 0 ? "transparent" : "rgba(10,10,11,0.02)",
-                        borderBottom: i === estilistasStats.length - 1 ? "none" : "1px solid var(--color-border-light)",
+                        borderBottom: i === profesionalesStats.length - 1 ? "none" : "1px solid var(--color-border-light)",
                       }}
                     >
                       <td style={{ ...td, color: "var(--color-text-on-light)", fontWeight: 500 }}>{e.nombre}</td>
@@ -769,3 +769,4 @@ function ReportesPage() {
     </AdminLayout>
   );
 }
+

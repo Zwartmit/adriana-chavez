@@ -44,8 +44,7 @@ const VALORES = [
 const CIFRAS = [
   { value: "12+", label: "Años de experiencia" },
   { value: "500+", label: "Clientas satisfechas" },
-  { value: "98%", label: "Satisfacción" },
-  { value: "4", label: "Estilistas certificadas" },
+  { value: "4", label: "Profesionals certificadas" },
 ];
 
 function SobreNosotrosPage() {
@@ -229,7 +228,7 @@ function SobreNosotrosPage() {
                   }}
                 >
                   A lo largo de los años, el centro creció no solo en tamaño
-                  sino en propósito. Hoy contamos con un equipo de estilistas
+                  sino en propósito. Hoy contamos con un equipo de profesionales
                   certificados internacionalmente, productos de las mejores
                   marcas del mundo y un ambiente diseñado para que cada
                   visita sea una experiencia de bienestar completa.
@@ -424,7 +423,7 @@ function SobreNosotrosPage() {
             paddingRight: "1.5rem",
           }}
         >
-          <div className="grid grid-cols-2 md:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-0">
             {CIFRAS.map((c) => (
               <div
                 key={c.label}
@@ -465,3 +464,4 @@ function SobreNosotrosPage() {
     </main>
   );
 }
+

@@ -3,7 +3,7 @@
 
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
 
-export type Rol = "admin" | "estilista" | "cliente";
+export type Rol = "admin" | "profesional" | "cliente";
 export type EstadoCita = "pendiente" | "confirmada" | "en_proceso" | "completada" | "cancelada" | "no_asistio";
 export type EstadoOrden = "pendiente" | "pagada" | "en_preparacion" | "enviada" | "entregada" | "cancelada" | "reembolsada";
 export type CanalOrigen = "web" | "whatsapp" | "telefono" | "presencial";
@@ -19,7 +19,7 @@ export interface PerfilesRow {
           created_at: string;
           updated_at: string;
         }
-export interface EstilistasRow {
+export interface ProfesionalsRow {
           id: string;
           perfil_id: string | null;
           nombre: string;
@@ -68,7 +68,7 @@ export interface ClientesRow {
           notas: string | null;
           alergias: string | null;
           preferencias: string | null;
-          estilista_preferido_id: string | null;
+          profesional_preferido_id: string | null;
           acepta_datos: boolean;
           fecha_acepta: string | null;
           activo: boolean;
@@ -78,7 +78,7 @@ export interface ClientesRow {
 export interface CitasRow {
           id: string;
           cliente_id: string;
-          estilista_id: string | null;
+          profesional_id: string | null;
           servicio_id: string | null;
           fecha_hora: string;
           duracion_min: number;
@@ -95,7 +95,7 @@ export interface CitasRow {
         }
 export interface Bloqueos_horarioRow {
           id: string;
-          estilista_id: string | null;
+          profesional_id: string | null;
           fecha_inicio: string;
           fecha_fin: string;
           motivo: string | null;
@@ -252,10 +252,10 @@ export interface Database {
         Insert: Omit<PerfilesRow, "created_at" | "updated_at">;
         Update: Partial<Omit<PerfilesRow, "created_at" | "updated_at">>;
       };
-      estilistas: {
-        Row: EstilistasRow;
-        Insert: Omit<EstilistasRow, "id" | "created_at" | "updated_at">;
-        Update: Partial<Omit<EstilistasRow, "id" | "created_at" | "updated_at">>;
+      profesionales: {
+        Row: ProfesionalsRow;
+        Insert: Omit<ProfesionalsRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<ProfesionalsRow, "id" | "created_at" | "updated_at">>;
       };
       categorias_servicios: {
         Row: Categorias_serviciosRow;
@@ -348,3 +348,5 @@ export interface Database {
     CompositeTypes: Record<string, never>;
   };
 }
+
+
