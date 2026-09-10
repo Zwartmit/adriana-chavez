@@ -44,7 +44,6 @@ CREATE TABLE IF NOT EXISTS public.profesionales (
   id              UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   perfil_id       UUID REFERENCES public.perfiles(id) ON DELETE SET NULL,
   nombre          TEXT NOT NULL,
-  cargo           TEXT NOT NULL DEFAULT 'profesional',
   especialidades  TEXT[] DEFAULT '{}',
   bio             TEXT,
   foto_url        TEXT,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { Star, Check } from "lucide-react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
@@ -8,8 +8,6 @@ interface ProfesionalUI {
   id: string;
   name: string;
   experience: number;
-  specialties: string[];
-  photo: string;
   bio: string;
 }
 
@@ -23,7 +21,7 @@ interface ProfesionalCardProps {
 function ProfesionalCard({ name, experience, specialties, photo }: ProfesionalCardProps) {
   return (
     <div
-      className="text-center"
+      className="flex flex-col md:flex-row gap-6 md:gap-10 items-center md:items-stretch w-full"
       style={{
         backgroundColor: "var(--color-surface-light)",
         border: "1px solid var(--color-border-light)",
@@ -41,64 +39,81 @@ function ProfesionalCard({ name, experience, specialties, photo }: ProfesionalCa
         e.currentTarget.style.transform = "translateY(0)";
       }}
     >
-      <img
-        src={photo}
-        alt={name}
-        className="mx-auto rounded-full"
-        style={{
-          width: 120,
-          height: 120,
-          border: "3px solid var(--color-primary-dim)",
-          objectFit: "cover",
-        }}
-      />
-      <h3
-        className="mt-4"
-        style={{
-          fontFamily: "var(--font-display)",
-          fontStyle: "italic",
-          fontWeight: 600,
-          fontSize: "var(--text-xl)",
-          color: "var(--color-text-on-light)",
-        }}
-      >
-        {name}
-      </h3>
-
-
-      <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1rem 0" }} />
-
-      <div className="flex flex-col items-center justify-center gap-y-1">
-        {specialties
-          .flatMap((s) => s.split(/\s+/))
-          .filter(Boolean)
-          .slice(0, 4)
-          .map((s, idx) => (
-            <span
-              key={`${s}-${idx}`}
-              className="uppercase text-center"
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "var(--text-xs)",
-                letterSpacing: "var(--tracking-wider)",
-                color: "var(--color-primary-dim)",
-              }}
-            >
-              {s}
-            </span>
-        ))}
+      {/* IZQUIERDA: Foto, nombre, experiencia */}
+      <div className="flex flex-col items-center justify-start min-w-[200px] pt-2">
+        <img
+          src={photo}
+          alt={name}
+          className="rounded-full mb-4"
+          style={{
+            width: 120,
+            height: 120,
+            border: "3px solid var(--color-primary-dim)",
+            objectFit: "cover",
+          }}
+        />
+        <h3
+          style={{
+            fontFamily: "var(--font-display)",
+            fontStyle: "italic",
+            fontWeight: 600,
+            fontSize: "var(--text-2xl)",
+            color: "var(--color-text-on-light)",
+            textAlign: "center"
+          }}
+        >
+          {name}
+        </h3>
+        <div
+          className="flex items-center justify-center gap-1 mt-2"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--text-sm)",
+            color: "var(--color-text-on-light-faint)",
+          }}
+        >
+          <Star size={14} color="var(--color-primary-dim)" />
+          {experience} años de exp.
+        </div>
       </div>
 
-      <div
-        className="flex items-center justify-center gap-1 mt-4"
-        style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: "var(--text-sm)",
-          color: "var(--color-text-on-light-faint)",
-        }}
-      >
-        <Star size={12} color="var(--color-primary-dim)" />
-        {experience} años de exp.
+      {/* SEPARADOR */}
+      <div className="hidden md:block w-px bg-black/5 mx-2" />
+      <div className="md:hidden w-full h-px bg-black/5 my-2" />
+
+      {/* DERECHA: Especialidades */}
+      <div className="flex-1 flex flex-col justify-start py-2">
+        <h4 
+          className="mb-4 text-center md:text-left uppercase tracking-widest"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "11px",
+            color: "var(--color-text-on-light-muted)",
+          }}
+        >
+          Especialidades
+        </h4>
+        <ul className="flex flex-col items-start gap-3 w-full">
+          {specialties.map((s, idx) => (
+            <li
+              key={`${s}-${idx}`}
+              className="flex items-start gap-2.5 text-left"
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "13px",
+                color: "var(--color-text-on-light-muted)",
+                lineHeight: "1.4",
+              }}
+            >
+              <Check 
+                size={16} 
+                className="mt-[2px] shrink-0" 
+                color="var(--color-primary-dim)" 
+              />
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
@@ -174,7 +189,7 @@ export function EquipoGrid() {
         ) : error ? (
           <ErrorState message={error} onRetry={fetchEquipo} variant="light" />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 w-full max-w-7xl mx-auto">
             {equipo.map((e) => (
               <ProfesionalCard key={e.id} {...e} />
             ))}

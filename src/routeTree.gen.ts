@@ -17,7 +17,6 @@ import { Route as ServiciosRouteImport } from './routes/servicios'
 import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminActualizarPasswordRouteImport } from './routes/admin/actualizar-password'
-import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as TiendaIndexRouteImport } from './routes/tienda/index'
 import { Route as TiendaSlugRouteImport } from './routes/tienda/$slug'
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/index'
@@ -66,11 +65,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminActualizarPasswordRoute = AdminActualizarPasswordRouteImport.update({
   id: '/admin/actualizar-password',
   path: '/admin/actualizar-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TiendaIndexRoute = TiendaIndexRouteImport.update({
@@ -128,7 +122,6 @@ export interface FileRoutesByFullPath {
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
-  '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
@@ -148,7 +141,6 @@ export interface FileRoutesByTo {
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
-  '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin': typeof AdminIndexRoute
   '/tienda': typeof TiendaIndexRoute
@@ -169,7 +161,6 @@ export interface FileRoutesById {
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
-  '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
@@ -191,7 +182,6 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/actualizar-password'
-    | '/admin/login'
     | '/tienda/$slug'
     | '/admin/'
     | '/tienda/'
@@ -211,7 +201,6 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/actualizar-password'
-    | '/admin/login'
     | '/tienda/$slug'
     | '/admin'
     | '/tienda'
@@ -231,7 +220,6 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/actualizar-password'
-    | '/admin/login'
     | '/tienda/$slug'
     | '/admin/'
     | '/tienda/'
@@ -252,7 +240,6 @@ export interface RootRouteChildren {
   ServiciosRoute: typeof ServiciosRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
   AdminActualizarPasswordRoute: typeof AdminActualizarPasswordRoute
-  AdminLoginRoute: typeof AdminLoginRoute
   TiendaSlugRoute: typeof TiendaSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   TiendaIndexRoute: typeof TiendaIndexRoute
@@ -321,13 +308,6 @@ declare module '@tanstack/react-router' {
       path: '/admin/actualizar-password'
       fullPath: '/admin/actualizar-password'
       preLoaderRoute: typeof AdminActualizarPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tienda/': {
@@ -404,7 +384,6 @@ const rootRouteChildren: RootRouteChildren = {
   ServiciosRoute: ServiciosRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,
   AdminActualizarPasswordRoute: AdminActualizarPasswordRoute,
-  AdminLoginRoute: AdminLoginRoute,
   TiendaSlugRoute: TiendaSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   TiendaIndexRoute: TiendaIndexRoute,
