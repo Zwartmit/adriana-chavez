@@ -13,6 +13,7 @@ export interface ServiceCardProps {
   href: string;
   /** "dark" (default, glass card) for dark sections, "light" for --color-bg-light sections. */
   theme?: "dark" | "light";
+  requiresAppointment?: boolean;
 }
 
 function formatCOP(n: number) {
@@ -23,18 +24,6 @@ function formatCOP(n: number) {
   }).format(n);
 }
 
-const REQUIRES_APPOINTMENT_SERVICES = [
-  "balayage",
-  "baby lights",
-  "morena iluminada",
-  "contour",
-  "mechas clásicas",
-  "decoloración parcial",
-  "corrección de color",
-  "micropigmentación de cejas",
-  "micropigmentación de labios",
-];
-
 export function ServiceCard({
   name,
   category,
@@ -44,11 +33,9 @@ export function ServiceCard({
   image,
   href,
   theme = "dark",
+  requiresAppointment = false,
 }: ServiceCardProps) {
   const isLight = theme === "light";
-  
-  const normalizedName = name.toLowerCase();
-  const requiresAppointment = REQUIRES_APPOINTMENT_SERVICES.some(s => normalizedName.includes(s));
 
   return (
     <article className="flex flex-col h-full group">

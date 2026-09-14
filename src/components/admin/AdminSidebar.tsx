@@ -11,6 +11,7 @@ import {
   Package,
   ShoppingBag,
   Users,
+  Scissors
 } from "lucide-react";
 import { signOut } from "@/lib/supabase/auth";
 import { supabase } from "@/lib/supabase/client";
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { label: "Clientas", href: "/admin/clientes", icon: Users },
   { label: "Inventario", href: "/admin/inventario", icon: Package },
   { label: "Productos", href: "/admin/productos", icon: ShoppingBag },
+  { label: "Servicios", href: "/admin/servicios", icon: Scissors },
   { label: "Reportes", href: "/admin/reportes", icon: BarChart3 },
 ];
 
@@ -184,7 +186,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
                   fontFamily: "var(--font-display)",
                   fontStyle: "italic",
                   fontWeight: 600,
-                  fontSize: "var(--text-xl)",
+                  fontSize: "var(--text-2xl)",
                   color: "var(--color-primary)",
                   whiteSpace: "nowrap",
                 }}
@@ -242,77 +244,6 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
 
           <div style={{ borderTop: "1px solid var(--color-border)", margin: "0.75rem 0.25rem" }} />
 
-          {/* Botón colapsar/expandir */}
-          <div
-            style={{ position: "relative" }}
-            onMouseEnter={() => setHoveredHref("toggle")}
-            onMouseLeave={() => setHoveredHref(null)}
-          >
-            <button
-              type="button"
-              aria-label={isCollapsed ? "Expandir menú" : "Contraer menú"}
-              onClick={onToggleCollapsed}
-              className={toggleHovered ? "glass-obsidian" : ""}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: isCollapsed ? "center" : "flex-start",
-                gap: isCollapsed ? 0 : "0.75rem",
-                padding: isCollapsed ? "0.75rem" : "0.75rem 1rem",
-                width: "100%",
-                minWidth: 36,
-                minHeight: 36,
-                borderRadius: "var(--radius-lg)",
-                border: "none",
-                background: toggleHovered ? undefined : "transparent",
-                fontFamily: "var(--font-body)",
-                fontWeight: 500,
-                fontSize: "var(--text-sm)",
-                color: "var(--color-primary)",
-                cursor: "pointer",
-                transition: "all 250ms ease",
-              }}
-            >
-              {isCollapsed ? (
-                <ChevronRight size={22} style={{ color: "var(--color-primary)", flexShrink: 0 }} />
-              ) : (
-                <ChevronLeft size={22} style={{ color: "var(--color-primary)", flexShrink: 0 }} />
-              )}
-              <span
-                style={{
-                  opacity: isCollapsed ? 0 : 1,
-                  width: isCollapsed ? 0 : "auto",
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  transition: "opacity 200ms ease, width 200ms ease",
-                }}
-              >
-                Contraer menú
-              </span>
-            </button>
-            {isCollapsed && toggleHovered && (
-              <span
-                className="glass-obsidian"
-                style={{
-                  position: "absolute",
-                  left: "calc(100% + 10px)",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  padding: "6px 12px",
-                  borderRadius: "var(--radius-md)",
-                  backgroundColor: "var(--color-surface)",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-sm)",
-                  color: "var(--color-text-primary)",
-                  whiteSpace: "nowrap",
-                  zIndex: 100,
-                  pointerEvents: "none",
-                }}
-              >
-                Expandir menú
-              </span>
-            )}
-          </div>
         </nav>
 
         {/* Cerrar sesión */}
@@ -386,6 +317,34 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
             </span>
           )}
         </div>
+
+        {/* Botón flotante colapsar/expandir */}
+        <button
+          type="button"
+          onClick={onToggleCollapsed}
+          aria-label={isCollapsed ? "Expandir menú" : "Contraer menú"}
+          style={{
+            position: "absolute",
+            top: "50%",
+            right: "-12px",
+            transform: "translateY(-50%)",
+            width: "24px",
+            height: "24px",
+            borderRadius: "50%",
+            backgroundColor: "var(--color-primary)",
+            color: "var(--color-text-inverse)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "none",
+            cursor: "pointer",
+            zIndex: 50,
+            boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+            padding: 0
+          }}
+        >
+          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
       </aside>
 
       {/* Modal de confirmación de cierre de sesión */}

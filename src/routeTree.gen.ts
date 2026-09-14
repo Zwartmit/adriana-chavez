@@ -17,6 +17,7 @@ import { Route as ServiciosRouteImport } from './routes/servicios'
 import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminActualizarPasswordRouteImport } from './routes/admin/actualizar-password'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as TiendaIndexRouteImport } from './routes/tienda/index'
 import { Route as TiendaSlugRouteImport } from './routes/tienda/$slug'
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/index'
@@ -26,6 +27,9 @@ import { Route as AdminProductosIndexRouteImport } from './routes/admin/producto
 import { Route as AdminProductosProductoIdRouteImport } from './routes/admin/productos/$productoId'
 import { Route as AdminProductosNuevoRouteImport } from './routes/admin/productos/nuevo'
 import { Route as AdminReportesIndexRouteImport } from './routes/admin/reportes/index'
+import { Route as AdminServiciosIndexRouteImport } from './routes/admin/servicios/index'
+import { Route as AdminServiciosServicioIdRouteImport } from './routes/admin/servicios/$servicioId'
+import { Route as AdminServiciosNuevoRouteImport } from './routes/admin/servicios/nuevo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -65,6 +69,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminActualizarPasswordRoute = AdminActualizarPasswordRouteImport.update({
   id: '/admin/actualizar-password',
   path: '/admin/actualizar-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TiendaIndexRoute = TiendaIndexRouteImport.update({
@@ -113,6 +122,22 @@ const AdminReportesIndexRoute = AdminReportesIndexRouteImport.update({
   path: '/admin/reportes/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminServiciosIndexRoute = AdminServiciosIndexRouteImport.update({
+  id: '/admin/servicios/',
+  path: '/admin/servicios/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminServiciosServicioIdRoute =
+  AdminServiciosServicioIdRouteImport.update({
+    id: '/admin/servicios/$servicioId',
+    path: '/admin/servicios/$servicioId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminServiciosNuevoRoute = AdminServiciosNuevoRouteImport.update({
+  id: '/admin/servicios/nuevo',
+  path: '/admin/servicios/nuevo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -122,16 +147,20 @@ export interface FileRoutesByFullPath {
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
+  '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
+  '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
+  '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
   '/admin/productos/': typeof AdminProductosIndexRoute
   '/admin/reportes/': typeof AdminReportesIndexRoute
+  '/admin/servicios/': typeof AdminServiciosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -141,16 +170,20 @@ export interface FileRoutesByTo {
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
+  '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin': typeof AdminIndexRoute
   '/tienda': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
+  '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
+  '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
   '/admin/inventario': typeof AdminInventarioIndexRoute
   '/admin/productos': typeof AdminProductosIndexRoute
   '/admin/reportes': typeof AdminReportesIndexRoute
+  '/admin/servicios': typeof AdminServiciosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,16 +194,20 @@ export interface FileRoutesById {
   '/servicios': typeof ServiciosRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
+  '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
+  '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
+  '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
   '/admin/productos/': typeof AdminProductosIndexRoute
   '/admin/reportes/': typeof AdminReportesIndexRoute
+  '/admin/servicios/': typeof AdminServiciosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -182,16 +219,20 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/actualizar-password'
+    | '/admin/login'
     | '/tienda/$slug'
     | '/admin/'
     | '/tienda/'
     | '/admin/clientes/$clienteId'
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
+    | '/admin/servicios/$servicioId'
+    | '/admin/servicios/nuevo'
     | '/admin/clientes/'
     | '/admin/inventario/'
     | '/admin/productos/'
     | '/admin/reportes/'
+    | '/admin/servicios/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -201,16 +242,20 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/actualizar-password'
+    | '/admin/login'
     | '/tienda/$slug'
     | '/admin'
     | '/tienda'
     | '/admin/clientes/$clienteId'
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
+    | '/admin/servicios/$servicioId'
+    | '/admin/servicios/nuevo'
     | '/admin/clientes'
     | '/admin/inventario'
     | '/admin/productos'
     | '/admin/reportes'
+    | '/admin/servicios'
   id:
     | '__root__'
     | '/'
@@ -220,16 +265,20 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-nosotros'
     | '/admin/actualizar-password'
+    | '/admin/login'
     | '/tienda/$slug'
     | '/admin/'
     | '/tienda/'
     | '/admin/clientes/$clienteId'
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
+    | '/admin/servicios/$servicioId'
+    | '/admin/servicios/nuevo'
     | '/admin/clientes/'
     | '/admin/inventario/'
     | '/admin/productos/'
     | '/admin/reportes/'
+    | '/admin/servicios/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -240,16 +289,20 @@ export interface RootRouteChildren {
   ServiciosRoute: typeof ServiciosRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
   AdminActualizarPasswordRoute: typeof AdminActualizarPasswordRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   TiendaSlugRoute: typeof TiendaSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   TiendaIndexRoute: typeof TiendaIndexRoute
   AdminClientesClienteIdRoute: typeof AdminClientesClienteIdRoute
   AdminProductosProductoIdRoute: typeof AdminProductosProductoIdRoute
   AdminProductosNuevoRoute: typeof AdminProductosNuevoRoute
+  AdminServiciosServicioIdRoute: typeof AdminServiciosServicioIdRoute
+  AdminServiciosNuevoRoute: typeof AdminServiciosNuevoRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
   AdminInventarioIndexRoute: typeof AdminInventarioIndexRoute
   AdminProductosIndexRoute: typeof AdminProductosIndexRoute
   AdminReportesIndexRoute: typeof AdminReportesIndexRoute
+  AdminServiciosIndexRoute: typeof AdminServiciosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -308,6 +361,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/actualizar-password'
       fullPath: '/admin/actualizar-password'
       preLoaderRoute: typeof AdminActualizarPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tienda/': {
@@ -373,6 +433,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReportesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/servicios/': {
+      id: '/admin/servicios/'
+      path: '/admin/servicios'
+      fullPath: '/admin/servicios/'
+      preLoaderRoute: typeof AdminServiciosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/servicios/$servicioId': {
+      id: '/admin/servicios/$servicioId'
+      path: '/admin/servicios/$servicioId'
+      fullPath: '/admin/servicios/$servicioId'
+      preLoaderRoute: typeof AdminServiciosServicioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/servicios/nuevo': {
+      id: '/admin/servicios/nuevo'
+      path: '/admin/servicios/nuevo'
+      fullPath: '/admin/servicios/nuevo'
+      preLoaderRoute: typeof AdminServiciosNuevoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -384,16 +465,20 @@ const rootRouteChildren: RootRouteChildren = {
   ServiciosRoute: ServiciosRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,
   AdminActualizarPasswordRoute: AdminActualizarPasswordRoute,
+  AdminLoginRoute: AdminLoginRoute,
   TiendaSlugRoute: TiendaSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   TiendaIndexRoute: TiendaIndexRoute,
   AdminClientesClienteIdRoute: AdminClientesClienteIdRoute,
   AdminProductosProductoIdRoute: AdminProductosProductoIdRoute,
   AdminProductosNuevoRoute: AdminProductosNuevoRoute,
+  AdminServiciosServicioIdRoute: AdminServiciosServicioIdRoute,
+  AdminServiciosNuevoRoute: AdminServiciosNuevoRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,
   AdminInventarioIndexRoute: AdminInventarioIndexRoute,
   AdminProductosIndexRoute: AdminProductosIndexRoute,
   AdminReportesIndexRoute: AdminReportesIndexRoute,
+  AdminServiciosIndexRoute: AdminServiciosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

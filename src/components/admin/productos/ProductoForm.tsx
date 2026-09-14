@@ -13,7 +13,6 @@ export interface ProductoFormData {
   marca: string;
   categoria_id: string;
   precio: number;
-  precio_original: number | null;
   descripcion: string;
   descripcion_larga: string;
   caracteristicas: { label: string; valor: string }[];
@@ -61,7 +60,6 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
     marca: initialData?.marca ?? "",
     categoria_id: initialData?.categoria_id ?? "",
     precio: initialData?.precio ?? 0,
-    precio_original: initialData?.precio_original ?? null,
     descripcion: initialData?.descripcion ?? "",
     descripcion_larga: initialData?.descripcion_larga ?? "",
     caracteristicas: Array.isArray(initialData?.caracteristicas) ? initialData.caracteristicas : [],
@@ -136,15 +134,9 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
               ))}
             </select>
           </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label style={labelStyle}>Precio *</label>
-              <input required type="number" min={0} name="precio" value={formData.precio} onChange={handleChange} style={inputStyle} />
-            </div>
-            <div className="flex-1">
-              <label style={labelStyle}>Precio Original <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
-              <input type="number" min={0} name="precio_original" value={formData.precio_original ?? ""} onChange={handleChange} style={inputStyle} placeholder="Opcional" />
-            </div>
+          <div>
+            <label style={labelStyle}>Precio *</label>
+            <input required type="number" min={0} name="precio" value={formData.precio} onChange={handleChange} style={inputStyle} />
           </div>
         </div>
       </section>
@@ -162,7 +154,7 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
             <textarea required name="descripcion" value={formData.descripcion} onChange={handleChange} style={{ ...inputStyle, minHeight: 80 }} placeholder="Resumen corto para la tarjeta del producto" />
           </div>
           <div>
-            <label style={labelStyle}>Descripción larga <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
+            <label style={labelStyle}>Descripción larga (opcional)</label>
             <textarea name="descripcion_larga" value={formData.descripcion_larga} onChange={handleChange} style={{ ...inputStyle, minHeight: 150 }} placeholder="Descripción completa del producto..." />
           </div>
         </div>

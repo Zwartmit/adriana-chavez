@@ -22,11 +22,11 @@ interface ProductoDetalleRow {
   nombre: string;
   marca: string;
   descripcion: string | null;
+  descripcion_larga: string | null;
+  caracteristicas: any;
   precio: number;
   precio_original: number | null;
   imagenes: string[];
-  rating: number;
-  total_resenas: number;
   es_nuevo: boolean;
   categorias_productos: { nombre: string; slug: string } | null;
   inventario: { stock_virtual: number; stock_fisico: number }[] | null;
@@ -45,10 +45,10 @@ function mapProductoDetalle(p: ProductoDetalleRow): ProductCardProps {
     originalPrice: p.precio_original ?? undefined,
     image: p.imagenes?.[0] ?? "",
     category: p.categorias_productos?.slug ?? "",
-    rating: p.rating,
-    reviews: p.total_resenas,
     isNew: p.es_nuevo,
     isAgotado,
+    descripcion_larga: p.descripcion_larga ?? undefined,
+    caracteristicas: p.caracteristicas ?? undefined,
   };
 }
 
@@ -68,36 +68,7 @@ export const Route = createFileRoute("/tienda/$slug")({
   },
 });
 
-const CARACTERISTICAS = [
-  { label: "Contenido", value: "250ml" },
-  { label: "Tipo de cabello", value: "Todo tipo" },
-  { label: "Ingrediente clave", value: "Aceite de argán" },
-  { label: "País de origen", value: "Francia" },
-  { label: "Uso", value: "Diario" },
-];
-
-const RESEÑAS = [
-  {
-    name: "Camila R.",
-    date: "Hace 2 semanas",
-    rating: 5,
-    text: "Excelente producto, se nota la diferencia desde el primer uso. Mi cabello quedó mucho más suave.",
-  },
-  {
-    name: "Valentina M.",
-    date: "Hace 1 mes",
-    rating: 5,
-    text: "Lo recomiendo totalmente, el olor es delicioso y rinde bastante.",
-  },
-  {
-    name: "Laura J.",
-    date: "Hace 2 meses",
-    rating: 4,
-    text: "Muy bueno, aunque esperaba un poco más de hidratación para cabello muy seco.",
-  },
-];
-
-const TABS = ["Descripción", "Características", "Reseñas"] as const;
+const TABS = ["Descripción", "Características"] as const;
 
 function ProductoPage() {
   const { slug } = Route.useParams();
@@ -366,21 +337,6 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                 {producto.name}
               </h1>
 
-              <div className="flex items-center gap-2 mt-3">
-                <span style={{ color: "var(--color-accent)" }}>
-                  {"★".repeat(Math.round(producto.rating))}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "var(--text-sm)",
-                    color: "var(--color-text-muted)",
-                  }}
-                >
-                  {producto.rating} ({producto.reviews} reseñas)
-                </span>
-              </div>
-
               <div style={{ borderTop: "1px solid var(--color-border)", margin: "1.5rem 0" }} />
 
               <span
@@ -556,34 +512,10 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                       fontSize: "var(--text-base)",
                       color: "var(--color-text-secondary)",
                       lineHeight: "var(--leading-relaxed)",
+                      whiteSpace: "pre-wrap",
                     }}
                   >
-                    {producto.description} Formulado con ingredientes de alta calidad
-                    seleccionados por nuestro equipo de profesionales para ofrecer resultados
-                    visibles desde las primeras aplicaciones.
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-base)",
-                      color: "var(--color-text-secondary)",
-                      lineHeight: "var(--leading-relaxed)",
-                    }}
-                  >
-                    <strong>Modo de uso:</strong> aplica sobre el cabello húmedo o seco según
-                    corresponda, distribuye uniformemente y sigue las instrucciones del
-                    empaque para obtener el mejor resultado.
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-base)",
-                      color: "var(--color-text-secondary)",
-                      lineHeight: "var(--leading-relaxed)",
-                    }}
-                  >
-                    Recomendado por nuestro equipo de profesionales para uso regular en casa,
-                    complementando los tratamientos realizados en el centro.
+                    {producto.descripcion_larga || producto.description}
                   </p>
                 </div>
               )}
@@ -615,9 +547,14 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                       {producto.brand}
                     </div>
                   </div>
-                  {CARACTERISTICAS.map((row, i) => (
+                  {(!producto.caracteristicas || producto.caracteristicas.length === 0) && (
+                    <div style={{ padding: "1rem", color: "var(--color-text-muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)" }}>
+                      No hay características adicionales para este producto.
+                    </div>
+                  )}
+                  {producto.caracteristicas?.map((row, i) => (
                     <div
-                      key={row.label}
+                      key={i}
                       className="flex"
                       style={{ backgroundColor: i % 2 === 0 ? "var(--color-bg)" : "var(--color-bg-alt)" }}
                     >
@@ -642,60 +579,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                           color: "var(--color-text-secondary)",
                         }}
                       >
-                        {row.value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {activeTab === "Reseñas" && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {RESEÑAS.map((r) => (
-                    <div
-                      key={r.name}
-                      style={{
-                        backgroundColor: "var(--color-surface)",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: "var(--radius-lg)",
-                        padding: "1.25rem",
-                      }}
-                    >
-                      <div className="flex gap-1 mb-2">
-                        {Array.from({ length: r.rating }).map((_, i) => (
-                          <Star key={i} size={14} fill="var(--color-accent)" color="var(--color-accent)" />
-                        ))}
-                      </div>
-                      <p
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: "var(--text-sm)",
-                          color: "var(--color-text-secondary)",
-                          lineHeight: "var(--leading-relaxed)",
-                        }}
-                      >
-                        {r.text}
-                      </p>
-                      <div className="flex items-center justify-between mt-3">
-                        <span
-                          style={{
-                            fontFamily: "var(--font-body)",
-                            fontWeight: 600,
-                            fontSize: "var(--text-sm)",
-                            color: "var(--color-text-primary)",
-                          }}
-                        >
-                          {r.name}
-                        </span>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-mono)",
-                            fontSize: "var(--text-xs)",
-                            color: "var(--color-text-muted)",
-                          }}
-                        >
-                          {r.date}
-                        </span>
+                        {row.valor}
                       </div>
                     </div>
                   ))}

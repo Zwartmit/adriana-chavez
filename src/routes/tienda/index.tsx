@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { TiendaFiltros } from "@/components/tienda/TiendaFiltros";
+import { useState, useEffect } from "react";
+import { TiendaFiltros, type CategoriaOption } from "@/components/tienda/TiendaFiltros";
 import { ProductosGrid } from "@/components/tienda/ProductosGrid";
+import { supabase } from "@/lib/supabase/client";
 
 export const Route = createFileRoute("/tienda/")({
   component: TiendaPage,
@@ -21,7 +22,26 @@ function TiendaPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("todas");
   const [sortOrder, setSortOrder] = useState("destacados");
-  const [filteredCount, setFilteredCount] = useState(16);
+  const [filteredCount, setFilteredCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [categorias, setCategorias] = useState<CategoriaOption[]>([
+    { value: "todas", label: "Todas las categorías" }
+  ]);
+
+  useEffect(() => {
+    supabase
+      .from("categorias_productos")
+      .select("nombre, slug")
+      .order("orden", { ascending: true })
+      .then(({ data }) => {
+        if (data) {
+          setCategorias([
+            { value: "todas", label: "Todas las categorías" },
+            ...data.map((c) => ({ value: c.slug, label: c.nombre })),
+          ]);
+        }
+      });
+  }, []);
 
   const handleClearFilters = () => {
     setSearchQuery("");
@@ -108,13 +128,14 @@ function TiendaPage() {
 
       {/* Filtros */}
       <TiendaFiltros
+        categorias={categorias}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
         sortOrder={sortOrder}
         onSortChange={setSortOrder}
-        totalProducts={16}
+        totalProducts={totalCount}
         filteredCount={filteredCount}
       />
 
@@ -124,6 +145,7 @@ function TiendaPage() {
         activeCategory={activeCategory}
         sortOrder={sortOrder}
         onFilteredCountChange={setFilteredCount}
+        onTotalCountChange={setTotalCount}
         onClearFilters={handleClearFilters}
       />
     </main>

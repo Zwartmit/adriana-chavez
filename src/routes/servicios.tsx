@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ServiciosFiltros } from "@/components/servicios/ServiciosFiltros";
 import { ServiciosGrid } from "@/components/servicios/ServiciosGrid";
 import { CTAFinal } from "@/components/home/CTAFinal";
+import { supabase } from "@/lib/supabase/client";
 
 export const Route = createFileRoute("/servicios")({
   component: ServiciosPage,
@@ -22,6 +23,18 @@ function ServiciosPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("categorias_servicios")
+      .select("nombre")
+      .order("orden", { ascending: true })
+      .then(({ data }) => {
+        if (data) {
+          setCategories(data.map((c) => c.nombre));
+        }
+      });
+  }, []);
 
   return (
     <main>
@@ -127,7 +140,11 @@ function ServiciosPage() {
         activeCategory={activeCategory}
         onSearchChange={setSearchQuery}
         onCategoryChange={setActiveCategory}
-        onCategoriesChange={setCategories}
+        onCategoriesChange={(cats) => {
+          // Si categories aún está vacío (antes del fetch), podemos usar esto de fallback.
+          // Si ya hay categories, respetamos el orden de la DB.
+          setCategories((prev) => prev.length > 0 ? prev : cats);
+        }}
       />
 
       {/* CTA */}

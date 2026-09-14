@@ -1,14 +1,9 @@
 import { ChevronDown, Search } from "lucide-react";
 
-const CATEGORIAS = [
-  { value: "todas", label: "Todas las categorías" },
-  { value: "cuidado-capilar", label: "Cuidado capilar" },
-  { value: "coloracion", label: "Coloración" },
-  { value: "tratamientos", label: "Tratamientos" },
-  { value: "estilizado", label: "Estilizado" },
-  { value: "unas", label: "Uñas" },
-  { value: "accesorios", label: "Accesorios" },
-];
+export interface CategoriaOption {
+  value: string;
+  label: string;
+}
 
 const ORDEN_OPTIONS = [
   { value: "destacados", label: "Destacados" },
@@ -18,6 +13,7 @@ const ORDEN_OPTIONS = [
 ];
 
 interface TiendaFiltrosProps {
+  categorias: CategoriaOption[];
   searchQuery: string;
   onSearchChange: (v: string) => void;
   activeCategory: string;
@@ -50,6 +46,7 @@ function handleBlur(e: React.FocusEvent<HTMLSelectElement>) {
 }
 
 export function TiendaFiltros({
+  categorias,
   searchQuery,
   onSearchChange,
   activeCategory,
@@ -120,7 +117,7 @@ export function TiendaFiltros({
                 onBlur={handleBlur}
                 style={selectStyle}
               >
-                {CATEGORIAS.map((c) => (
+                {categorias.map((c) => (
                   <option key={c.value} value={c.value}>
                     {c.label}
                   </option>

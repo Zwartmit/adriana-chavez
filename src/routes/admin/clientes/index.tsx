@@ -41,9 +41,14 @@ function ClientesPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState(() => typeof window !== "undefined" ? localStorage.getItem("admin_clientes_sort") || "nuevos" : "nuevos");
   const [page, setPage] = useState(1);
   const [panelOpen, setPanelOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem("admin_clientes_sort", sortOrder);
+  }, [sortOrder]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -53,14 +58,23 @@ function ClientesPage() {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
-  const fetchClientes = useCallback(async (query: string) => {
+  const fetchClientes = useCallback(async (query: string, sort: string) => {
     setLoading(true);
     setError(null);
 
     let clientesQuery = supabase
       .from("clientes")
-      .select("id, nombre, apellido, email, telefono, activo, profesionales(nombre)")
-      .order("created_at", { ascending: false });
+      .select("id, nombre, apellido, email, telefono, activo, profesionales(nombre)");
+
+    if (sort === "nombre_asc") {
+      clientesQuery = clientesQuery.order("nombre", { ascending: true });
+    } else if (sort === "nombre_desc") {
+      clientesQuery = clientesQuery.order("nombre", { ascending: false });
+    } else if (sort === "antiguos") {
+      clientesQuery = clientesQuery.order("created_at", { ascending: true });
+    } else {
+      clientesQuery = clientesQuery.order("created_at", { ascending: false });
+    }
 
     if (query) {
       clientesQuery = clientesQuery.or(
@@ -112,8 +126,8 @@ function ClientesPage() {
   }, []);
 
   useEffect(() => {
-    fetchClientes(searchQuery);
-  }, [searchQuery, fetchClientes]);
+    fetchClientes(searchQuery, sortOrder);
+  }, [searchQuery, sortOrder, fetchClientes]);
 
   const handleDeleteCliente = async (id: string, nombre: string) => {
     if (!window.confirm(`¿Seguro que deseas eliminar definitivamente a ${nombre}?\n\nSi tiene citas registradas, no podrás eliminarla. En ese caso, te recomendamos desactivarla editando su perfil.`)) {
@@ -153,7 +167,7 @@ function ClientesPage() {
       setLoading(false);
     } else {
       showToast("Clienta eliminada con éxito");
-      fetchClientes(searchQuery);
+      fetchClientes(searchQuery, sortOrder);
     }
   };
 
@@ -190,8 +204,29 @@ function ClientesPage() {
         </div>
       </div>
 
-      {/* Buscador */}
-      <div className="relative w-full sm:w-auto sm:max-w-[360px]" style={{ margin: "1.5rem 0" }}>
+      {/* Filtros */}
+      <div className="flex flex-col sm:flex-row flex-wrap sm:items-center gap-3" style={{ margin: "1.5rem 0" }}>
+        <select
+          className="w-full sm:w-auto"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          style={{
+            padding: "10px 14px",
+            backgroundColor: "var(--color-surface-light)",
+            border: "1px solid var(--color-border-light)",
+            borderRadius: "var(--radius-lg)",
+            fontFamily: "var(--font-body)",
+            fontSize: "var(--text-sm)",
+            color: "var(--color-text-on-light)",
+            outline: "none",
+          }}
+        >
+          <option value="nuevos">Más nuevas primero</option>
+          <option value="antiguos">Más antiguas primero</option>
+          <option value="nombre_asc">Nombre (A-Z)</option>
+          <option value="nombre_desc">Nombre (Z-A)</option>
+        </select>
+        <div className="relative w-full sm:w-auto sm:max-w-[360px]">
         <Search
           size={18}
           style={{
@@ -219,6 +254,7 @@ function ClientesPage() {
             outline: "none",
           }}
         />
+        </div>
       </div>
 
       {error && (
@@ -428,7 +464,7 @@ function ClientesPage() {
         isOpen={panelOpen}
         onClose={() => setPanelOpen(false)}
         onCreated={() => {
-          fetchClientes(searchQuery);
+          fetchClientes(searchQuery, sortOrder);
           showToast("Clienta registrada correctamente");
         }}
         onError={(msg) => showToast(msg, "error")}

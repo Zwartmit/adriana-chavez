@@ -59,7 +59,6 @@ function EditarProductoPage() {
       marca: data.marca,
       categoria_id: data.categoria_id,
       precio: data.precio,
-      precio_original: data.precio_original,
       descripcion: data.descripcion,
       descripcion_larga: data.descripcion_larga,
       caracteristicas: data.caracteristicas,

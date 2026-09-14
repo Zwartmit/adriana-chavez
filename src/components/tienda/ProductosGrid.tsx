@@ -29,11 +29,11 @@ type ProductoRow = {
   nombre: string;
   marca: string;
   descripcion: string | null;
+  descripcion_larga: string | null;
+  caracteristicas: any;
   precio: number;
   precio_original: number | null;
   imagenes: string[];
-  rating: number;
-  total_resenas: number;
   es_nuevo: boolean;
   categorias_productos: { nombre: string; slug: string } | null;
   inventario: { stock_virtual: number; stock_fisico: number }[] | null;
@@ -52,10 +52,10 @@ function mapProducto(p: ProductoRow): ProductCardProps {
     originalPrice: p.precio_original ?? undefined,
     image: p.imagenes?.[0] ?? "",
     category: p.categorias_productos?.slug ?? "",
-    rating: p.rating,
-    reviews: p.total_resenas,
     isNew: p.es_nuevo,
     isAgotado,
+    descripcion_larga: p.descripcion_larga ?? undefined,
+    caracteristicas: p.caracteristicas ?? undefined,
   };
 }
 
@@ -64,6 +64,7 @@ interface ProductosGridProps {
   activeCategory: string;
   sortOrder: string;
   onFilteredCountChange: (count: number) => void;
+  onTotalCountChange?: (count: number) => void;
   onClearFilters: () => void;
 }
 
@@ -72,6 +73,7 @@ export function ProductosGrid({
   activeCategory,
   sortOrder,
   onFilteredCountChange,
+  onTotalCountChange,
   onClearFilters,
 }: ProductosGridProps) {
   const { addItem } = useCart();
@@ -98,6 +100,7 @@ export function ProductosGrid({
     const mapped = (data as unknown as ProductoRow[]).map(mapProducto);
     PRODUCTOS = mapped;
     setProductos(mapped);
+    onTotalCountChange?.(mapped.length);
     setLoading(false);
   }, []);
 

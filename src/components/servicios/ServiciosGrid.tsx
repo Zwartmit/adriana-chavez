@@ -29,6 +29,7 @@ interface ServicioUI {
   image: string;
   href: string;
   orden: number;
+  requiere_cita: boolean;
 }
 
 interface ServiciosGridProps {
@@ -82,6 +83,7 @@ export function ServiciosGrid({
         image: s.imagen_url ?? "",
         href: "/servicios",
         orden: s.orden,
+        requiere_cita: s.requiere_cita ?? false,
       };
     });
 
@@ -155,7 +157,7 @@ export function ServiciosGrid({
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mt-6">
                   {serviciosFiltrados.slice(0, displayCount).map((s) => (
-                    <ServiceCard key={s.id} {...s} theme="light" />
+                    <ServiceCard key={s.id} {...s} theme="light" requiresAppointment={s.requiere_cita} />
                   ))}
                 </div>
 

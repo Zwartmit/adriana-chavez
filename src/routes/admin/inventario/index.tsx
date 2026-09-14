@@ -92,8 +92,13 @@ function InventarioPage() {
   const [categorias, setCategorias] = useState<CategoriaOption[]>([]);
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [filtroEstado, setFiltroEstado] = useState<"todos" | EstadoStock>("todos");
+  const [sortOrder, setSortOrder] = useState(() => typeof window !== "undefined" ? localStorage.getItem("admin_inventario_sort") || "estado_asc" : "estado_asc");
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("admin_inventario_sort", sortOrder);
+  }, [sortOrder]);
 
   const [movimientos, setMovimientos] = useState<MovimientoUI[]>([]);
   const [movimientosLoading, setMovimientosLoading] = useState(true);
@@ -121,9 +126,7 @@ function InventarioPage() {
     setError(null);
     const { data, error } = await supabase
       .from("inventario_completo")
-      .select("*")
-      .order("estado_stock", { ascending: true })
-      .order("producto_nombre", { ascending: true });
+      .select("*");
 
     if (error) {
       console.error("[InventarioPage] error al cargar inventario:", error.message);
@@ -190,14 +193,36 @@ function InventarioPage() {
   }, [inventario]);
 
   const filtrado = useMemo(() => {
-    return inventario.filter((r) => {
+    let filtered = inventario.filter((r) => {
       const matchCategoria = !filtroCategoria || r.categoria_id === filtroCategoria;
       const matchEstado = filtroEstado === "todos" || r.estado_stock === filtroEstado;
       const q = searchQuery;
       const matchSearch = !q || r.producto_nombre.toLowerCase().includes(q) || r.producto_marca.toLowerCase().includes(q);
       return matchCategoria && matchEstado && matchSearch;
     });
-  }, [inventario, filtroCategoria, filtroEstado, searchQuery]);
+
+    return filtered.sort((a, b) => {
+      if (sortOrder === "nombre_asc") {
+        return a.producto_nombre.localeCompare(b.producto_nombre);
+      }
+      if (sortOrder === "nombre_desc") {
+        return b.producto_nombre.localeCompare(a.producto_nombre);
+      }
+      if (sortOrder === "estado_asc" || sortOrder === "estado_desc") {
+        // Prioridad: agotado (2), critico (1), disponible (0)
+        const valA = a.estado_stock === "agotado" ? 2 : a.estado_stock === "critico" ? 1 : 0;
+        const valB = b.estado_stock === "agotado" ? 2 : b.estado_stock === "critico" ? 1 : 0;
+        
+        let diff = valB - valA; // Por defecto: agotado primero
+        if (sortOrder === "estado_desc") diff = valA - valB;
+        
+        if (diff !== 0) return diff;
+        // Empate -> ordenar alfabéticamente
+        return a.producto_nombre.localeCompare(b.producto_nombre);
+      }
+      return 0;
+    });
+  }, [inventario, filtroCategoria, filtroEstado, searchQuery, sortOrder]);
 
   const openMovimiento = (tipo: "entrada" | "salida", producto?: InventarioRow) => {
     setPanelTipo(tipo);
@@ -297,6 +322,12 @@ function InventarioPage() {
               <option value="critico">Crítico</option>
               <option value="agotado">Agotado</option>
             </select>
+            <select className="w-full sm:w-auto" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} style={selectStyle}>
+              <option value="estado_asc">Prioridad: Agotados primero</option>
+              <option value="estado_desc">Prioridad: Disponibles primero</option>
+              <option value="nombre_asc">Nombre (A-Z)</option>
+              <option value="nombre_desc">Nombre (Z-A)</option>
+            </select>
             <div className="relative w-full sm:w-auto sm:max-w-[280px]">
               <Search size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-on-light-faint)" }} />
               <input
@@ -350,10 +381,10 @@ function InventarioPage() {
                     const estilo = ESTADO_STYLES[r.estado_stock];
                     const rowStyle: React.CSSProperties =
                       r.estado_stock === "critico"
-                        ? { backgroundColor: "rgba(212,175,107,0.06)", borderLeft: "2px solid var(--color-primary)" }
+                        ? { backgroundColor: "rgba(212,175,107,0.15)", borderLeft: "2px solid var(--color-primary-dim)" }
                         : r.estado_stock === "agotado"
-                          ? { backgroundColor: "rgba(224,82,82,0.06)", borderLeft: "2px solid var(--color-error)", opacity: 0.7 }
-                          : { borderLeft: "2px solid transparent" };
+                          ? { backgroundColor: "rgba(224,82,82,0.15)", borderLeft: "2px solid var(--color-error)" }
+                          : { backgroundColor: "rgba(61, 143, 141, 0.08)", borderLeft: "2px solid #3D8F8D" };
                     return (
                       <tr key={r.id} style={rowStyle}>
                         <td style={{ padding: "12px 16px", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>

@@ -1,29 +1,28 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Edit, Package, Search } from "lucide-react";
+import { Edit, Scissors, Search } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { Button } from "@/components/ui/Button";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 
-export const Route = createFileRoute("/admin/productos/")({
-  component: ProductosPage,
+export const Route = createFileRoute("/admin/servicios/")({
+  component: ServiciosAdminPage,
 });
 
 const PAGE_SIZE = 20;
 
-interface ProductoRow {
+interface ServicioRow {
   id: string;
   nombre: string;
-  marca: string;
   categoria_id: string | null;
   precio: number;
+  duracion_min: number;
   activo: boolean;
   destacado: boolean;
-  es_nuevo: boolean;
   created_at: string;
-  categorias_productos: { nombre: string } | null;
+  categorias_servicios: { nombre: string } | null;
 }
 
 const selectStyle: React.CSSProperties = {
@@ -37,9 +36,9 @@ const selectStyle: React.CSSProperties = {
   outline: "none",
 };
 
-function ProductosPage() {
+function ServiciosAdminPage() {
   const navigate = useNavigate();
-  const [productos, setProductos] = useState<ProductoRow[]>([]);
+  const [servicios, setServicios] = useState<ServicioRow[]>([]);
   const [categorias, setCategorias] = useState<{ id: string; nombre: string }[]>([]);
 
   const [loading, setLoading] = useState(true);
@@ -48,14 +47,14 @@ function ProductosPage() {
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
-  const [sortOrder, setSortOrder] = useState(() => typeof window !== "undefined" ? localStorage.getItem("admin_productos_sort") || "nuevos" : "nuevos");
+  const [sortOrder, setSortOrder] = useState(() => typeof window !== "undefined" ? localStorage.getItem("admin_servicios_sort") || "nuevos" : "nuevos");
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    localStorage.setItem("admin_productos_sort", sortOrder);
-  }, [sortOrder]);
-
   const [toast, setToast] = useState<ToastState | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem("admin_servicios_sort", sortOrder);
+  }, [sortOrder]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -69,26 +68,26 @@ function ProductosPage() {
     setLoading(true);
     setError(null);
 
-    const [productosRes, categoriasRes] = await Promise.all([
+    const [serviciosRes, categoriasRes] = await Promise.all([
       supabase
-        .from("productos")
-        .select("id, nombre, marca, categoria_id, precio, activo, destacado, es_nuevo, created_at, categorias_productos(nombre)")
+        .from("servicios")
+        .select("id, nombre, categoria_id, precio, duracion_min, activo, destacado, created_at, categorias_servicios(nombre)")
         .order("created_at", { ascending: false }),
       supabase
-        .from("categorias_productos")
+        .from("categorias_servicios")
         .select("id, nombre")
         .order("orden", { ascending: true })
     ]);
 
-    if (productosRes.error) {
-      console.error("[ProductosPage] error al cargar productos:", productosRes.error.message);
-      setError(productosRes.error.message);
+    if (serviciosRes.error) {
+      console.error("[ServiciosAdminPage] error al cargar servicios:", serviciosRes.error.message);
+      setError(serviciosRes.error.message);
       setLoading(false);
       return;
     }
 
     setCategorias(categoriasRes.data ?? []);
-    setProductos(productosRes.data as unknown as ProductoRow[]);
+    setServicios(serviciosRes.data as unknown as ServicioRow[]);
     setLoading(false);
   }, []);
 
@@ -97,10 +96,10 @@ function ProductosPage() {
   }, [fetchData]);
 
   const filtrado = useMemo(() => {
-    const filtered = productos.filter((p) => {
-      const matchCat = !filtroCategoria || p.categoria_id === filtroCategoria;
+    const filtered = servicios.filter((s) => {
+      const matchCat = !filtroCategoria || s.categoria_id === filtroCategoria;
       const q = searchQuery.toLowerCase();
-      const matchSearch = !q || p.nombre.toLowerCase().includes(q) || p.marca.toLowerCase().includes(q);
+      const matchSearch = !q || s.nombre.toLowerCase().includes(q);
       return matchCat && matchSearch;
     });
 
@@ -111,21 +110,16 @@ function ProductosPage() {
       // por defecto 'nuevos'
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  }, [productos, filtroCategoria, searchQuery, sortOrder]);
+  }, [servicios, filtroCategoria, searchQuery, sortOrder]);
 
   const totalPages = Math.max(1, Math.ceil(filtrado.length / PAGE_SIZE));
-  const productosPagina = useMemo(
+  const serviciosPagina = useMemo(
     () => filtrado.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
     [filtrado, page]
   );
 
-  const showToast = (message: string, type: ToastState["type"] = "success") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
-  };
-
   return (
-    <AdminLayout pageTitle="Catálogo de productos">
+    <AdminLayout pageTitle="Servicios">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ marginBottom: "0.5rem" }}>
         <div>
           <p
@@ -136,12 +130,12 @@ function ProductosPage() {
               marginTop: "0.25rem",
             }}
           >
-            {productos.length} {productos.length === 1 ? "producto registrado" : "productos registrados"}
+            {servicios.length} {servicios.length === 1 ? "servicio registrado" : "servicios registrados"}
           </p>
         </div>
         <div className="w-full sm:w-auto">
-          <Button className="w-full sm:w-auto" variant="accent" size="md" onClick={() => navigate({ to: "/admin/productos/nuevo" })}>
-            Nuevo producto +
+          <Button className="w-full sm:w-auto" variant="accent" size="md" onClick={() => navigate({ to: "/admin/servicios/nuevo" })}>
+            Nuevo servicio +
           </Button>
         </div>
       </div>
@@ -177,7 +171,7 @@ function ProductosPage() {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Buscar producto o marca..."
+            placeholder="Buscar servicio..."
             style={{
               ...selectStyle,
               padding: "10px 14px 10px 42px",
@@ -203,7 +197,7 @@ function ProductosPage() {
             <table className="w-full min-w-[800px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#0A0A0B" }}>
-                  {["Nombre", "Marca", "Categoría", "Precio", "Etiquetas", "Estado", "Acciones"].map((h) => (
+                  {["Nombre", "Categoría", "Duración", "Precio", "Etiquetas", "Estado", "Acciones"].map((h) => (
                     <th
                       key={h}
                       style={{
@@ -223,11 +217,11 @@ function ProductosPage() {
                 </tr>
               </thead>
               <tbody>
-                {productosPagina.length === 0 ? (
+                {serviciosPagina.length === 0 ? (
                   <tr>
                     <td colSpan={7}>
                       <div className="flex flex-col items-center gap-3" style={{ padding: "4rem 0" }}>
-                        <Package size={40} color="var(--color-text-on-light-faint)" />
+                        <Scissors size={40} color="var(--color-text-on-light-faint)" />
                         <p
                           style={{
                             fontFamily: "var(--font-display)",
@@ -236,15 +230,15 @@ function ProductosPage() {
                             color: "var(--color-text-on-light-faint)",
                           }}
                         >
-                          No se encontraron productos
+                          No se encontraron servicios
                         </p>
                       </div>
                     </td>
                   </tr>
                 ) : (
-                  productosPagina.map((p, i) => (
+                  serviciosPagina.map((s, i) => (
                     <tr
-                      key={p.id}
+                      key={s.id}
                       style={{
                         backgroundColor: i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)",
                         transition: "background-color var(--transition-fast)",
@@ -253,35 +247,32 @@ function ProductosPage() {
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)")}
                     >
                       <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
-                        {p.nombre}
+                        {s.nombre}
                       </td>
                       <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
-                        {p.marca}
-                      </td>
-                      <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
-                        {p.categorias_productos?.nombre ?? "—"}
+                        {s.categorias_servicios?.nombre ?? "—"}
                       </td>
                       <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
-                        {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(p.precio)}
+                        {s.duracion_min} min
+                      </td>
+                      <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
+                        {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(s.precio)}
                       </td>
                       <td style={{ padding: "14px 16px" }}>
                         <div className="flex gap-2">
-                          {p.destacado && (
+                          {s.destacado && (
                             <span style={{ backgroundColor: "rgba(200,168,74,0.18)", color: "var(--color-primary-dim)", padding: "2px 8px", borderRadius: "var(--radius-full)", fontSize: "10px", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>Destacado</span>
-                          )}
-                          {p.es_nuevo && (
-                            <span style={{ backgroundColor: "rgba(76,175,128,0.15)", color: "#3D8F66", padding: "2px 8px", borderRadius: "var(--radius-full)", fontSize: "10px", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>Nuevo</span>
                           )}
                         </div>
                       </td>
-                      <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: p.activo ? "#4CAF80" : "var(--color-text-on-light-faint)" }}>
-                        {p.activo ? "Activo" : "Inactivo"}
+                      <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: s.activo ? "#4CAF80" : "var(--color-text-on-light-faint)" }}>
+                        {s.activo ? "Activo" : "Inactivo"}
                       </td>
                       <td style={{ padding: "14px 16px" }}>
                         <button
                           type="button"
                           aria-label="Editar"
-                          onClick={() => navigate({ to: `/admin/productos/$productoId`, params: { productoId: p.id } })}
+                          onClick={() => navigate({ to: `/admin/servicios/$servicioId`, params: { servicioId: s.id } })}
                           style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
                           onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
                           onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}

@@ -2,11 +2,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
-import { ProductoForm, type ProductoFormData } from "@/components/admin/productos/ProductoForm";
+import { ServicioForm, type ServicioFormData } from "@/components/admin/servicios/ServicioForm";
 import { supabase } from "@/lib/supabase/client";
 
-export const Route = createFileRoute("/admin/productos/nuevo")({
-  component: NuevoProductoPage,
+export const Route = createFileRoute("/admin/servicios/nuevo")({
+  component: NuevoServicioPage,
 });
 
 function generarSlug(nombre: string) {
@@ -18,7 +18,7 @@ function generarSlug(nombre: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
-function NuevoProductoPage() {
+function NuevoServicioPage() {
   const navigate = useNavigate();
   const [categorias, setCategorias] = useState<{ id: string; nombre: string }[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +26,7 @@ function NuevoProductoPage() {
 
   useEffect(() => {
     supabase
-      .from("categorias_productos")
+      .from("categorias_servicios")
       .select("id, nombre")
       .order("orden", { ascending: true })
       .then(({ data }) => setCategorias(data ?? []));
@@ -37,7 +37,7 @@ function NuevoProductoPage() {
     setTimeout(() => setToast(null), 2000);
   };
 
-  const handleSubmit = async (data: ProductoFormData) => {
+  const handleSubmit = async (data: ServicioFormData) => {
     setIsSubmitting(true);
     
     // Generar slug base
@@ -46,54 +46,39 @@ function NuevoProductoPage() {
 
     const insertData = {
       nombre: data.nombre,
-      marca: data.marca,
       categoria_id: data.categoria_id,
       precio: data.precio,
+      precio_desde: data.precio_desde,
+      duracion_min: data.duracion_min,
       descripcion: data.descripcion,
-      descripcion_larga: data.descripcion_larga,
-      caracteristicas: data.caracteristicas,
-      imagenes: data.imagenes, // Podrían agregarse luego con un uploader
+      imagen_url: data.imagen_url,
+      requiere_cita: data.requiere_cita,
       destacado: data.destacado,
-      es_nuevo: data.es_nuevo,
       activo: data.activo,
       slug,
       orden: 0,
     };
 
-    const { data: newProduct, error } = await supabase
-      .from("productos")
-      .insert([insertData])
-      .select("id")
-      .single();
-
-    if (!error && newProduct) {
-      // Crear el registro de inventario asociado (stock inicial 0)
-      await supabase.from("inventario").insert([{
-        producto_id: newProduct.id,
-        stock_virtual: 0,
-        stock_fisico: 0,
-        umbral_alerta: 5
-      }]);
-    }
+    const { error } = await supabase.from("servicios").insert([insertData]);
 
     setIsSubmitting(false);
 
     if (error) {
-      console.error("Error al crear producto:", error);
+      console.error("Error al crear servicio:", error);
       showToast(
         error.message.includes("slug") 
           ? "Error: el nombre generado ya existe. Intenta con otro." 
-          : "Error al crear el producto", 
+          : "Error al crear el servicio", 
         "error"
       );
     } else {
-      showToast("Producto creado con éxito");
-      setTimeout(() => navigate({ to: "/admin/productos" }), 1500);
+      showToast("Servicio creado con éxito");
+      setTimeout(() => navigate({ to: "/admin/servicios" }), 1500);
     }
   };
 
   return (
-    <AdminLayout pageTitle="Nuevo producto">
+    <AdminLayout pageTitle="Nuevo servicio">
       <div style={{ maxWidth: "1000px", width: "100%", margin: "0 auto" }}>
         <p
           style={{
@@ -103,7 +88,7 @@ function NuevoProductoPage() {
             marginBottom: "2rem",
           }}
         >
-          Completa la información para agregar un nuevo producto al catálogo.
+          Completa la información para agregar un nuevo servicio.
         </p>
 
         <div
@@ -114,11 +99,11 @@ function NuevoProductoPage() {
             padding: "2rem",
           }}
         >
-          <ProductoForm
+          <ServicioForm
             categorias={categorias}
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
-            onCancel={() => navigate({ to: "/admin/productos" })}
+            onCancel={() => navigate({ to: "/admin/servicios" })}
           />
         </div>
       </div>

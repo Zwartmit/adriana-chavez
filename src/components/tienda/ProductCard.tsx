@@ -11,11 +11,11 @@ export interface ProductCardProps {
   originalPrice?: number;
   image: string;
   category: string;
-  rating: number;
-  reviews: number;
   isNew?: boolean;
   isAgotado?: boolean;
   slug: string;
+  descripcion_larga?: string;
+  caracteristicas?: { label: string; valor: string }[];
   onAddToCart?: (product: ProductCardProps) => void;
   /** "dark" (default) for dark sections, "light" for --color-bg-light sections. */
   theme?: "dark" | "light";
@@ -28,8 +28,6 @@ export function ProductCard(props: ProductCardProps) {
     description,
     price,
     image,
-    rating,
-    reviews,
     isNew,
     isAgotado,
     slug,
