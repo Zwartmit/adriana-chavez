@@ -127,17 +127,34 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     borderBottom: "1px solid var(--color-border)",
                   }}
                 >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    style={{
-                      width: 80,
-                      height: 80,
-                      objectFit: "cover",
-                      borderRadius: "var(--radius-lg)",
-                      flexShrink: 0,
-                    }}
-                  />
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        objectFit: "cover",
+                        borderRadius: "var(--radius-lg)",
+                        flexShrink: 0,
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: 80,
+                        height: 80,
+                        backgroundColor: "var(--color-surface)",
+                        borderRadius: "var(--radius-lg)",
+                        flexShrink: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <span style={{ fontSize: "10px", color: "var(--color-text-faint)", fontFamily: "var(--font-mono)" }}>No img</span>
+                    </div>
+                  )}
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                     <p
                       style={{
@@ -307,7 +324,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
               <a href="/tienda/carrito">
                 <Button variant="accent" size="lg" className="w-full">
-                  Ir al checkout →
+                  Ir al carrito →
                 </Button>
               </a>
               <button
@@ -319,6 +336,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   fontSize: "var(--text-sm)",
                   color: "var(--color-text-secondary)",
                   transition: "color var(--transition-base)",
+                  cursor: "pointer",
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}

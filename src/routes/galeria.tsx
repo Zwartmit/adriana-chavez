@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase/client";
 import { GaleriaFiltros } from "@/components/galeria/GaleriaFiltros";
 import { GaleriaGrid } from "@/components/galeria/GaleriaGrid";
 import { Lightbox } from "@/components/galeria/Lightbox";
@@ -24,6 +25,20 @@ function GaleriaPage() {
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [lightboxItem, setLightboxItem] = useState<GaleriaItem | null>(null);
   const [filteredItems, setFilteredItems] = useState<GaleriaItem[]>([]);
+  const [categorias, setCategorias] = useState<{ nombre: string; slug: string }[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
+
+  useEffect(() => {
+    async function fetchCategorias() {
+      // Importante: usar import { supabase } from "@/lib/supabase/client" (lo agregaremos arriba si no esta)
+      const { data } = await supabase
+        .from("categorias_galeria")
+        .select("nombre, slug")
+        .order("orden");
+      if (data) setCategorias(data);
+    }
+    fetchCategorias();
+  }, []);
 
   const handlePrev = () => {
     const idx = filteredItems.findIndex((i) => i.id === lightboxItem?.id);
@@ -114,9 +129,10 @@ function GaleriaPage() {
 
       {/* Filtros */}
       <GaleriaFiltros
+        categorias={categorias}
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
-        totalItems={18}
+        totalItems={18} // Se podria actualizar con totalItems real
         filteredItems={filteredItems.length}
       />
 

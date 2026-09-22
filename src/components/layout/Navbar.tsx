@@ -19,6 +19,7 @@ function CartIcon({ isDark }: { isDark: boolean }) {
         color: isDark ? "#F5F2EB" : "#0A0A0B",
         padding: "8px",
         transition: "color 300ms ease",
+        cursor: "pointer",
       }}
     >
       <ShoppingBag size={22} />

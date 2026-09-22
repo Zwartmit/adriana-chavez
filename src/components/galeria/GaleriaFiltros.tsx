@@ -1,14 +1,10 @@
-const CATEGORIAS = [
-  "Todos",
-  "Antes & Después",
-  "Coloración",
-  "Corte",
-  "Tratamiento",
-  "Uñas",
-  "Peinado",
-];
+export interface CategoriaFiltro {
+  nombre: string;
+  slug: string;
+}
 
 interface GaleriaFiltrosProps {
+  categorias: CategoriaFiltro[];
   activeCategory: string;
   onCategoryChange: (category: string) => void;
   totalItems: number;
@@ -16,11 +12,15 @@ interface GaleriaFiltrosProps {
 }
 
 export function GaleriaFiltros({
+  categorias,
   activeCategory,
   onCategoryChange,
   totalItems,
   filteredItems,
 }: GaleriaFiltrosProps) {
+  // Siempre agregamos "Todos" al inicio
+  const allCategorias = [{ nombre: "Todos", slug: "todos" }, ...categorias];
+
   return (
     <section
       data-navbar-dark
@@ -44,13 +44,13 @@ export function GaleriaFiltros({
           className="flex items-center gap-3 overflow-x-auto"
           style={{ scrollbarWidth: "none" }}
         >
-          {CATEGORIAS.map((cat) => {
-            const active = cat === activeCategory;
+          {allCategorias.map((cat) => {
+            const active = cat.nombre === activeCategory;
             return (
               <button
-                key={cat}
+                key={cat.slug}
                 type="button"
-                onClick={() => onCategoryChange(cat)}
+                onClick={() => onCategoryChange(cat.nombre)}
                 className="shrink-0"
                 style={{
                   backgroundColor: active ? "var(--color-primary)" : "var(--color-surface)",
@@ -75,7 +75,7 @@ export function GaleriaFiltros({
                   e.currentTarget.style.color = "var(--color-text-secondary)";
                 }}
               >
-                {cat}
+                {cat.nombre}
               </button>
             );
           })}

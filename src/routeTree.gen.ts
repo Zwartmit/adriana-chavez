@@ -20,9 +20,13 @@ import { Route as AdminActualizarPasswordRouteImport } from './routes/admin/actu
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as TiendaIndexRouteImport } from './routes/tienda/index'
 import { Route as TiendaSlugRouteImport } from './routes/tienda/$slug'
+import { Route as TiendaCarritoRouteImport } from './routes/tienda/carrito'
+import { Route as TiendaOrdenConfirmadaRouteImport } from './routes/tienda/orden-confirmada'
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/index'
 import { Route as AdminClientesClienteIdRouteImport } from './routes/admin/clientes/$clienteId'
+import { Route as AdminGaleriaIndexRouteImport } from './routes/admin/galeria/index'
 import { Route as AdminInventarioIndexRouteImport } from './routes/admin/inventario/index'
+import { Route as AdminOrdenesIndexRouteImport } from './routes/admin/ordenes/index'
 import { Route as AdminProductosIndexRouteImport } from './routes/admin/productos/index'
 import { Route as AdminProductosProductoIdRouteImport } from './routes/admin/productos/$productoId'
 import { Route as AdminProductosNuevoRouteImport } from './routes/admin/productos/nuevo'
@@ -86,6 +90,16 @@ const TiendaSlugRoute = TiendaSlugRouteImport.update({
   path: '/tienda/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TiendaCarritoRoute = TiendaCarritoRouteImport.update({
+  id: '/tienda/carrito',
+  path: '/tienda/carrito',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TiendaOrdenConfirmadaRoute = TiendaOrdenConfirmadaRouteImport.update({
+  id: '/tienda/orden-confirmada',
+  path: '/tienda/orden-confirmada',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminClientesIndexRoute = AdminClientesIndexRouteImport.update({
   id: '/admin/clientes/',
   path: '/admin/clientes/',
@@ -96,9 +110,19 @@ const AdminClientesClienteIdRoute = AdminClientesClienteIdRouteImport.update({
   path: '/admin/clientes/$clienteId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminGaleriaIndexRoute = AdminGaleriaIndexRouteImport.update({
+  id: '/admin/galeria/',
+  path: '/admin/galeria/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminInventarioIndexRoute = AdminInventarioIndexRouteImport.update({
   id: '/admin/inventario/',
   path: '/admin/inventario/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOrdenesIndexRoute = AdminOrdenesIndexRouteImport.update({
+  id: '/admin/ordenes/',
+  path: '/admin/ordenes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminProductosIndexRoute = AdminProductosIndexRouteImport.update({
@@ -149,6 +173,8 @@ export interface FileRoutesByFullPath {
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
+  '/tienda/carrito': typeof TiendaCarritoRoute
+  '/tienda/orden-confirmada': typeof TiendaOrdenConfirmadaRoute
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
@@ -157,7 +183,9 @@ export interface FileRoutesByFullPath {
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
+  '/admin/galeria/': typeof AdminGaleriaIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
+  '/admin/ordenes/': typeof AdminOrdenesIndexRoute
   '/admin/productos/': typeof AdminProductosIndexRoute
   '/admin/reportes/': typeof AdminReportesIndexRoute
   '/admin/servicios/': typeof AdminServiciosIndexRoute
@@ -172,6 +200,8 @@ export interface FileRoutesByTo {
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
+  '/tienda/carrito': typeof TiendaCarritoRoute
+  '/tienda/orden-confirmada': typeof TiendaOrdenConfirmadaRoute
   '/admin': typeof AdminIndexRoute
   '/tienda': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
@@ -180,7 +210,9 @@ export interface FileRoutesByTo {
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
+  '/admin/galeria': typeof AdminGaleriaIndexRoute
   '/admin/inventario': typeof AdminInventarioIndexRoute
+  '/admin/ordenes': typeof AdminOrdenesIndexRoute
   '/admin/productos': typeof AdminProductosIndexRoute
   '/admin/reportes': typeof AdminReportesIndexRoute
   '/admin/servicios': typeof AdminServiciosIndexRoute
@@ -196,6 +228,8 @@ export interface FileRoutesById {
   '/admin/actualizar-password': typeof AdminActualizarPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/tienda/$slug': typeof TiendaSlugRoute
+  '/tienda/carrito': typeof TiendaCarritoRoute
+  '/tienda/orden-confirmada': typeof TiendaOrdenConfirmadaRoute
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
@@ -204,7 +238,9 @@ export interface FileRoutesById {
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
+  '/admin/galeria/': typeof AdminGaleriaIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
+  '/admin/ordenes/': typeof AdminOrdenesIndexRoute
   '/admin/productos/': typeof AdminProductosIndexRoute
   '/admin/reportes/': typeof AdminReportesIndexRoute
   '/admin/servicios/': typeof AdminServiciosIndexRoute
@@ -221,6 +257,8 @@ export interface FileRouteTypes {
     | '/admin/actualizar-password'
     | '/admin/login'
     | '/tienda/$slug'
+    | '/tienda/carrito'
+    | '/tienda/orden-confirmada'
     | '/admin/'
     | '/tienda/'
     | '/admin/clientes/$clienteId'
@@ -229,7 +267,9 @@ export interface FileRouteTypes {
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
     | '/admin/clientes/'
+    | '/admin/galeria/'
     | '/admin/inventario/'
+    | '/admin/ordenes/'
     | '/admin/productos/'
     | '/admin/reportes/'
     | '/admin/servicios/'
@@ -244,6 +284,8 @@ export interface FileRouteTypes {
     | '/admin/actualizar-password'
     | '/admin/login'
     | '/tienda/$slug'
+    | '/tienda/carrito'
+    | '/tienda/orden-confirmada'
     | '/admin'
     | '/tienda'
     | '/admin/clientes/$clienteId'
@@ -252,7 +294,9 @@ export interface FileRouteTypes {
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
     | '/admin/clientes'
+    | '/admin/galeria'
     | '/admin/inventario'
+    | '/admin/ordenes'
     | '/admin/productos'
     | '/admin/reportes'
     | '/admin/servicios'
@@ -267,6 +311,8 @@ export interface FileRouteTypes {
     | '/admin/actualizar-password'
     | '/admin/login'
     | '/tienda/$slug'
+    | '/tienda/carrito'
+    | '/tienda/orden-confirmada'
     | '/admin/'
     | '/tienda/'
     | '/admin/clientes/$clienteId'
@@ -275,7 +321,9 @@ export interface FileRouteTypes {
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
     | '/admin/clientes/'
+    | '/admin/galeria/'
     | '/admin/inventario/'
+    | '/admin/ordenes/'
     | '/admin/productos/'
     | '/admin/reportes/'
     | '/admin/servicios/'
@@ -291,6 +339,8 @@ export interface RootRouteChildren {
   AdminActualizarPasswordRoute: typeof AdminActualizarPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
   TiendaSlugRoute: typeof TiendaSlugRoute
+  TiendaCarritoRoute: typeof TiendaCarritoRoute
+  TiendaOrdenConfirmadaRoute: typeof TiendaOrdenConfirmadaRoute
   AdminIndexRoute: typeof AdminIndexRoute
   TiendaIndexRoute: typeof TiendaIndexRoute
   AdminClientesClienteIdRoute: typeof AdminClientesClienteIdRoute
@@ -299,7 +349,9 @@ export interface RootRouteChildren {
   AdminServiciosServicioIdRoute: typeof AdminServiciosServicioIdRoute
   AdminServiciosNuevoRoute: typeof AdminServiciosNuevoRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
+  AdminGaleriaIndexRoute: typeof AdminGaleriaIndexRoute
   AdminInventarioIndexRoute: typeof AdminInventarioIndexRoute
+  AdminOrdenesIndexRoute: typeof AdminOrdenesIndexRoute
   AdminProductosIndexRoute: typeof AdminProductosIndexRoute
   AdminReportesIndexRoute: typeof AdminReportesIndexRoute
   AdminServiciosIndexRoute: typeof AdminServiciosIndexRoute
@@ -384,6 +436,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TiendaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tienda/carrito': {
+      id: '/tienda/carrito'
+      path: '/tienda/carrito'
+      fullPath: '/tienda/carrito'
+      preLoaderRoute: typeof TiendaCarritoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tienda/orden-confirmada': {
+      id: '/tienda/orden-confirmada'
+      path: '/tienda/orden-confirmada'
+      fullPath: '/tienda/orden-confirmada'
+      preLoaderRoute: typeof TiendaOrdenConfirmadaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/clientes/': {
       id: '/admin/clientes/'
       path: '/admin/clientes'
@@ -398,11 +464,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminClientesClienteIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/galeria/': {
+      id: '/admin/galeria/'
+      path: '/admin/galeria'
+      fullPath: '/admin/galeria/'
+      preLoaderRoute: typeof AdminGaleriaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/inventario/': {
       id: '/admin/inventario/'
       path: '/admin/inventario'
       fullPath: '/admin/inventario/'
       preLoaderRoute: typeof AdminInventarioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ordenes/': {
+      id: '/admin/ordenes/'
+      path: '/admin/ordenes'
+      fullPath: '/admin/ordenes/'
+      preLoaderRoute: typeof AdminOrdenesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/productos/': {
@@ -467,6 +547,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminActualizarPasswordRoute: AdminActualizarPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
   TiendaSlugRoute: TiendaSlugRoute,
+  TiendaCarritoRoute: TiendaCarritoRoute,
+  TiendaOrdenConfirmadaRoute: TiendaOrdenConfirmadaRoute,
   AdminIndexRoute: AdminIndexRoute,
   TiendaIndexRoute: TiendaIndexRoute,
   AdminClientesClienteIdRoute: AdminClientesClienteIdRoute,
@@ -475,7 +557,9 @@ const rootRouteChildren: RootRouteChildren = {
   AdminServiciosServicioIdRoute: AdminServiciosServicioIdRoute,
   AdminServiciosNuevoRoute: AdminServiciosNuevoRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,
+  AdminGaleriaIndexRoute: AdminGaleriaIndexRoute,
   AdminInventarioIndexRoute: AdminInventarioIndexRoute,
+  AdminOrdenesIndexRoute: AdminOrdenesIndexRoute,
   AdminProductosIndexRoute: AdminProductosIndexRoute,
   AdminReportesIndexRoute: AdminReportesIndexRoute,
   AdminServiciosIndexRoute: AdminServiciosIndexRoute,

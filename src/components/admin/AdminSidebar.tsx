@@ -6,12 +6,14 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  ClipboardList,
   LogOut,
   MessageSquare,
   Package,
   ShoppingBag,
   Users,
-  Scissors
+  Scissors,
+  Image
 } from "lucide-react";
 import { signOut } from "@/lib/supabase/auth";
 import { supabase } from "@/lib/supabase/client";
@@ -19,9 +21,11 @@ import { supabase } from "@/lib/supabase/client";
 const NAV_ITEMS = [
   { label: "Calendario", href: "/admin", icon: Calendar },
   { label: "Clientas", href: "/admin/clientes", icon: Users },
+  { label: "Ordenes", href: "/admin/ordenes", icon: ClipboardList },
   { label: "Inventario", href: "/admin/inventario", icon: Package },
   { label: "Productos", href: "/admin/productos", icon: ShoppingBag },
   { label: "Servicios", href: "/admin/servicios", icon: Scissors },
+  { label: "Galería", href: "/admin/galeria", icon: Image },
   { label: "Reportes", href: "/admin/reportes", icon: BarChart3 },
 ];
 
@@ -143,6 +147,23 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [pendingOrders, setPendingOrders] = useState(0);
+
+  useEffect(() => {
+    async function fetchPending() {
+      const { count } = await supabase
+        .from("ordenes")
+        .select("id", { count: "exact", head: true })
+        .eq("estado", "pendiente");
+      setPendingOrders(count ?? 0);
+    }
+    fetchPending();
+    const channel = supabase
+      .channel("ordenes_pendientes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "ordenes" }, fetchPending)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const handleConfirmSignOut = async () => {
     setSigningOut(true);
@@ -216,6 +237,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
         <nav style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
           {NAV_ITEMS.map((item) => {
             const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
+            const badge = item.href === "/admin/ordenes" ? pendingOrders : undefined;
             return (
               <SidebarLink
                 key={item.href}
@@ -226,6 +248,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
                 isCollapsed={isCollapsed}
                 hovered={hoveredHref === item.href}
                 onHoverChange={(hovered) => setHoveredHref(hovered ? item.href : null)}
+                badge={badge}
               />
             );
           })}

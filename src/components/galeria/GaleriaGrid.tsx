@@ -106,7 +106,7 @@ export function GaleriaGrid({
     setError(null);
     const { data, error } = await supabase
       .from("galeria")
-      .select("*")
+      .select("*, categorias_galeria(nombre)")
       .eq("activo", true)
       .order("orden", { ascending: true });
 
@@ -122,7 +122,7 @@ export function GaleriaGrid({
         id: g.id,
         src: g.imagen_url,
         alt: g.titulo ?? g.tag ?? "",
-        category: g.categoria,
+        category: g.categorias_galeria?.nombre ?? "Sin categoría",
         tag: g.tag ?? undefined,
         aspectRatio: ASPECT_CYCLE[i % ASPECT_CYCLE.length],
       })),
@@ -175,15 +175,26 @@ export function GaleriaGrid({
           <ErrorState message={error} onRetry={fetchGaleria} variant="light" />
         ) : (
           <>
-            <div
-              key={activeCategory}
-              className="animate-in fade-in duration-300 columns-2 sm:columns-2 lg:columns-3 gap-x-3 sm:gap-x-4"
-            >
-              {itemsFiltrados.slice(0, displayCount).map((item) => (
-                <GaleriaCard key={item.id} item={item} onClick={() => onItemClick(item)} />
-              ))}
-            </div>
-            {(displayCount < itemsFiltrados.length || displayCount > 5) && (
+            {itemsFiltrados.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-300">
+                <p style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", color: "var(--color-text-on-light-muted)", fontStyle: "italic", marginBottom: "0.5rem" }}>
+                  Aún no hay trabajos en esta categoría
+                </p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)" }}>
+                  Pronto subiremos nuevas transformaciones.
+                </p>
+              </div>
+            ) : (
+              <div
+                key={activeCategory}
+                className="animate-in fade-in duration-300 columns-2 sm:columns-2 lg:columns-3 gap-x-3 sm:gap-x-4"
+              >
+                {itemsFiltrados.slice(0, displayCount).map((item) => (
+                  <GaleriaCard key={item.id} item={item} onClick={() => onItemClick(item)} />
+                ))}
+              </div>
+            )}
+            {(displayCount < itemsFiltrados.length || displayCount > 5) && itemsFiltrados.length > 0 && (
               <div className="flex justify-center mt-12 gap-4">
                 {displayCount > 5 && (
                   <button

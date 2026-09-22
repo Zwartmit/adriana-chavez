@@ -5,6 +5,11 @@ import { signIn, resetPassword } from "@/lib/supabase/auth";
 
 export const Route = createFileRoute("/admin/login")({
   component: AdminLoginPage,
+  head: () => ({
+    meta: [
+      { title: "Iniciar sesión | Centro de Belleza Adriana Chávez" },
+    ],
+  }),
 });
 
 function AdminLoginPage() {

@@ -42,11 +42,17 @@ export function ProductCard(props: ProductCardProps) {
         href={`/tienda/${slug}`}
         className="group block relative w-full overflow-hidden rounded-t-[var(--radius-xl)] aspect-square"
       >
-        <img
-          src={image}
-          alt={name}
-          className="transition-transform duration-500 group-hover:scale-105 w-full h-full object-cover"
-        />
+        {image ? (
+          <img
+            src={image}
+            alt={name}
+            className="transition-transform duration-500 group-hover:scale-105 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: isLight ? "var(--color-surface-light)" : "var(--color-surface)" }}>
+            <span style={{ color: isLight ? "var(--color-text-on-light-muted)" : "var(--color-text-faint)", fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)" }}>Sin imagen</span>
+          </div>
+        )}
         {isNew && !isAgotado && (
           <span
             className="uppercase absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs"

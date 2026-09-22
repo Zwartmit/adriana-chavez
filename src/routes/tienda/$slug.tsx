@@ -141,7 +141,7 @@ function ProductoPage() {
               fontFamily: "var(--font-display)",
               fontStyle: "italic",
               fontSize: "var(--text-2xl)",
-              color: "var(--color-text-muted)",
+              color: "var(--color-text-on-light-faint)",
             }}
           >
             Producto no encontrado
@@ -212,13 +212,12 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
   };
 
   return (
-    <main>
+    <main style={{ backgroundColor: "var(--color-bg-light)", color: "var(--color-text-on-light)", minHeight: "100vh" }}>
       {/* Breadcrumb */}
       <nav
         style={{
-          paddingTop: "80px",
+          paddingTop: "6rem",
           paddingBottom: "1rem",
-          borderBottom: "0.5px solid var(--color-border)",
         }}
       >
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1.5rem" }}>
@@ -229,16 +228,19 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
               { label: producto.name, href: null },
             ].map((item, i) => (
               <li key={i} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                {i > 0 && <span style={{ color: "var(--color-text-muted)" }}>/</span>}
+                {i > 0 && <span style={{ color: "var(--color-text-on-light-faint)" }}>/</span>}
                 {item.href ? (
                   <a
                     href={item.href}
                     style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "var(--text-sm)",
-                      color: "var(--color-text-secondary)",
+                      color: "var(--color-text-on-light-muted)",
                       textDecoration: "none",
+                      transition: "color 200ms",
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-muted)")}
                   >
                     {item.label}
                   </a>
@@ -247,8 +249,8 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                     style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "var(--text-sm)",
-                      color: "var(--color-text-primary)",
-                      fontWeight: 500,
+                      color: "var(--color-text-on-light)",
+                      fontWeight: 600,
                     }}
                   >
                     {item.label}
@@ -275,40 +277,70 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
           <div className="grid grid-cols-1 lg:grid-cols-[45fr_55fr] gap-8 lg:gap-16">
             {/* Imágenes */}
             <div>
-              <img
-                src={producto.image}
-                alt={producto.name}
-                style={{
-                  width: "100%",
-                  aspectRatio: "1 / 1",
-                  objectFit: "cover",
-                  borderRadius: "var(--radius-2xl)",
-                }}
-              />
-              <div className="flex gap-3 mt-4">
-                {[0, 1, 2, 3].map((i) => (
-                  <img
-                    key={i}
-                    src={producto.image}
-                    alt={`${producto.name} miniatura ${i + 1}`}
-                    style={{
-                      width: 80,
-                      height: 80,
-                      objectFit: "cover",
-                      borderRadius: "var(--radius-lg)",
-                      border: i === 0 ? "2px solid var(--color-primary)" : "2px solid transparent",
-                      cursor: "pointer",
-                      transition: "border-color var(--transition-base)",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (i !== 0) e.currentTarget.style.borderColor = "var(--color-accent)";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (i !== 0) e.currentTarget.style.borderColor = "transparent";
-                    }}
-                  />
-                ))}
-              </div>
+              {producto.image ? (
+                <img
+                  src={producto.image}
+                  alt={producto.name}
+                  style={{
+                    width: "100%",
+                    aspectRatio: "1 / 1",
+                    objectFit: "cover",
+                    borderRadius: "var(--radius-2xl)",
+                    border: "1px solid var(--color-border-light)",
+                    backgroundColor: "var(--color-surface-light)",
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    aspectRatio: "1 / 1",
+                    borderRadius: "var(--radius-2xl)",
+                    border: "1px solid var(--color-border-light)",
+                    backgroundColor: "var(--color-surface-light)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <span style={{ color: "var(--color-text-on-light-muted)", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)" }}>Sin imagen</span>
+                </div>
+              )}
+              {producto.image && (
+                <div className="flex gap-3 mt-4">
+                  {[0, 1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: "var(--radius-lg)",
+                        border: i === 0 ? "2px solid var(--color-primary)" : "2px solid transparent",
+                        cursor: "pointer",
+                        transition: "border-color var(--transition-base)",
+                        overflow: "hidden",
+                        backgroundColor: "var(--color-surface-light)",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (i !== 0) e.currentTarget.style.borderColor = "var(--color-border-gold)";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (i !== 0) e.currentTarget.style.borderColor = "transparent";
+                      }}
+                    >
+                      <img
+                        src={producto.image}
+                        alt={`${producto.name} miniatura ${i + 1}`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Info */}
@@ -319,7 +351,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-xs)",
                   letterSpacing: "var(--tracking-widest)",
-                  color: "var(--color-accent)",
+                  color: "var(--color-text-on-light-muted)",
                 }}
               >
                 {producto.brand}
@@ -330,33 +362,48 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                   fontStyle: "italic",
                   fontWeight: 600,
                   fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
-                  color: "var(--color-text-primary)",
+                  color: "var(--color-text-on-light)",
                   marginTop: "0.5rem",
                 }}
               >
                 {producto.name}
               </h1>
 
-              <div style={{ borderTop: "1px solid var(--color-border)", margin: "1.5rem 0" }} />
+              <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1.5rem 0" }} />
 
-              <span
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontWeight: 700,
-                  fontSize: "var(--text-4xl)",
-                  color: "var(--color-primary)",
-                }}
-              >
-                {formatPrice(producto.price)}
-              </span>
+              <div className="flex items-end gap-3">
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 700,
+                    fontSize: "var(--text-4xl)",
+                    color: "var(--color-text-on-light)",
+                  }}
+                >
+                  {formatPrice(producto.price)}
+                </span>
+                {producto.originalPrice && producto.originalPrice > producto.price && (
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-xl)",
+                      color: "var(--color-text-on-light-faint)",
+                      textDecoration: "line-through",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {formatPrice(producto.originalPrice)}
+                  </span>
+                )}
+              </div>
 
-              <div style={{ borderTop: "1px solid var(--color-border)", margin: "1.5rem 0" }} />
+              <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1.5rem 0" }} />
 
               <p
                 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-base)",
-                  color: "var(--color-text-secondary)",
+                  color: "var(--color-text-on-light-muted)",
                   lineHeight: "var(--leading-relaxed)",
                   display: "-webkit-box",
                   WebkitLineClamp: 3,
@@ -367,72 +414,82 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                 {producto.description}
               </p>
 
-              <div style={{ borderTop: "1px solid var(--color-border)", margin: "1.5rem 0" }} />
+              <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1.5rem 0" }} />
 
               {/* Selector de cantidad */}
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  style={{
-                    width: 36,
-                    height: 36,
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-md)",
-                    backgroundColor: "transparent",
-                    transition: "all var(--transition-base)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--color-primary)";
-                    e.currentTarget.style.color = "var(--color-text-inverse)";
-                    e.currentTarget.style.borderColor = "var(--color-primary)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = "inherit";
-                    e.currentTarget.style.borderColor = "var(--color-border)";
-                  }}
-                >
-                  −
-                </button>
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 700,
-                    fontSize: "var(--text-lg)",
-                    minWidth: 48,
-                    textAlign: "center",
-                  }}
-                >
-                  {quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => q + 1)}
-                  style={{
-                    width: 36,
-                    height: 36,
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-md)",
-                    backgroundColor: "transparent",
-                    transition: "all var(--transition-base)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--color-primary)";
-                    e.currentTarget.style.color = "var(--color-text-inverse)";
-                    e.currentTarget.style.borderColor = "var(--color-primary)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = "inherit";
-                    e.currentTarget.style.borderColor = "var(--color-border)";
-                  }}
-                >
-                  +
-                </button>
+              <div className="flex items-center gap-4 mt-2">
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Cantidad:</p>
+                <div style={{ display: "flex", alignItems: "center", backgroundColor: "var(--color-surface-light)", border: "1px solid var(--color-border-light)", borderRadius: "var(--radius-full)", padding: "2px" }}>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      color: "var(--color-text-on-light-muted)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      transition: "all 200ms ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--color-bg-light-alt)";
+                      e.currentTarget.style.color = "var(--color-text-on-light)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = "var(--color-text-on-light-muted)";
+                    }}
+                  >
+                    −
+                  </button>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontWeight: 600,
+                      fontSize: "var(--text-base)",
+                      color: "var(--color-text-on-light)",
+                      minWidth: 40,
+                      textAlign: "center",
+                    }}
+                  >
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => q + 1)}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      color: "var(--color-text-on-light-muted)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      transition: "all 200ms ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--color-bg-light-alt)";
+                      e.currentTarget.style.color = "var(--color-text-on-light)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = "var(--color-text-on-light-muted)";
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
 
-              <div style={{ borderTop: "1px solid var(--color-border)", margin: "1.5rem 0" }} />
+              <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1.5rem 0" }} />
 
               {/* Botones de acción */}
               <div className="flex flex-col gap-3">
@@ -444,7 +501,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                 </Button>
               </div>
 
-              <div style={{ borderTop: "1px solid var(--color-border)", margin: "1.5rem 0" }} />
+              <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "1.5rem 0" }} />
 
               {/* Badges de garantía */}
               <div className="flex flex-wrap items-center gap-4">
@@ -456,7 +513,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                         style={{
                           fontFamily: "var(--font-body)",
                           fontSize: "var(--text-sm)",
-                          color: "var(--color-text-secondary)",
+                          color: "var(--color-text-on-light-muted)",
                         }}
                       >
                         {texto}
@@ -470,7 +527,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
 
           {/* Tabs */}
           <div className="mt-16">
-            <div className="flex" style={{ borderBottom: "1px solid var(--color-border)" }}>
+            <div className="flex" style={{ borderBottom: "1px solid var(--color-border-light)" }}>
               {TABS.map((tab) => {
                 const isActive = tab === activeTab;
                 return (
@@ -482,7 +539,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                       fontFamily: "var(--font-body)",
                       fontWeight: isActive ? 600 : 500,
                       fontSize: "var(--text-sm)",
-                      color: isActive ? "var(--color-primary)" : "var(--color-text-muted)",
+                      color: isActive ? "var(--color-primary)" : "var(--color-text-on-light-muted)",
                       padding: "12px 20px",
                       borderBottom: isActive
                         ? "2px solid var(--color-primary)"
@@ -491,10 +548,10 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                       transition: "color var(--transition-base)",
                     }}
                     onMouseEnter={(e) => {
-                      if (!isActive) e.currentTarget.style.color = "var(--color-text-primary)";
+                      if (!isActive) e.currentTarget.style.color = "var(--color-text-on-light)";
                     }}
                     onMouseLeave={(e) => {
-                      if (!isActive) e.currentTarget.style.color = "var(--color-text-muted)";
+                      if (!isActive) e.currentTarget.style.color = "var(--color-text-on-light-muted)";
                     }}
                   >
                     {tab}
@@ -510,7 +567,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                     style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "var(--text-base)",
-                      color: "var(--color-text-secondary)",
+                      color: "var(--color-text-on-light-muted)",
                       lineHeight: "var(--leading-relaxed)",
                       whiteSpace: "pre-wrap",
                     }}
@@ -522,7 +579,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
 
               {activeTab === "Características" && (
                 <div style={{ maxWidth: "560px", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
-                  <div className="flex" style={{ backgroundColor: "var(--color-bg-alt)" }}>
+                  <div className="flex" style={{ backgroundColor: "var(--color-bg-light-alt)" }}>
                     <div
                       style={{
                         flex: 1,
@@ -530,7 +587,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                         fontFamily: "var(--font-body)",
                         fontWeight: 600,
                         fontSize: "var(--text-sm)",
-                        color: "var(--color-text-primary)",
+                        color: "var(--color-text-on-light)",
                       }}
                     >
                       Marca
@@ -541,22 +598,22 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                         padding: "0.75rem 1rem",
                         fontFamily: "var(--font-body)",
                         fontSize: "var(--text-sm)",
-                        color: "var(--color-text-secondary)",
+                        color: "var(--color-text-on-light-muted)",
                       }}
                     >
                       {producto.brand}
                     </div>
                   </div>
-                  {(!producto.caracteristicas || producto.caracteristicas.length === 0) && (
-                    <div style={{ padding: "1rem", color: "var(--color-text-muted)", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)" }}>
+                  {(!producto.caracteristicas || !Array.isArray(producto.caracteristicas) || producto.caracteristicas.length === 0) && (
+                    <div style={{ padding: "1rem", color: "var(--color-text-on-light-faint)", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)" }}>
                       No hay características adicionales para este producto.
                     </div>
                   )}
-                  {producto.caracteristicas?.map((row, i) => (
+                  {Array.isArray(producto.caracteristicas) && producto.caracteristicas.map((row, i) => (
                     <div
                       key={i}
                       className="flex"
-                      style={{ backgroundColor: i % 2 === 0 ? "var(--color-bg)" : "var(--color-bg-alt)" }}
+                      style={{ backgroundColor: i % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light-alt)" }}
                     >
                       <div
                         style={{
@@ -565,7 +622,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                           fontFamily: "var(--font-body)",
                           fontWeight: 600,
                           fontSize: "var(--text-sm)",
-                          color: "var(--color-text-primary)",
+                          color: "var(--color-text-on-light)",
                         }}
                       >
                         {row.label}
@@ -576,7 +633,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
                           padding: "0.75rem 1rem",
                           fontFamily: "var(--font-body)",
                           fontSize: "var(--text-sm)",
-                          color: "var(--color-text-secondary)",
+                          color: "var(--color-text-on-light-muted)",
                         }}
                       >
                         {row.valor}
@@ -592,7 +649,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
 
       {/* Productos relacionados */}
       {relacionados.length > 0 && (
-        <section style={{ backgroundColor: "var(--color-bg-alt)", paddingTop: "6rem", paddingBottom: "6rem" }}>
+        <section style={{ backgroundColor: "var(--color-bg)", color: "var(--color-text-primary)", paddingTop: "6rem", paddingBottom: "6rem" }}>
           <div
             className="mx-auto"
             style={{
@@ -634,4 +691,5 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
     </main>
   );
 }
+
 

@@ -112,11 +112,16 @@ export function ServiciosGrid({
     return matchesCategory && matchesSearch;
   });
 
-  const [displayCount, setDisplayCount] = useState(6);
+  const ITEMS_PER_PAGE = 8;
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    setDisplayCount(6);
+    setPage(1);
   }, [activeCategory, searchQuery]);
+
+  const totalPages = Math.ceil(serviciosFiltrados.length / ITEMS_PER_PAGE);
+  const startIndex = (page - 1) * ITEMS_PER_PAGE;
+  const paginatedServicios = serviciosFiltrados.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <section
@@ -156,65 +161,79 @@ export function ServiciosGrid({
             {serviciosFiltrados.length > 0 ? (
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mt-6">
-                  {serviciosFiltrados.slice(0, displayCount).map((s) => (
+                  {paginatedServicios.map((s) => (
                     <ServiceCard key={s.id} {...s} theme="light" requiresAppointment={s.requiere_cita} />
                   ))}
                 </div>
 
-                {(displayCount < serviciosFiltrados.length || displayCount > 6) && (
-                  <div className="flex justify-center mt-12 gap-4">
-                    {displayCount > 6 && (
-                      <button
-                        onClick={() => setDisplayCount((prev) => Math.max(6, prev - 6))}
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "var(--color-primary-dim)",
-                          border: "1px solid var(--color-primary-dim)",
-                          padding: "10px 24px",
-                          borderRadius: "var(--radius-full)",
-                          fontFamily: "var(--font-body)",
-                          fontWeight: 500,
-                          cursor: "pointer",
-                          transition: "all 0.2s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "var(--color-primary-dim)";
-                          e.currentTarget.style.color = "white";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                          e.currentTarget.style.color = "var(--color-primary-dim)";
-                        }}
-                      >
-                        Mostrar menos
-                      </button>
-                    )}
-                    {displayCount < serviciosFiltrados.length && (
-                      <button
-                        onClick={() => setDisplayCount((prev) => prev + 6)}
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "var(--color-primary-dim)",
-                          border: "1px solid var(--color-primary-dim)",
-                          padding: "10px 24px",
-                          borderRadius: "var(--radius-full)",
-                          fontFamily: "var(--font-body)",
-                          fontWeight: 500,
-                          cursor: "pointer",
-                          transition: "all 0.2s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "var(--color-primary-dim)";
-                          e.currentTarget.style.color = "white";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                          e.currentTarget.style.color = "var(--color-primary-dim)";
-                        }}
-                      >
-                        Cargar más (6)
-                      </button>
-                    )}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center mt-12 gap-2 sm:gap-4">
+                    <button
+                      onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                      disabled={page === 1}
+                      style={{
+                        backgroundColor: "transparent",
+                        color: page === 1 ? "var(--color-text-on-light-faint)" : "var(--color-primary-dim)",
+                        border: `1px solid ${page === 1 ? "var(--color-border-light)" : "var(--color-primary-dim)"}`,
+                        padding: "8px 16px",
+                        borderRadius: "var(--radius-full)",
+                        fontFamily: "var(--font-body)",
+                        fontWeight: 500,
+                        cursor: page === 1 ? "not-allowed" : "pointer",
+                        transition: "all 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (page === 1) return;
+                        e.currentTarget.style.backgroundColor = "var(--color-primary-dim)";
+                        e.currentTarget.style.color = "white";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (page === 1) return;
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "var(--color-primary-dim)";
+                      }}
+                    >
+                      Anterior
+                    </button>
+                    
+                    <span 
+                      style={{
+                        fontFamily: "var(--font-mono)", 
+                        fontSize: "var(--text-sm)",
+                        color: "var(--color-text-on-light)",
+                        padding: "0 8px"
+                      }}
+                    >
+                      Página {page} de {totalPages}
+                    </span>
+
+                    <button
+                      onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                      disabled={page === totalPages}
+                      style={{
+                        backgroundColor: "transparent",
+                        color: page === totalPages ? "var(--color-text-on-light-faint)" : "var(--color-primary-dim)",
+                        border: `1px solid ${page === totalPages ? "var(--color-border-light)" : "var(--color-primary-dim)"}`,
+                        padding: "8px 16px",
+                        borderRadius: "var(--radius-full)",
+                        fontFamily: "var(--font-body)",
+                        fontWeight: 500,
+                        cursor: page === totalPages ? "not-allowed" : "pointer",
+                        transition: "all 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (page === totalPages) return;
+                        e.currentTarget.style.backgroundColor = "var(--color-primary-dim)";
+                        e.currentTarget.style.color = "white";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (page === totalPages) return;
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "var(--color-primary-dim)";
+                      }}
+                    >
+                      Siguiente
+                    </button>
                   </div>
                 )}
               </>

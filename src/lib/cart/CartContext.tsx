@@ -1,11 +1,30 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { CartItem, CartStore } from "./types";
 
 const CartContext = createContext<CartStore | null>(null);
 
+const CART_KEY = "ac_carrito";
+
+function loadFromStorage(): CartItem[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(CART_KEY);
+    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+  } catch {
+    return [];
+  }
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(loadFromStorage);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Persist to localStorage whenever items change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(CART_KEY, JSON.stringify(items));
+    }
+  }, [items]);
 
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
