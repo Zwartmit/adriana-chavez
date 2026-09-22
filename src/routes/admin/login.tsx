@@ -260,6 +260,33 @@ function AdminLoginPage() {
           >
             {loading ? "Procesando..." : (isResetMode ? "Enviar enlace" : "Iniciar sesión →")}
           </button>
+
+          <a
+            href="/"
+            style={{
+              display: "block",
+              width: "100%",
+              padding: "4px",
+              marginTop: "0.25rem",
+              backgroundColor: "transparent",
+              color: "var(--color-text-primary)",
+              borderRadius: "var(--radius-full)",
+              textAlign: "center",
+              textDecoration: "none",
+              fontFamily: "var(--font-body)",
+              fontWeight: 500,
+              fontSize: "var(--text-sm)",
+              transition: "all var(--transition-base)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--color-primary)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--color-text-primary)";
+            }}
+          >
+            ← Volver a la página principal
+          </a>
           
           <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
             <button
