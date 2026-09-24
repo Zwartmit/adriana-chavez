@@ -69,7 +69,7 @@ function GaleriaPage() {
         <div
           className="mx-auto w-full"
           style={{
-            maxWidth: "1200px",
+            maxWidth: "1440px",
             marginLeft: "auto",
             marginRight: "auto",
             paddingLeft: "1.5rem",

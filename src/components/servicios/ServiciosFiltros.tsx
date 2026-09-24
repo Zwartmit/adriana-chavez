@@ -33,7 +33,7 @@ export function ServiciosFiltros({
       <div
         className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-4 mx-auto"
         style={{
-          maxWidth: "1200px",
+          maxWidth: "1440px",
           paddingLeft: "1.5rem",
           paddingRight: "1.5rem",
         }}

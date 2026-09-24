@@ -17,7 +17,7 @@ export function CTAFinal() {
       <div
         className="relative z-10 mx-auto flex flex-col items-center text-center gap-6"
         style={{
-          maxWidth: "1200px",
+          maxWidth: "1440px",
           marginLeft: "auto",
           marginRight: "auto",
           paddingLeft: "1.5rem",

@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { ZoomIn } from "lucide-react";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
+import { ReactCompareSlider, ReactCompareSliderImage } from "react-compare-slider";
 
 export interface GaleriaItem {
   id: string;
   src: string;
+  srcAfter?: string | null;
   alt: string;
   category: string;
   tag?: string;
@@ -40,11 +42,19 @@ function GaleriaCard({ item, onClick }: GaleriaCardProps) {
         overflow: "hidden",
       }}
     >
-      <img
-        src={item.src}
-        alt={item.alt}
-        style={{ width: "100%", height: "auto", display: "block", objectFit: "cover" }}
-      />
+      {item.srcAfter ? (
+        <ReactCompareSlider
+          itemOne={<img src={item.src} alt={item.alt + " Antes"} className="w-full h-full object-cover" />}
+          itemTwo={<img src={item.srcAfter} alt={item.alt + " Después"} className="w-full h-full object-cover" />}
+          className="w-full aspect-[3/4]"
+        />
+      ) : (
+        <img
+          src={item.src}
+          alt={item.alt}
+          style={{ width: "100%", height: "auto", display: "block", objectFit: "cover" }}
+        />
+      )}
       <div
         className="absolute opacity-0 group-hover:opacity-100 flex flex-col justify-end"
         style={{
@@ -121,6 +131,7 @@ export function GaleriaGrid({
       data.map((g, i) => ({
         id: g.id,
         src: g.imagen_url,
+        srcAfter: g.imagen_despues_url || null,
         alt: g.titulo ?? g.tag ?? "",
         category: g.categorias_galeria?.nombre ?? "Sin categoría",
         tag: g.tag ?? undefined,
@@ -140,11 +151,6 @@ export function GaleriaGrid({
     (item) => activeCategory === "Todos" || normalize(item.category) === normalize(activeCategory),
   );
 
-  const [displayCount, setDisplayCount] = useState(5);
-
-  useEffect(() => {
-    setDisplayCount(5);
-  }, [activeCategory]);
 
   useEffect(() => {
     onFilteredItemsChange(itemsFiltrados);
@@ -162,7 +168,7 @@ export function GaleriaGrid({
       <div
         className="mx-auto"
         style={{
-          maxWidth: "1200px",
+          maxWidth: "1440px",
           marginLeft: "auto",
           marginRight: "auto",
           paddingLeft: "1.5rem",
@@ -187,67 +193,11 @@ export function GaleriaGrid({
             ) : (
               <div
                 key={activeCategory}
-                className="animate-in fade-in duration-300 columns-2 sm:columns-2 lg:columns-3 gap-x-3 sm:gap-x-4"
+                className="animate-in fade-in duration-300 columns-2 sm:columns-3 md:columns-4 lg:columns-4 xl:columns-5 gap-x-3 sm:gap-x-4 space-y-3 sm:space-y-4"
               >
-                {itemsFiltrados.slice(0, displayCount).map((item) => (
+                {itemsFiltrados.map((item) => (
                   <GaleriaCard key={item.id} item={item} onClick={() => onItemClick(item)} />
                 ))}
-              </div>
-            )}
-            {(displayCount < itemsFiltrados.length || displayCount > 5) && itemsFiltrados.length > 0 && (
-              <div className="flex justify-center mt-12 gap-4">
-                {displayCount > 5 && (
-                  <button
-                    onClick={() => setDisplayCount((prev) => Math.max(5, prev - 5))}
-                    style={{
-                      backgroundColor: "transparent",
-                      color: "var(--color-primary)",
-                      border: "1px solid var(--color-primary)",
-                      padding: "10px 24px",
-                      borderRadius: "var(--radius-full)",
-                      fontFamily: "var(--font-body)",
-                      fontWeight: 500,
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--color-primary)";
-                      e.currentTarget.style.color = "var(--color-text-inverse)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.color = "var(--color-primary)";
-                    }}
-                  >
-                    Mostrar menos
-                  </button>
-                )}
-                {displayCount < itemsFiltrados.length && (
-                  <button
-                    onClick={() => setDisplayCount((prev) => prev + 5)}
-                    style={{
-                      backgroundColor: "transparent",
-                      color: "var(--color-primary)",
-                      border: "1px solid var(--color-primary)",
-                      padding: "10px 24px",
-                      borderRadius: "var(--radius-full)",
-                      fontFamily: "var(--font-body)",
-                      fontWeight: 500,
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--color-primary)";
-                      e.currentTarget.style.color = "var(--color-text-inverse)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.color = "var(--color-primary)";
-                    }}
-                  >
-                    Cargar más (5)
-                  </button>
-                )}
               </div>
             )}
           </>

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ReactCompareSlider } from "react-compare-slider";
 import type { GaleriaItem } from "@/components/galeria/GaleriaGrid";
 
 interface LightboxProps {
@@ -131,15 +132,33 @@ export function Lightbox({ item, items, onClose, onPrev, onNext }: LightboxProps
           </button>
         )}
 
-        <img
-          src={item.src}
-          alt={item.alt}
-          style={{
-            maxHeight: "80vh",
-            maxWidth: "90vw",
-            objectFit: "contain",
+        <div 
+          className="relative" 
+          style={{ 
+            height: "80vh", 
+            width: "auto",
+            maxWidth: "90vw", 
+            aspectRatio: "3/4" 
           }}
-        />
+        >
+          {item.srcAfter ? (
+            <ReactCompareSlider
+              itemOne={<img src={item.src} alt={item.alt + " Antes"} style={{ width: "100%", height: "100%", objectFit: "contain" }} />}
+              itemTwo={<img src={item.srcAfter} alt={item.alt + " Después"} style={{ width: "100%", height: "100%", objectFit: "contain" }} />}
+              className="w-full h-full"
+            />
+          ) : (
+            <img
+              src={item.src}
+              alt={item.alt}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+              }}
+            />
+          )}
+        </div>
 
         {currentIndex < total - 1 && (
           <button

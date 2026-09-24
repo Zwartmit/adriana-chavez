@@ -37,7 +37,7 @@ export function HeroBanner() {
       <div
         className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-16"
         style={{
-          maxWidth: "1200px",
+          maxWidth: "1440px",
           marginLeft: "auto",
           marginRight: "auto",
           paddingLeft: "1.5rem",

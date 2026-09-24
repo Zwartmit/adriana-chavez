@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase/client";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { Button } from "@/components/ui/Button";
 import { Plus, Trash2, UploadCloud, X } from "lucide-react";
+import { ReactCompareSlider } from "react-compare-slider";
 
 interface Categoria {
   id: string;
@@ -33,7 +34,11 @@ export function ImagenesGaleriaPanel() {
   const [newCatId, setNewCatId] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
+  const [newFileAfter, setNewFileAfter] = useState<File | null>(null);
+  const [previewUrlAfter, setPreviewUrlAfter] = useState<string | null>(null);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputAfterRef = useRef<HTMLInputElement>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -65,6 +70,14 @@ export function ImagenesGaleriaPanel() {
     }
   };
 
+  const handleFileAfterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setNewFileAfter(file);
+      setPreviewUrlAfter(URL.createObjectURL(file));
+    }
+  };
+
   const handleUpload = async () => {
     if (!newFile || !newCatId) {
       alert("Debes seleccionar una imagen y una categoría.");
@@ -91,12 +104,35 @@ export function ImagenesGaleriaPanel() {
 
       const publicUrl = publicUrlData.publicUrl;
 
+      // 1.5 Subir al bucket la imagen después (si existe)
+      let publicUrlAfter = null;
+      if (newFileAfter) {
+        const fileExtAfter = newFileAfter.name.split('.').pop();
+        const fileNameAfter = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}_after.${fileExtAfter}`;
+        const filePathAfter = `trabajos/${fileNameAfter}`;
+
+        const { error: uploadErrorAfter } = await supabase.storage
+          .from("galeria")
+          .upload(filePathAfter, newFileAfter);
+
+        if (uploadErrorAfter) throw uploadErrorAfter;
+
+        const { data: publicUrlDataAfter } = supabase.storage
+          .from("galeria")
+          .getPublicUrl(filePathAfter);
+
+        publicUrlAfter = publicUrlDataAfter.publicUrl;
+      }
+
       // 2. Guardar en base de datos
+      const catName = categorias.find(c => c.id === newCatId)?.nombre || "";
       const { error: dbError } = await supabase.from("galeria").insert({
         titulo: newTitle || null,
         tag: newTag || null,
         categoria_id: newCatId,
+        categoria: catName,
         imagen_url: publicUrl,
+        imagen_despues_url: publicUrlAfter,
         activo: true,
       });
 
@@ -105,7 +141,9 @@ export function ImagenesGaleriaPanel() {
       // Éxito
       setIsAdding(false);
       setNewFile(null);
+      setNewFileAfter(null);
       setPreviewUrl(null);
+      setPreviewUrlAfter(null);
       setNewTitle("");
       setNewTag("");
       setNewCatId("");
@@ -145,9 +183,9 @@ export function ImagenesGaleriaPanel() {
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)" }}>
           Imágenes del Portafolio
         </h2>
-        <Button onClick={() => setIsAdding(!isAdding)} variant={isAdding ? "outline" : "primary"} className="flex items-center gap-2">
+        <Button onClick={() => setIsAdding(!isAdding)} variant={isAdding ? "secondary" : "primary"} className="flex items-center gap-2">
           {isAdding ? <X size={16} /> : <Plus size={16} />}
-          {isAdding ? "Cancelar" : "Nueva Imagen"}
+          {isAdding ? "Cancelar" : "Nueva imagen"}
         </Button>
       </div>
 
@@ -155,18 +193,17 @@ export function ImagenesGaleriaPanel() {
         <div className="bg-[var(--color-surface-light)] border border-[var(--color-border-light)] rounded-xl p-6 mb-8 animate-in fade-in slide-in-from-top-4">
           <h3 className="text-[var(--color-text-on-light)] font-medium mb-4">Subir nueva imagen</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+            <div className="flex flex-col gap-4">
               <div 
-                className="border-2 border-dashed border-[var(--color-border-strong)] rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors hover:border-[var(--color-primary)] bg-[rgba(0,0,0,0.02)] h-full min-h-[250px]"
+                className="border-2 border-dashed border-[var(--color-border-strong)] rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-colors hover:border-[var(--color-primary)] bg-[rgba(0,0,0,0.02)] flex-1 min-h-[160px]"
                 onClick={() => fileInputRef.current?.click()}
               >
                 {previewUrl ? (
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-contain max-h-[300px]" />
+                  <img src={previewUrl} alt="Preview Antes" className="w-full h-full object-contain max-h-[160px]" />
                 ) : (
                   <>
-                    <UploadCloud size={40} className="text-[var(--color-text-on-light-faint)] mb-3" />
-                    <p className="text-[var(--color-text-on-light-muted)] font-medium mb-1">Haz clic para seleccionar</p>
-                    <p className="text-[var(--color-text-on-light-faint)] text-sm">PNG, JPG o WEBP (Max. 5MB)</p>
+                    <UploadCloud size={32} className="text-[var(--color-text-on-light-faint)] mb-2" />
+                    <p className="text-[var(--color-text-on-light-muted)] font-medium text-sm mb-1">Imagen Principal (o Antes)</p>
                   </>
                 )}
                 <input 
@@ -175,6 +212,28 @@ export function ImagenesGaleriaPanel() {
                   className="hidden" 
                   accept="image/png, image/jpeg, image/webp" 
                   onChange={handleFileChange} 
+                />
+              </div>
+
+              <div 
+                className="border-2 border-dashed border-[var(--color-border-strong)] rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-colors hover:border-[var(--color-primary)] bg-[rgba(0,0,0,0.02)] flex-1 min-h-[160px]"
+                onClick={() => fileInputAfterRef.current?.click()}
+              >
+                {previewUrlAfter ? (
+                  <img src={previewUrlAfter} alt="Preview Después" className="w-full h-full object-contain max-h-[160px]" />
+                ) : (
+                  <>
+                    <UploadCloud size={32} className="text-[var(--color-text-on-light-faint)] mb-2" />
+                    <p className="text-[var(--color-text-on-light-muted)] font-medium text-sm mb-1">Imagen Secundaria (o Después)</p>
+                    <p className="text-[var(--color-text-on-light-faint)] text-xs">Opcional</p>
+                  </>
+                )}
+                <input 
+                  type="file" 
+                  ref={fileInputAfterRef} 
+                  className="hidden" 
+                  accept="image/png, image/jpeg, image/webp" 
+                  onChange={handleFileAfterChange} 
                 />
               </div>
             </div>
@@ -215,7 +274,7 @@ export function ImagenesGaleriaPanel() {
               </div>
               
               <Button onClick={handleUpload} disabled={uploading || !newFile || !newCatId} variant="primary" className="w-full mt-2">
-                {uploading ? "Subiendo..." : "Subir Imagen"}
+                {uploading ? "Subiendo..." : "Subir imagen"}
               </Button>
             </div>
           </div>
@@ -227,15 +286,23 @@ export function ImagenesGaleriaPanel() {
           <p className="text-[var(--color-text-on-light-faint)]">No hay imágenes en la galería.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 gap-x-3 sm:gap-x-4 space-y-3 sm:space-y-4">
           {imagenes.map((img) => (
-            <div key={img.id} className="group relative rounded-xl overflow-hidden border border-[var(--color-border-light)] bg-[var(--color-surface-light)]">
-              <div className="aspect-w-3 aspect-h-4 bg-[var(--color-bg-light-alt)]">
-                <img 
-                  src={img.imagen_url} 
-                  alt={img.titulo || ""} 
-                  className="w-full h-full object-cover"
-                />
+            <div key={img.id} className="group relative rounded-xl overflow-hidden border border-[var(--color-border-light)] bg-[var(--color-surface-light)] break-inside-avoid">
+              <div className="w-full bg-[var(--color-bg-light-alt)] relative">
+                {img.imagen_despues_url ? (
+                  <ReactCompareSlider
+                    itemOne={<img src={img.imagen_url} alt="Antes" className="w-full h-full object-cover" />}
+                    itemTwo={<img src={img.imagen_despues_url} alt="Después" className="w-full h-full object-cover" />}
+                    className="w-full aspect-[3/4]"
+                  />
+                ) : (
+                  <img 
+                    src={img.imagen_url} 
+                    alt={img.titulo || ""} 
+                    className="w-full h-auto object-cover block"
+                  />
+                )}
               </div>
               
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-between">

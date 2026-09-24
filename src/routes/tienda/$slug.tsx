@@ -220,7 +220,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
           paddingBottom: "1rem",
         }}
       >
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1.5rem" }}>
+        <div style={{ maxWidth: "1440px", margin: "0 auto", padding: "0 1.5rem" }}>
           <ol style={{ display: "flex", gap: "0.5rem", alignItems: "center", listStyle: "none" }}>
             {[
               { label: "Inicio", href: "/" },
@@ -267,7 +267,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
         <div
           className="mx-auto"
           style={{
-            maxWidth: "1200px",
+            maxWidth: "1440px",
             marginLeft: "auto",
             marginRight: "auto",
             paddingLeft: "1.5rem",
@@ -653,7 +653,7 @@ function ProductoDetalle({ producto }: { producto: ProductCardProps }) {
           <div
             className="mx-auto"
             style={{
-              maxWidth: "1200px",
+              maxWidth: "1440px",
               marginLeft: "auto",
               marginRight: "auto",
               paddingLeft: "1.5rem",

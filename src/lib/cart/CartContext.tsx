@@ -16,15 +16,21 @@ function loadFromStorage(): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(loadFromStorage);
+  const [items, setItems] = useState<CartItem[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    setItems(loadFromStorage());
+  }, []);
 
   // Persist to localStorage whenever items change
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isMounted && typeof window !== "undefined") {
       localStorage.setItem(CART_KEY, JSON.stringify(items));
     }
-  }, [items]);
+  }, [items, isMounted]);
 
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);

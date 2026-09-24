@@ -61,7 +61,7 @@ export function ServiciosDestacados() {
       <div
         className="mx-auto"
         style={{
-          maxWidth: "1200px",
+          maxWidth: "1440px",
           marginLeft: "auto",
           marginRight: "auto",
           paddingLeft: "1.5rem",
