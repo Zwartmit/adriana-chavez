@@ -335,10 +335,10 @@ COMMENT ON TABLE public.testimonios IS 'Testimonios de clientes. Solo se muestra
 CREATE TABLE IF NOT EXISTS public.galeria (
   id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   titulo      TEXT,
-  categoria   TEXT NOT NULL CHECK (categoria IN ('antes-despues', 'coloracion', 'corte', 'tratamiento', 'unas', 'peinado')),
+  categoria   TEXT NOT NULL,
   tag         TEXT, -- Ej: "Balayage", "Bob moderno"
   imagen_url  TEXT NOT NULL,
-  imagen_antes_url TEXT, -- Para la categoría antes-despues
+  imagen_despues_url TEXT, -- Para slider comparativo
   destacado   BOOLEAN DEFAULT FALSE,
   activo      BOOLEAN DEFAULT TRUE,
   orden       INTEGER DEFAULT 0,
