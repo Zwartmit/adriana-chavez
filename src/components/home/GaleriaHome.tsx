@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
+import { ReactCompareSlider } from "react-compare-slider";
 
 // Array local original — comentado por si hay que hacer rollback rápido.
 // const GALERIA = [
@@ -17,20 +18,9 @@ import { supabase } from "@/lib/supabase/client";
 interface GaleriaHomeItem {
   id: string;
   src: string;
+  srcAfter?: string | null;
   alt: string;
-  gridRow?: string;
-  gridColumn?: string;
 }
-
-// Patrón de grid original repetido por índice (span2, normal, span2, normal, normal, span2col)
-const GRID_PATTERN: { gridRow?: string; gridColumn?: string }[] = [
-  { gridRow: "span 2" },
-  {},
-  { gridRow: "span 2" },
-  {},
-  {},
-  { gridColumn: "span 2" },
-];
 
 export function GaleriaHome() {
   const [galeria, setGaleria] = useState<GaleriaHomeItem[]>([]);
@@ -44,8 +34,9 @@ export function GaleriaHome() {
       .from("galeria")
       .select("*")
       .eq("activo", true)
+      .eq("destacado", true)
       .order("orden", { ascending: true })
-      .limit(6);
+      .limit(4);
 
     if (error) {
       console.error("[GaleriaHome] error al cargar:", error.message);
@@ -55,11 +46,11 @@ export function GaleriaHome() {
     }
 
     setGaleria(
-      data.map((g, i) => ({
+      data.map((g) => ({
         id: g.id,
         src: g.imagen_url,
+        srcAfter: g.imagen_despues_url || null,
         alt: g.titulo ?? g.tag ?? "",
-        ...GRID_PATTERN[i % GRID_PATTERN.length],
       })),
     );
     setLoading(false);
@@ -102,81 +93,26 @@ export function GaleriaHome() {
         ) : error ? (
           <ErrorState message={error} onRetry={fetchGaleria} variant="light" />
         ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gridTemplateRows: "200px 200px 200px",
-            gap: "0.75rem",
-          }}
-        >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {galeria.map((g) => (
-            <a
+            <div
               key={g.id}
-              href="/galeria"
-              className="group"
-              style={{
-                display: "block",
-                position: "relative",
-                borderRadius: "var(--radius-xl)",
-                overflow: "hidden",
-                cursor: "pointer",
-                gridRow: g.gridRow,
-                gridColumn: g.gridColumn,
-              }}
+              className="group block relative rounded-xl overflow-hidden bg-[var(--color-bg-light-alt)] aspect-[3/4]"
             >
-              <img
-                src={g.src}
-                alt={g.alt}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                  transition: "transform var(--transition-slow)",
-                }}
-                className="group-hover:scale-105"
-              />
-              {/* Overlay */}
-              <div
-                className="opacity-0 group-hover:opacity-100"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(180deg, rgba(10,10,11,0.15) 0%, rgba(10,10,11,0.75) 100%)",
-                  transition: "opacity 350ms ease",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  gap: "0.5rem",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontStyle: "italic",
-                    fontSize: "var(--text-xl)",
-                    color: "#F5F2EB",
-                  }}
-                >
-                  Ver más →
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "var(--text-xs)",
-                    letterSpacing: "var(--tracking-wider)",
-                    textTransform: "uppercase",
-                    color: "var(--color-primary)",
-                  }}
-                >
-                  {g.alt}
-                </span>
-              </div>
-            </a>
+              {g.srcAfter ? (
+                <ReactCompareSlider
+                  itemOne={<img src={g.src} alt={g.alt + " Antes"} className="w-full h-full object-cover" />}
+                  itemTwo={<img src={g.srcAfter} alt={g.alt + " Después"} className="w-full h-full object-cover" />}
+                  className="w-full h-full transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <img
+                  src={g.src}
+                  alt={g.alt}
+                  className="w-full h-full object-cover block transition-transform duration-500 group-hover:scale-105"
+                />
+              )}
+            </div>
           ))}
         </div>
         )}

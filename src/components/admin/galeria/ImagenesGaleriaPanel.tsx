@@ -16,7 +16,9 @@ interface ImagenGaleria {
   categoria_id: string;
   tag: string | null;
   imagen_url: string;
+  imagen_despues_url?: string | null;
   orden: number;
+  destacado?: boolean;
   categorias_galeria?: { nombre: string } | null;
 }
 
@@ -174,6 +176,30 @@ export function ImagenesGaleriaPanel() {
     }
   };
 
+  const handleToggleDestacado = async (id: string, currentlyDestacado: boolean) => {
+    if (!currentlyDestacado) {
+      const destacadosCount = imagenes.filter(i => i.destacado).length;
+      if (destacadosCount >= 4) {
+        alert("Ya tienes 4 imágenes destacadas. Quita una antes de destacar otra.");
+        return;
+      }
+    }
+
+    try {
+      const { error } = await supabase
+        .from("galeria")
+        .update({ destacado: !currentlyDestacado })
+        .eq("id", id);
+      
+      if (error) throw error;
+      
+      setImagenes(imagenes.map(img => img.id === id ? { ...img, destacado: !currentlyDestacado } : img));
+    } catch (e: any) {
+      console.error("Error toggling destacado", e);
+      alert("Error al actualizar la imagen.");
+    }
+  };
+
   if (loading) return <LoadingState />;
   if (error) return <ErrorState message={error} onRetry={fetchData} />;
 
@@ -306,7 +332,14 @@ export function ImagenesGaleriaPanel() {
               </div>
               
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-between">
-                <div className="flex justify-end">
+                <div className="flex justify-between items-start">
+                  <button 
+                    onClick={() => handleToggleDestacado(img.id, !!img.destacado)}
+                    className={`p-2 rounded-full transition-colors cursor-pointer ${img.destacado ? 'bg-yellow-500/90 text-white' : 'bg-white/20 text-white hover:bg-yellow-500/50'}`}
+                    title={img.destacado ? "Quitar de inicio" : "Destacar en inicio"}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={img.destacado ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </button>
                   <button 
                     onClick={() => handleDelete(img.id, img.imagen_url)}
                     className="p-2 bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-full transition-colors cursor-pointer"
