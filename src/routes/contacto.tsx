@@ -105,7 +105,7 @@ function ContactoPage() {
         </div>
       </section>
 
-      {/* Formulario + Info */}
+      {/* Info */}
       <section
         style={{
           backgroundColor: "var(--color-bg-light)",
@@ -124,7 +124,6 @@ function ContactoPage() {
           }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-[30fr_70fr] gap-6 items-stretch">
-            {/* Info de contacto — tarjeta oscura dentro de la sección clara */}
             <div
               style={{
                 backgroundColor: "#0A0A0B",
@@ -134,7 +133,6 @@ function ContactoPage() {
                 color: "var(--color-text-primary)",
               }}
             >
-              {/* Visítanos */}
               <p
                 className="uppercase"
                 style={{
@@ -166,7 +164,6 @@ function ContactoPage() {
 
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "1.5rem 0" }} />
 
-              {/* Escríbenos */}
               <p
                 className="uppercase"
                 style={{
@@ -224,7 +221,6 @@ function ContactoPage() {
 
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "1.5rem 0" }} />
 
-              {/* Síguenos */}
               <p
                 className="uppercase"
                 style={{
@@ -259,7 +255,6 @@ function ContactoPage() {
               </div>
             </div>
 
-            {/* Mapa */}
             <MapaContacto />
           </div>
         </div>
