@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { MapaContacto } from "@/components/contacto/MapaContacto";
 import { CONTACT_INFO, SOCIAL_LINKS } from "@/constants";
+import { FAQ } from "@/components/home/FAQ";
 
 export const Route = createFileRoute("/contacto")({
   component: ContactoPage,
@@ -259,6 +260,8 @@ function ContactoPage() {
           </div>
         </div>
       </section>
+
+      <FAQ />
     </main>
   );
 }

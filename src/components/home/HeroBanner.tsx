@@ -113,9 +113,16 @@ export function HeroBanner() {
                 Reservar cita →
               </Button>
             </a>
-            <a href="/servicios" style={{ display: "inline-block" }}>
+            <a
+              href="#productos"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("productos")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              style={{ display: "inline-block" }}
+            >
               <Button variant="ghost" size="lg">
-                Ver servicios
+                Ver productos
               </Button>
             </a>
           </div>

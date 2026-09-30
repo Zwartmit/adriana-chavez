@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ServiciosFiltros } from "@/components/servicios/ServiciosFiltros";
 import { ServiciosGrid } from "@/components/servicios/ServiciosGrid";
 import { CTAFinal } from "@/components/home/CTAFinal";
+import { Testimonios } from "@/components/home/Testimonios";
 import { supabase } from "@/lib/supabase/client";
 
 export const Route = createFileRoute("/servicios")({
@@ -146,6 +147,9 @@ function ServiciosPage() {
           setCategories((prev) => prev.length > 0 ? prev : cats);
         }}
       />
+
+      {/* Testimonios */}
+      <Testimonios />
 
       {/* CTA */}
       <CTAFinal />
