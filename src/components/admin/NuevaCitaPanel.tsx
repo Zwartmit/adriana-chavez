@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
+import { format } from "date-fns";
 import { X } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { es } from "react-day-picker/locale";
 import "react-day-picker/style.css";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
+import { TZDate } from "@date-fns/tz";
 import { CrudServiciosModal } from "./CrudServiciosModal";
 import { CrudProfesionalesModal } from "./CrudProfesionalesModal";
 
@@ -89,7 +91,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
   const [selectedProfesionalId, setSelectedProfesionalId] = useState("");
   const [profesionalQuery, setProfesionalQuery] = useState("");
   const [showProfesionalResults, setShowProfesionalResults] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(defaultDate ?? new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(defaultDate ?? new TZDate(new Date(), "America/Bogota"));
   const [selectedHora, setSelectedHora] = useState("");
   const [notas, setNotas] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -100,7 +102,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
   useEffect(() => {
     if (!isOpen) return;
-    setSelectedDate(defaultDate ?? new Date());
+    setSelectedDate(defaultDate ?? new TZDate(new Date(), "America/Bogota"));
   }, [isOpen, defaultDate]);
 
   const fetchOptions = useCallback(async () => {
@@ -149,7 +151,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
     setSelectedProfesionalId("");
     setProfesionalQuery("");
     setShowProfesionalResults(false);
-    setSelectedDate(defaultDate ?? new Date());
+    setSelectedDate(defaultDate ?? new TZDate(new Date(), "America/Bogota"));
     setSelectedHora("");
     setNotas("");
     setFormError(null);
@@ -171,10 +173,67 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
     const servicio = servicios.find((s) => s.id === selectedServicioId);
     const [hh, mm] = selectedHora.split(":").map(Number);
-    const fechaHora = new Date(selectedDate);
-    fechaHora.setHours(hh, mm, 0, 0);
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth();
+    const date = selectedDate.getDate();
+    
+    // Forzamos la zona horaria a Bogotá, sin importar en qué país esté la computadora
+    const fechaHora = new TZDate(year, month, date, hh, mm, 0, 0, "America/Bogota");
 
     setSubmitting(true);
+
+    // --- VALIDACIÓN DE SOLAPAMIENTOS ---
+    const startOfDay = new TZDate(year, month, date, 0, 0, 0, 0, "America/Bogota");
+    const endOfDay = new TZDate(year, month, date, 23, 59, 59, 999, "America/Bogota");
+    const startNew = fechaHora.getTime();
+    const endNew = startNew + (servicio?.duracion_min ?? 60) * 60_000;
+    const profName = profesionales.find((p: ProfesionalOption) => p.id === selectedProfesionalId)?.nombre ?? "La profesional";
+
+    const [citasRes, bloqueosRes] = await Promise.all([
+      supabase
+        .from("citas")
+        .select("fecha_hora, duracion_min, estado")
+        .eq("profesional_id", selectedProfesionalId)
+        .in("estado", ["pendiente", "confirmada", "en_proceso"])
+        .gte("fecha_hora", startOfDay.toISOString())
+        .lte("fecha_hora", endOfDay.toISOString()),
+      supabase
+        .from("bloqueos_horario")
+        .select("fecha_inicio, fecha_fin")
+        .eq("profesional_id", selectedProfesionalId)
+        .gte("fecha_fin", startOfDay.toISOString())
+        .lte("fecha_inicio", endOfDay.toISOString())
+    ]);
+
+    if (bloqueosRes.data) {
+      for (const b of bloqueosRes.data) {
+        const bs = new Date(b.fecha_inicio).getTime();
+        const be = new Date(b.fecha_fin).getTime();
+        if (startNew < be && endNew > bs) {
+          const formatBs = format(new TZDate(b.fecha_inicio, "America/Bogota"), "hh:mm a");
+          const formatBe = format(new TZDate(b.fecha_fin, "America/Bogota"), "hh:mm a");
+          setFormError(`${profName} tiene un bloqueo de ${formatBs} a ${formatBe}.`);
+          setSubmitting(false);
+          return;
+        }
+      }
+    }
+
+    if (citasRes.data) {
+      for (const c of citasRes.data) {
+        const cs = new Date(c.fecha_hora).getTime();
+        const ce = cs + c.duracion_min * 60_000;
+        if (startNew < ce && endNew > cs) {
+          const formatCs = format(new TZDate(c.fecha_hora, "America/Bogota"), "hh:mm a");
+          const formatCe = format(new TZDate(new Date(ce).toISOString(), "America/Bogota"), "hh:mm a");
+          setFormError(`${profName} ya tiene una cita de ${formatCs} a ${formatCe}.`);
+          setSubmitting(false);
+          return;
+        }
+      }
+    }
+    // -----------------------------------
+
     const { error } = await supabase.from("citas").insert({
       cliente_id: selectedCliente.id,
       profesional_id: selectedProfesionalId,

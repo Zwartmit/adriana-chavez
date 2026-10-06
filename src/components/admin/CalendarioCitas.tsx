@@ -22,6 +22,7 @@ import { NuevaCitaPanel } from "@/components/admin/NuevaCitaPanel";
 import { CitaDetalleModal } from "@/components/admin/CitaDetalleModal";
 import { DetalleDiaPanel } from "@/components/admin/DetalleDiaPanel";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
+import { TZDate } from "@date-fns/tz";
 
 export interface CitaUI {
   id: string;
@@ -51,7 +52,7 @@ const DIAS_SEMANA = ["L", "M", "X", "J", "V", "S", "D"];
 
 function mapCita(row: CitaRow): CitaUI {
   const cliente = row.clientes;
-  const fechaHora = parseISO(row.fecha_hora);
+  const fechaHora = new TZDate(row.fecha_hora, "America/Bogota");
 
   // Auto-complete: si la hora de finalización ya pasó y la cita no fue cancelada/no_asistio,
   // la mostramos visualmente como "completada" sin tocar la BD.
@@ -78,9 +79,39 @@ function mapCita(row: CitaRow): CitaUI {
   };
 }
 
+export interface BloqueoUI {
+  id: string;
+  profesionalId: string;
+  profesionalNombre: string;
+  fechaInicio: Date;
+  fechaFin: Date;
+  motivo: string | null;
+}
+
+interface BloqueoRow {
+  id: string;
+  profesional_id: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  motivo: string | null;
+  profesionales: { nombre: string } | null;
+}
+
+function mapBloqueo(row: BloqueoRow): BloqueoUI {
+  return {
+    id: row.id,
+    profesionalId: row.profesional_id,
+    profesionalNombre: row.profesionales?.nombre ?? "Desconocida",
+    fechaInicio: new TZDate(row.fecha_inicio, "America/Bogota"),
+    fechaFin: new TZDate(row.fecha_fin, "America/Bogota"),
+    motivo: row.motivo,
+  };
+}
+
 export function CalendarioCitas() {
-  const [currentMonth, setCurrentMonth] = useState(() => new Date());
+  const [currentMonth, setCurrentMonth] = useState(() => new TZDate(new Date(), "America/Bogota"));
   const [citas, setCitas] = useState<CitaUI[]>([]);
+  const [bloqueos, setBloqueos] = useState<BloqueoUI[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -96,28 +127,42 @@ export function CalendarioCitas() {
     const inicioDelMes = startOfMonth(month);
     const finDelMes = endOfMonth(month);
 
-    const { data, error } = await supabase
-      .from("citas")
-      .select(
-        `
-        id, fecha_hora, duracion_min, estado, notas_cliente,
-        clientes(nombre, apellido, telefono),
-        profesionales(nombre, color_calendario),
-        servicios(nombre, duracion_min)
-      `,
-      )
-      .gte("fecha_hora", inicioDelMes.toISOString())
-      .lte("fecha_hora", finDelMes.toISOString())
-      .order("fecha_hora", { ascending: true });
+    const [citasRes, bloqueosRes] = await Promise.all([
+      supabase
+        .from("citas")
+        .select(`
+          id, fecha_hora, duracion_min, estado, notas_cliente,
+          clientes(nombre, apellido, telefono),
+          profesionales(nombre, color_calendario),
+          servicios(nombre, duracion_min)
+        `)
+        .gte("fecha_hora", inicioDelMes.toISOString())
+        .lte("fecha_hora", finDelMes.toISOString())
+        .order("fecha_hora", { ascending: true }),
+      supabase
+        .from("bloqueos_horario")
+        .select(`
+          id, profesional_id, fecha_inicio, fecha_fin, motivo,
+          profesionales(nombre)
+        `)
+        .gte("fecha_inicio", inicioDelMes.toISOString())
+        .lte("fecha_inicio", finDelMes.toISOString())
+        .order("fecha_inicio", { ascending: true })
+    ]);
 
-    if (error) {
-      console.error("[CalendarioCitas] error al cargar citas:", error.message);
-      setError(error.message);
+    if (citasRes.error) {
+      console.error("[CalendarioCitas] error al cargar citas:", citasRes.error.message);
+      setError(citasRes.error.message);
       setLoading(false);
       return;
     }
 
-    setCitas((data as unknown as CitaRow[]).map(mapCita));
+    if (bloqueosRes.error) {
+      console.error("[CalendarioCitas] error al cargar bloqueos:", bloqueosRes.error.message);
+    }
+
+    setCitas((citasRes.data as unknown as CitaRow[]).map(mapCita));
+    setBloqueos((bloqueosRes.data as unknown as BloqueoRow[] || []).map(mapBloqueo));
     setLoading(false);
   }, []);
 
@@ -262,6 +307,7 @@ export function CalendarioCitas() {
         <div className="grid grid-cols-7 gap-1">
           {days.map((day) => {
             const citasDelDia = citas.filter((c) => isSameDay(c.fechaHora, day));
+            const bloqueosDelDia = bloqueos.filter((b) => isSameDay(b.fechaInicio, day));
             const enMes = isSameMonth(day, currentMonth);
             const hoy = isToday(day);
 
@@ -305,6 +351,30 @@ export function CalendarioCitas() {
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                  {bloqueosDelDia.map((bloqueo) => (
+                    <div
+                      key={bloqueo.id}
+                      title={`${format(bloqueo.fechaInicio, "hh:mm a")} - ${format(bloqueo.fechaFin, "hh:mm a")} · Bloqueo: ${bloqueo.profesionalNombre}`}
+                      style={{
+                        backgroundColor: "var(--color-surface)",
+                        border: "1px dashed var(--color-border-light)",
+                        color: "var(--color-text-on-light-muted)",
+                        borderRadius: "var(--radius-sm)",
+                        padding: "2px 6px",
+                        fontFamily: "var(--font-body)",
+                        fontWeight: 600,
+                        fontSize: "11px",
+                        textAlign: "left",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        cursor: "default",
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {format(bloqueo.fechaInicio, "hh:mm a")} {bloqueo.profesionalNombre} (Bloqueo)
+                    </div>
+                  ))}
                   {citasDelDia.map((cita) => (
                     <button
                       key={cita.id}

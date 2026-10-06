@@ -13,7 +13,8 @@ import {
   ShoppingBag,
   Users,
   Scissors,
-  Image
+  Image,
+  Star
 } from "lucide-react";
 import { signOut } from "@/lib/supabase/auth";
 import { supabase } from "@/lib/supabase/client";
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { label: "Inventario", href: "/admin/inventario", icon: Package },
   { label: "Productos", href: "/admin/productos", icon: ShoppingBag },
   { label: "Servicios", href: "/admin/servicios", icon: Scissors },
+  { label: "Profesionales", href: "/admin/profesionales", icon: Star },
   { label: "Galería", href: "/admin/galeria", icon: Image },
   { label: "Reportes", href: "/admin/reportes", icon: BarChart3 },
 ];
