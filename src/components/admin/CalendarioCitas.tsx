@@ -420,6 +420,7 @@ export function CalendarioCitas() {
         isOpen={diaPanelOpen}
         date={panelDate}
         citas={panelDate ? citas.filter((c) => isSameDay(c.fechaHora, panelDate)) : []}
+        bloqueos={panelDate ? bloqueos.filter((b) => isSameDay(b.fechaInicio, panelDate) || isSameDay(b.fechaFin, panelDate)) : []}
         onClose={() => setDiaPanelOpen(false)}
         onNuevaCita={() => {
           setDiaPanelOpen(false);

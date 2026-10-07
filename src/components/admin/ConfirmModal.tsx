@@ -1,6 +1,8 @@
+import { ReactNode } from "react";
+
 interface ConfirmModalProps {
   title: string;
-  message: string;
+  message: ReactNode;
   confirmLabel: string;
   loading?: boolean;
   onConfirm: () => void;
@@ -45,7 +47,7 @@ export function ConfirmModal({ title, message, confirmLabel, loading, onConfirm,
         >
           {title}
         </h2>
-        <p
+        <div
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-sm)",
@@ -54,7 +56,7 @@ export function ConfirmModal({ title, message, confirmLabel, loading, onConfirm,
           }}
         >
           {message}
-        </p>
+        </div>
         <div className="flex items-center justify-center gap-3">
           <button
             type="button"

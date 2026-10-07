@@ -21,6 +21,8 @@ interface ProfesionalRow {
   color_calendario: string;
   activo: boolean;
   orden: number;
+  citas: { id: string }[];
+  bloqueos_horario: { id: string }[];
 }
 
 function ProfesionalesAdminPage() {
@@ -42,6 +44,10 @@ function ProfesionalesAdminPage() {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [checkingCitas, setCheckingCitas] = useState(false);
 
+  // Para eliminar
+  const [profToDelete, setProfToDelete] = useState<ProfesionalRow | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearchQuery(searchInput.trim());
@@ -55,7 +61,9 @@ function ProfesionalesAdminPage() {
 
     const { data, error } = await supabase
       .from("profesionales")
-      .select("id, nombre, foto_url, especialidades, color_calendario, activo, orden")
+      .select("id, nombre, foto_url, especialidades, color_calendario, activo, orden, citas(id), bloqueos_horario(id)")
+      .limit(1, { foreignTable: "citas" })
+      .limit(1, { foreignTable: "bloqueos_horario" })
       .order("orden", { ascending: true })
       .order("created_at", { ascending: false });
 
@@ -139,6 +147,31 @@ function ProfesionalesAdminPage() {
     }
     setIsConfirmOpen(false);
     setActionProf(null);
+  };
+
+  const handleDelete = async () => {
+    if (!profToDelete) return;
+    setIsDeleting(true);
+
+    const { data, error } = await supabase.rpc("eliminar_profesional_si_libre", { p_id: profToDelete.id });
+
+    setIsDeleting(false);
+    
+    if (error) {
+      showToast("Error al intentar borrar la profesional", "error");
+      setProfToDelete(null);
+      return;
+    }
+
+    if (data === true) {
+      showToast("Profesional eliminada exitosamente");
+      fetchData();
+    } else {
+      showToast("Esta profesional ya tiene citas o bloqueos; solo puede desactivarse", "error");
+      fetchData(); // Refrescar para limpiar el estado que habilitó el botón
+    }
+    
+    setProfToDelete(null);
   };
 
   const moverOrden = async (id: string, delta: number) => {
@@ -343,6 +376,18 @@ function ProfesionalesAdminPage() {
                           >
                             <Edit size={16} />
                           </button>
+                          {p.citas && p.citas.length === 0 && p.bloqueos_horario && p.bloqueos_horario.length === 0 && (
+                            <button
+                              type="button"
+                              aria-label="Eliminar"
+                              onClick={() => setProfToDelete(p)}
+                              style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-error)")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
+                            >
+                              <Trash size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -381,6 +426,22 @@ function ProfesionalesAdminPage() {
             setIsConfirmOpen(false);
             setActionProf(null);
           }}
+        />
+      )}
+
+      {profToDelete && (
+        <ConfirmModal
+          onCancel={() => setProfToDelete(null)}
+          onConfirm={handleDelete}
+          title="Confirmar eliminación"
+          message={
+            <div className="flex flex-col gap-2">
+              <p>¿Estás seguro de que deseas eliminar a <strong>{profToDelete.nombre}</strong>?</p>
+              <p className="text-[var(--color-error)] font-medium">Esta acción no se puede deshacer.</p>
+            </div>
+          }
+          confirmLabel="Sí, eliminar"
+          loading={isDeleting}
         />
       )}
 

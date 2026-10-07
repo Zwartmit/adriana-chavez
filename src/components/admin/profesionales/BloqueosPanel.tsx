@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, ReactNode } from "react";
 import { format } from "date-fns";
+import { es } from "date-fns/locale/es";
 import { TZDate } from "@date-fns/tz";
-import { Plus, Trash2, Clock } from "lucide-react";
+import { Plus, Trash2, Clock, Pencil, X } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { LoadingState } from "@/components/ui/QueryState";
@@ -58,6 +59,7 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
   const [toast, setToast] = useState<ToastState | null>(null);
 
   // Form states
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [fecha, setFecha] = useState("");
   const [todoElDia, setTodoElDia] = useState(false);
   const [horaInicio, setHoraInicio] = useState("");
@@ -68,6 +70,16 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
   // Delete state
   const [bloqueoToDelete, setBloqueoToDelete] = useState<BloqueoRow | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Confirm Save State
+  const [confirmSaveData, setConfirmSaveData] = useState<{
+    startTz: TZDate;
+    endTz: TZDate;
+    hi: string;
+    hf: string;
+    outOfBounds: boolean;
+    citas: any[];
+  } | null>(null);
 
   const fetchBloqueos = useCallback(async () => {
     setLoading(true);
@@ -98,7 +110,33 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
     setTimeout(() => setToast(null), 2000);
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleEdit = (b: BloqueoRow) => {
+    const sTz = new TZDate(b.fecha_inicio, "America/Bogota");
+    const eTz = new TZDate(b.fecha_fin, "America/Bogota");
+    
+    setFecha(format(sTz, "yyyy-MM-dd"));
+    setHoraInicio(format(sTz, "HH:mm"));
+    setHoraFin(format(eTz, "HH:mm"));
+    setMotivo(b.motivo || "");
+    setEditingId(b.id);
+    
+    if (format(sTz, "HH:mm") === "08:00" && format(eTz, "HH:mm") === "18:00") {
+      setTodoElDia(true);
+    } else {
+      setTodoElDia(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setFecha("");
+    setHoraInicio("");
+    setHoraFin("");
+    setMotivo("");
+    setTodoElDia(false);
+  };
+
+  const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fecha) {
       showToast("La fecha es obligatoria", "error");
@@ -130,30 +168,70 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
     const startTz = new TZDate(yyyy, mm - 1, dd, h1, m1, 0, 0, "America/Bogota");
     const endTz = new TZDate(yyyy, mm - 1, dd, h2, m2, 0, 0, "America/Bogota");
 
-    const { data: userData } = await supabase.auth.getUser();
+    const outOfBounds = hi < "07:00" || hf > "20:00";
 
-    const { error } = await supabase.from("bloqueos_horario").insert({
-      profesional_id: profesionalId,
-      fecha_inicio: startTz.toISOString(),
-      fecha_fin: endTz.toISOString(),
-      motivo: motivo.trim() || null,
-      created_by: userData.user?.id || null
+    const dayStartUTC = new Date(startTz.getTime() - 24 * 3600_000).toISOString();
+    const dayEndUTC = new Date(endTz.getTime() + 24 * 3600_000).toISOString();
+
+    const { data: citasOver } = await supabase
+      .from("citas")
+      .select("id, fecha_hora, duracion_min, clientes(nombre, apellido)")
+      .eq("profesional_id", profesionalId)
+      .in("estado", ["pendiente", "confirmada"])
+      .gte("fecha_hora", dayStartUTC)
+      .lte("fecha_hora", dayEndUTC);
+
+    const overlapping = (citasOver || []).filter(c => {
+      const cStart = new Date(c.fecha_hora);
+      const cEnd = new Date(cStart.getTime() + c.duracion_min * 60_000);
+      return cStart < endTz && cEnd > startTz;
     });
 
+    setConfirmSaveData({
+      startTz,
+      endTz,
+      hi,
+      hf,
+      outOfBounds,
+      citas: overlapping
+    });
     setIsSubmitting(false);
+  };
+
+  const executeSave = async () => {
+    if (!confirmSaveData) return;
+    setIsSubmitting(true);
+
+    const { data: userData } = await supabase.auth.getUser();
+
+    const payload = {
+      profesional_id: profesionalId,
+      fecha_inicio: confirmSaveData.startTz.toISOString(),
+      fecha_fin: confirmSaveData.endTz.toISOString(),
+      motivo: motivo.trim() || null,
+      created_by: userData.user?.id || null
+    };
+
+    let error;
+    if (editingId) {
+      const res = await supabase.from("bloqueos_horario").update(payload).eq("id", editingId);
+      error = res.error;
+    } else {
+      const res = await supabase.from("bloqueos_horario").insert(payload);
+      error = res.error;
+    }
+
+    setIsSubmitting(false);
+    setConfirmSaveData(null);
 
     if (error) {
-      showToast("Error al crear el bloqueo", "error");
+      showToast("Error al guardar el bloqueo", "error");
       console.error(error);
       return;
     }
 
-    showToast("Bloqueo creado correctamente");
-    setFecha("");
-    setHoraInicio("");
-    setHoraFin("");
-    setMotivo("");
-    setTodoElDia(false);
+    showToast(editingId ? "Bloqueo actualizado correctamente" : "Bloqueo creado correctamente");
+    handleCancelEdit();
     fetchBloqueos();
   };
 
@@ -188,8 +266,15 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
     <div className="flex flex-col md:flex-row gap-8">
       {/* Formulario Crear Bloqueo */}
       <div className="w-full md:w-1/3">
-        <h3 className="font-display italic text-xl text-[var(--color-text-on-light)] mb-4">Nuevo bloqueo</h3>
-        <form onSubmit={handleCreate} className="flex flex-col gap-4 bg-[var(--color-surface-light)] p-4 rounded-xl border border-[var(--color-border-light)]">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-display italic text-xl text-[var(--color-text-on-light)]">{editingId ? "Editar bloqueo" : "Nuevo bloqueo"}</h3>
+          {editingId && (
+            <Button type="button" variant="ghost" size="sm" onClick={handleCancelEdit} className="text-sm">
+              <X size={16} className="mr-1"/> Cancelar
+            </Button>
+          )}
+        </div>
+        <form onSubmit={handleSubmitForm} className="flex flex-col gap-4 bg-[var(--color-surface-light)] p-4 rounded-xl border border-[var(--color-border-light)]">
           <div>
             <label className="block text-sm font-semibold text-[var(--color-text-on-light)] mb-1">Fecha</label>
             <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} style={inputStyle} required />
@@ -233,8 +318,8 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
           </div>
 
           <Button type="submit" variant="primary" className="w-full mt-2" disabled={isSubmitting}>
-            <Plus size={18} className="mr-2" />
-            {isSubmitting ? "Registrando..." : "Registrar bloqueo"}
+            {editingId ? <Pencil size={18} className="mr-2" /> : <Plus size={18} className="mr-2" />}
+            {isSubmitting ? "Procesando..." : (editingId ? "Guardar cambios" : "Registrar bloqueo")}
           </Button>
         </form>
       </div>
@@ -251,7 +336,7 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
         ) : (
           <div className="flex flex-col gap-3">
             {bloqueos.map(b => (
-              <div key={b.id} className="flex items-center justify-between p-4 bg-[var(--color-surface-light)] rounded-xl border border-[var(--color-border-light)]">
+              <div key={b.id} className={`flex items-center justify-between p-4 bg-[var(--color-surface-light)] rounded-xl border ${editingId === b.id ? 'border-[var(--color-primary)]' : 'border-[var(--color-border-light)]'}`}>
                 <div className="flex items-start gap-3">
                   <div className="mt-1 text-[var(--color-text-on-light-muted)]">
                     <Clock size={18} />
@@ -265,9 +350,14 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
                     )}
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => setBloqueoToDelete(b)} className="text-[var(--color-error)] hover:text-red-600 hover:bg-red-50">
-                  <Trash2 size={16} />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="sm" onClick={() => handleEdit(b)} className="text-[var(--color-text-on-light-muted)] hover:text-[var(--color-primary)] hover:bg-[rgba(232,201,122,0.15)]">
+                    <Pencil size={16} />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setBloqueoToDelete(b)} className="text-[var(--color-error)] hover:text-red-600 hover:bg-red-50">
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
@@ -282,6 +372,45 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
           loading={isDeleting}
           onConfirm={handleDelete}
           onCancel={() => setBloqueoToDelete(null)}
+        />
+      )}
+
+      {confirmSaveData && (
+        <ConfirmModal
+          title={editingId ? "Guardar cambios" : "Confirmar bloqueo"}
+          confirmLabel={isSubmitting ? "Guardando..." : "Sí, confirmar"}
+          loading={isSubmitting}
+          onConfirm={executeSave}
+          onCancel={() => setConfirmSaveData(null)}
+          message={
+            <div className="text-left font-body text-sm text-[var(--color-text-secondary)] space-y-4 flex flex-col items-center">
+              <p className="text-center">
+                Se bloqueará <strong>{format(confirmSaveData.startTz, "dd 'de' MMMM", { locale: es })}</strong> de <strong>{format12h(confirmSaveData.hi)}</strong> a <strong>{format12h(confirmSaveData.hf)}</strong>.
+              </p>
+              
+              {confirmSaveData.outOfBounds && (
+                <div className="bg-[rgba(212,168,75,0.15)] text-[var(--color-warning)] p-3 rounded-lg border border-[var(--color-warning)] mt-2">
+                  <p className="font-semibold mb-1">Horario inusual</p>
+                  <p>Este bloqueo incluye horas fuera del horario habitual (07:00 AM - 08:00 PM). ¿Seguro que es correcto?</p>
+                </div>
+              )}
+
+              {confirmSaveData.citas.length > 0 && (
+                <div className="bg-[rgba(224,82,82,0.1)] text-[var(--color-error)] p-3 rounded-lg border border-[var(--color-error)] mt-2 w-full">
+                  <p className="font-semibold mb-2">¡Espera! Hay citas existentes</p>
+                  <p className="mb-2">Existen citas activas en este rango de horario:</p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {confirmSaveData.citas.map((c: any) => (
+                      <li key={c.id}>
+                        {format(new TZDate(c.fecha_hora, "America/Bogota"), "hh:mm a")} - {c.clientes?.nombre} {c.clientes?.apellido || ""} ({c.duracion_min} min)
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-3 text-xs italic opacity-90">Estas citas NO se cancelarán automáticamente.</p>
+                </div>
+              )}
+            </div>
+          }
         />
       )}
       
