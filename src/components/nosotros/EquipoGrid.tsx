@@ -9,6 +9,8 @@ interface ProfesionalUI {
   name: string;
   experience: number;
   bio: string;
+  specialties: string[];
+  photo: string;
 }
 
 interface ProfesionalCardProps {
@@ -41,17 +43,33 @@ function ProfesionalCard({ name, experience, specialties, photo }: ProfesionalCa
     >
       {/* IZQUIERDA: Foto, nombre, experiencia */}
       <div className="flex flex-col items-center justify-start min-w-[200px] pt-2">
-        <img
-          src={photo}
-          alt={name}
-          className="rounded-full mb-4"
-          style={{
-            width: 120,
-            height: 120,
-            border: "3px solid var(--color-primary-dim)",
-            objectFit: "cover",
-          }}
-        />
+        {photo ? (
+          <img
+            src={photo}
+            alt={name}
+            className="rounded-full mb-4"
+            style={{
+              width: 120,
+              height: 120,
+              border: "3px solid var(--color-primary-dim)",
+              objectFit: "cover",
+            }}
+          />
+        ) : (
+          <div 
+            className="rounded-full mb-4 flex items-center justify-center font-display font-semibold"
+            style={{
+              width: 120,
+              height: 120,
+              border: "3px solid var(--color-primary-dim)",
+              backgroundColor: "var(--color-bg-light-alt)",
+              color: "var(--color-text-on-light-muted)",
+              fontSize: "3rem"
+            }}
+          >
+            {name.charAt(0).toUpperCase()}
+          </div>
+        )}
         <h3
           style={{
             fontFamily: "var(--font-display)",

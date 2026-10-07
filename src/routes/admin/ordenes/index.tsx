@@ -140,7 +140,7 @@ function OrdenesPage() {
 
   return (
     <AdminLayout pageTitle="Ordenes">
-      <AdminToast toast={toast} onClose={() => setToast(null)} />
+      <AdminToast toast={toast} />
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ marginBottom: "1.5rem" }}>
         {/* Filtros de estado */}
