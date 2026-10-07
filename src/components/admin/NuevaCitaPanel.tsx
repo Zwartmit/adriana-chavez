@@ -254,7 +254,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
     if (error) {
       console.error("[NuevaCitaPanel] error al crear cita:", error.message);
       setFormError(error.message);
-      onError("No se pudo crear la cita.");
+      onError(error.code === "23P01" ? error.message : "No se pudo crear la cita.");
       return;
     }
 
