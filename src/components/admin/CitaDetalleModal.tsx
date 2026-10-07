@@ -46,14 +46,15 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
     setUpdating(true);
     const { error } = await supabase.from("citas").update({ estado } as any).eq("id", cita.id);
     setUpdating(false);
-    setConfirmAction(null);
 
     if (error) {
       console.error("[CitaDetalleModal] error al actualizar:", error.message);
       onError("No se pudo actualizar la cita.");
+      setConfirmAction(null);
       return;
     }
 
+    setConfirmAction(null);
     onUpdated();
     onClose();
   };
@@ -199,20 +200,42 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             variant="secondary"
             size="sm"
             className="flex-1 !text-[var(--color-error)] hover:!bg-[var(--color-error)] hover:!text-white hover:!border-[var(--color-error)]"
-            disabled={updating || cita.estado === "completada" || cita.estado === "cancelada"}
+            disabled={updating || cita.estadoReal === "cancelada" || cita.estadoReal === "no_asistio"}
             onClick={() => setConfirmAction("cancelada")}
             style={{ borderColor: "rgba(224,82,82,0.3)" }}
           >
             Cancelar cita
           </Button>
+
+          {cita.fechaHora < new Date() && cita.estadoReal !== "no_asistio" && cita.estadoReal !== "cancelada" && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="flex-1 hover:!bg-black/5"
+              disabled={updating}
+              onClick={() => setConfirmAction("no_asistio")}
+              style={{ 
+                color: "var(--color-text-on-light-muted)",
+                borderColor: "rgba(0,0,0,0.15)"
+              }}
+            >
+              No asistió
+            </Button>
+          )}
         </div>
       </div>
 
       {confirmAction && (
         <ConfirmModal
-          title="Cancelar cita"
-          message="¿Deseas cancelar esta cita? Quedará guardada en el historial."
-          confirmLabel="Sí, cancelar"
+          title={confirmAction === "cancelada" ? "Cancelar cita" : "Marcar inasistencia"}
+          message={
+            confirmAction === "cancelada"
+              ? cita.estadoReal === "completada"
+                ? "Esta cita ya figura como completada. Al cancelarla dejará de contar en el cierre de caja."
+                : "¿Deseas cancelar esta cita? Quedará guardada en el historial."
+              : "¿Marcar como no asistió? Esta cita dejará de contar en el cierre de caja."
+          }
+          confirmLabel={confirmAction === "cancelada" ? "Sí, cancelar" : "Sí, marcar no asistió"}
           loading={updating}
           onConfirm={() => handleUpdateEstado(confirmAction)}
           onCancel={() => setConfirmAction(null)}

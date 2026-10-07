@@ -30,6 +30,7 @@ export interface CitaUI {
   fechaHora: Date;
   duracionMin: number;
   estado: EstadoCita;
+  estadoReal: EstadoCita;
   notasCliente: string | null;
   clienteNombre: string;
   clienteTelefono: string | null;
@@ -71,6 +72,7 @@ function mapCita(row: CitaRow): CitaUI {
     fechaHora,
     duracionMin: row.duracion_min,
     estado: estadoVisual,
+    estadoReal: row.estado,
     notasCliente: row.notas_cliente,
     clienteNombre: cliente ? `${cliente.nombre} ${cliente.apellido ?? ""}`.trim() : "Clienta",
     clienteTelefono: cliente?.telefono ?? null,
@@ -403,7 +405,7 @@ export function CalendarioCitas() {
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                         cursor: "pointer",
-                        opacity: cita.estado === "cancelada" ? 0.5 : 1,
+                        opacity: cita.estado === "cancelada" || cita.estado === "no_asistio" ? 0.5 : 1,
                       }}
                     >
                       {format(cita.fechaHora, "hh:mm a")} {cita.clienteNombre}

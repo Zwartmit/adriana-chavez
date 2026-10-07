@@ -121,7 +121,7 @@ export function DetalleDiaPanel({
                           borderRadius: "var(--radius-lg)",
                           backgroundColor: "var(--color-bg-alt)",
                           borderLeft: `4px solid ${cita.profesionalColor}`,
-                          opacity: cita.estado === "cancelada" ? 0.6 : 1,
+                          opacity: cita.estado === "cancelada" || cita.estado === "no_asistio" ? 0.6 : 1,
                         }}
                         onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-alt)")}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg-alt)")}
@@ -148,11 +148,15 @@ export function DetalleDiaPanel({
                                 ? "rgba(46, 204, 113, 0.15)"
                                 : cita.estado === "cancelada"
                                 ? "rgba(231, 76, 60, 0.15)"
+                                : cita.estado === "no_asistio"
+                                ? "rgba(149, 165, 166, 0.15)"
                                 : "var(--glass-champagne-bg)",
                               color: cita.estado === "completada"
                                 ? "#2ecc71"
                                 : cita.estado === "cancelada"
                                 ? "#e74c3c"
+                                : cita.estado === "no_asistio"
+                                ? "#95a5a6"
                                 : "var(--color-primary-dim)",
                             }}
                           >
