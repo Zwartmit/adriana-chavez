@@ -32,7 +32,6 @@ import { Route as AdminProductosProductoIdRouteImport } from './routes/admin/pro
 import { Route as AdminProductosNuevoRouteImport } from './routes/admin/productos/nuevo'
 import { Route as AdminProfesionalesIndexRouteImport } from './routes/admin/profesionales/index'
 import { Route as AdminProfesionalesProfesionalIdRouteImport } from './routes/admin/profesionales/$profesionalId'
-import { Route as AdminProfesionalesNuevoRouteImport } from './routes/admin/profesionales/nuevo'
 import { Route as AdminReportesIndexRouteImport } from './routes/admin/reportes/index'
 import { Route as AdminServiciosIndexRouteImport } from './routes/admin/servicios/index'
 import { Route as AdminServiciosServicioIdRouteImport } from './routes/admin/servicios/$servicioId'
@@ -155,11 +154,6 @@ const AdminProfesionalesProfesionalIdRoute =
     path: '/admin/profesionales/$profesionalId',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AdminProfesionalesNuevoRoute = AdminProfesionalesNuevoRouteImport.update({
-  id: '/admin/profesionales/nuevo',
-  path: '/admin/profesionales/nuevo',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminReportesIndexRoute = AdminReportesIndexRouteImport.update({
   id: '/admin/reportes/',
   path: '/admin/reportes/',
@@ -200,7 +194,6 @@ export interface FileRoutesByFullPath {
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
-  '/admin/profesionales/nuevo': typeof AdminProfesionalesNuevoRoute
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
@@ -230,7 +223,6 @@ export interface FileRoutesByTo {
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
-  '/admin/profesionales/nuevo': typeof AdminProfesionalesNuevoRoute
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
@@ -261,7 +253,6 @@ export interface FileRoutesById {
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
-  '/admin/profesionales/nuevo': typeof AdminProfesionalesNuevoRoute
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
@@ -293,7 +284,6 @@ export interface FileRouteTypes {
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
     | '/admin/profesionales/$profesionalId'
-    | '/admin/profesionales/nuevo'
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
     | '/admin/clientes/'
@@ -323,7 +313,6 @@ export interface FileRouteTypes {
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
     | '/admin/profesionales/$profesionalId'
-    | '/admin/profesionales/nuevo'
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
     | '/admin/clientes'
@@ -353,7 +342,6 @@ export interface FileRouteTypes {
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
     | '/admin/profesionales/$profesionalId'
-    | '/admin/profesionales/nuevo'
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
     | '/admin/clientes/'
@@ -384,7 +372,6 @@ export interface RootRouteChildren {
   AdminProductosProductoIdRoute: typeof AdminProductosProductoIdRoute
   AdminProductosNuevoRoute: typeof AdminProductosNuevoRoute
   AdminProfesionalesProfesionalIdRoute: typeof AdminProfesionalesProfesionalIdRoute
-  AdminProfesionalesNuevoRoute: typeof AdminProfesionalesNuevoRoute
   AdminServiciosServicioIdRoute: typeof AdminServiciosServicioIdRoute
   AdminServiciosNuevoRoute: typeof AdminServiciosNuevoRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
@@ -560,13 +547,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProfesionalesProfesionalIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/profesionales/nuevo': {
-      id: '/admin/profesionales/nuevo'
-      path: '/admin/profesionales/nuevo'
-      fullPath: '/admin/profesionales/nuevo'
-      preLoaderRoute: typeof AdminProfesionalesNuevoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/reportes/': {
       id: '/admin/reportes/'
       path: '/admin/reportes'
@@ -616,7 +596,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminProductosProductoIdRoute: AdminProductosProductoIdRoute,
   AdminProductosNuevoRoute: AdminProductosNuevoRoute,
   AdminProfesionalesProfesionalIdRoute: AdminProfesionalesProfesionalIdRoute,
-  AdminProfesionalesNuevoRoute: AdminProfesionalesNuevoRoute,
   AdminServiciosServicioIdRoute: AdminServiciosServicioIdRoute,
   AdminServiciosNuevoRoute: AdminServiciosNuevoRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,

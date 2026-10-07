@@ -33,6 +33,25 @@ const inputStyle = {
   outline: "none",
 };
 
+function generarSlots(): string[] {
+  const slots: string[] = [];
+  for (let h = 0; h <= 23; h++) {
+    for (const m of [0, 30]) {
+      slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+    }
+  }
+  return slots;
+}
+
+const SLOTS = generarSlots();
+
+function format12h(time24: string) {
+  const [h, m] = time24.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
   const [bloqueos, setBloqueos] = useState<BloqueoRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -169,7 +188,7 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
     <div className="flex flex-col md:flex-row gap-8">
       {/* Formulario Crear Bloqueo */}
       <div className="w-full md:w-1/3">
-        <h3 className="font-display italic text-xl text-[var(--color-primary-dim)] mb-4">Nuevo Bloqueo</h3>
+        <h3 className="font-display italic text-xl text-[var(--color-text-on-light)] mb-4">Nuevo bloqueo</h3>
         <form onSubmit={handleCreate} className="flex flex-col gap-4 bg-[var(--color-surface-light)] p-4 rounded-xl border border-[var(--color-border-light)]">
           <div>
             <label className="block text-sm font-semibold text-[var(--color-text-on-light)] mb-1">Fecha</label>
@@ -185,11 +204,25 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
             <div className="flex gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-semibold text-[var(--color-text-on-light)] mb-1">Inicio</label>
-                <input type="time" value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} style={inputStyle} required={!todoElDia} />
+                <select value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} style={inputStyle} required={!todoElDia}>
+                  <option value="">--:--</option>
+                  {SLOTS.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {format12h(slot)}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-semibold text-[var(--color-text-on-light)] mb-1">Fin</label>
-                <input type="time" value={horaFin} onChange={(e) => setHoraFin(e.target.value)} style={inputStyle} required={!todoElDia} />
+                <select value={horaFin} onChange={(e) => setHoraFin(e.target.value)} style={inputStyle} required={!todoElDia}>
+                  <option value="">--:--</option>
+                  {SLOTS.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {format12h(slot)}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           )}
@@ -201,19 +234,19 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
 
           <Button type="submit" variant="primary" className="w-full mt-2" disabled={isSubmitting}>
             <Plus size={18} className="mr-2" />
-            {isSubmitting ? "Creando..." : "Crear Bloqueo"}
+            {isSubmitting ? "Registrando..." : "Registrar bloqueo"}
           </Button>
         </form>
       </div>
 
-      {/* Lista de Bloqueos Futuros */}
+      {/* Lista de Bloqueos registrados */}
       <div className="w-full md:w-2/3">
-        <h3 className="font-display italic text-xl text-[var(--color-primary-dim)] mb-4">Bloqueos Futuros</h3>
+        <h3 className="font-display italic text-xl text-[var(--color-text-on-light)] mb-4">Bloqueos registrados</h3>
         {loading ? (
           <LoadingState label="Cargando bloqueos..." />
         ) : bloqueos.length === 0 ? (
           <div className="text-center p-8 bg-[var(--color-surface-light)] rounded-xl border border-[var(--color-border-light)]">
-            <p className="text-[var(--color-text-on-light-muted)] font-body">No hay bloqueos futuros programados.</p>
+            <p className="text-[var(--color-text-on-light-muted)] font-body">No hay bloqueos registrados.</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
@@ -243,7 +276,7 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
 
       {bloqueoToDelete && (
         <ConfirmModal
-          title="Eliminar Bloqueo"
+          title="Eliminar bloqueo"
           message={`¿Estás segura de que quieres eliminar el bloqueo del día ${formatFecha(bloqueoToDelete.fecha_inicio)}?`}
           confirmLabel={isDeleting ? "Eliminando..." : "Sí, eliminar"}
           loading={isDeleting}

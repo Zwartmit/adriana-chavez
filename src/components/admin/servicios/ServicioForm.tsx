@@ -88,7 +88,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Información Básica */}
       <section>
-        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "1rem" }}>
           Información básica
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -126,7 +126,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
 
       {/* Descripción */}
       <section>
-        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "1rem" }}>
           Detalles
         </h3>
         <div>
@@ -139,7 +139,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
 
       {/* Imagen */}
       <section>
-        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "1rem" }}>
           Imagen representativa
         </h3>
         <ImageUploader
@@ -154,7 +154,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
 
       {/* Opciones y Visibilidad */}
       <section>
-        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "1rem" }}>
           Visibilidad y Etiquetas
         </h3>
         <div className="flex flex-wrap gap-6">

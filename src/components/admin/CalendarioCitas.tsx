@@ -23,6 +23,7 @@ import { CitaDetalleModal } from "@/components/admin/CitaDetalleModal";
 import { DetalleDiaPanel } from "@/components/admin/DetalleDiaPanel";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { TZDate } from "@date-fns/tz";
+import { BloqueoDetalleModal } from "@/components/admin/BloqueoDetalleModal";
 
 export interface CitaUI {
   id: string;
@@ -119,6 +120,7 @@ export function CalendarioCitas() {
   const [diaPanelOpen, setDiaPanelOpen] = useState(false);
   const [panelDate, setPanelDate] = useState<Date | undefined>(undefined);
   const [selectedCita, setSelectedCita] = useState<CitaUI | null>(null);
+  const [selectedBloqueo, setSelectedBloqueo] = useState<BloqueoUI | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
 
   const fetchCitas = useCallback(async (month: Date) => {
@@ -356,8 +358,8 @@ export function CalendarioCitas() {
                       key={bloqueo.id}
                       title={`${format(bloqueo.fechaInicio, "hh:mm a")} - ${format(bloqueo.fechaFin, "hh:mm a")} · Bloqueo: ${bloqueo.profesionalNombre}`}
                       style={{
-                        backgroundColor: "var(--color-surface)",
-                        border: "1px dashed var(--color-border-light)",
+                        background: "repeating-linear-gradient(45deg, rgba(10,10,11,0.03), rgba(10,10,11,0.03) 4px, rgba(10,10,11,0.06) 4px, rgba(10,10,11,0.06) 8px)",
+                        border: "1px dashed var(--color-border-light-gold)",
                         color: "var(--color-text-on-light-muted)",
                         borderRadius: "var(--radius-sm)",
                         padding: "2px 6px",
@@ -368,9 +370,12 @@ export function CalendarioCitas() {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
-                        cursor: "default",
+                        cursor: "pointer",
                       }}
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedBloqueo(bloqueo);
+                      }}
                     >
                       {format(bloqueo.fechaInicio, "hh:mm a")} {bloqueo.profesionalNombre} (Bloqueo)
                     </div>
@@ -440,6 +445,16 @@ export function CalendarioCitas() {
         onUpdated={() => {
           fetchCitas(currentMonth);
           showToast("Cita actualizada correctamente");
+        }}
+        onError={(msg) => showToast(msg, "error")}
+      />
+
+      <BloqueoDetalleModal
+        bloqueo={selectedBloqueo}
+        onClose={() => setSelectedBloqueo(null)}
+        onDeleted={() => {
+          fetchCitas(currentMonth);
+          showToast("Bloqueo eliminado correctamente");
         }}
         onError={(msg) => showToast(msg, "error")}
       />

@@ -111,19 +111,28 @@ function EditarProfesionalPage() {
   };
 
   return (
-    <AdminLayout pageTitle="Editar Profesional">
-      <div className="max-w-5xl mx-auto flex flex-col gap-6">
-        <div>
-          <h1 className="font-display italic font-semibold text-2xl text-[var(--color-text-on-light)]">
-            Editar Profesional
-          </h1>
-          <p className="font-body text-sm text-[var(--color-text-on-light-muted)] mt-1">
-            Modifica la información o gestiona los bloqueos de horario.
-          </p>
-        </div>
+    <AdminLayout pageTitle={initialData?.nombre ?? "Cargando profesional..."}>
+      <button
+        type="button"
+        onClick={() => navigate({ to: "/admin/profesionales" })}
+        style={{
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          fontFamily: "var(--font-mono)",
+          fontSize: "var(--text-sm)",
+          color: "var(--color-text-on-light-faint)",
+          marginBottom: "1.5rem",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
+      >
+        ← Volver a profesionales
+      </button>
 
+      <div className="max-w-5xl mx-auto flex flex-col gap-6">
         {/* Pestañas */}
-        <div className="flex border-b border-[var(--color-border-light)] gap-6">
+        <div className="flex border-b border-[var(--color-border-light)] gap-6" style={{ marginBottom: "1rem" }}>
           <button
             onClick={() => setActiveTab("info")}
             className={`pb-3 font-semibold font-body text-sm transition-colors ${
@@ -142,11 +151,11 @@ function EditarProfesionalPage() {
                 : "text-[var(--color-text-on-light-muted)] hover:text-[var(--color-text-on-light)]"
             }`}
           >
-            Bloqueos de Horario
+            Bloqueos de horario
           </button>
         </div>
 
-        <div className="bg-[var(--color-surface)] p-6 md:p-8 rounded-2xl border border-[var(--color-border-light)] shadow-sm">
+        <div>
           {loading ? (
             <LoadingState label="Cargando información..." />
           ) : error ? (

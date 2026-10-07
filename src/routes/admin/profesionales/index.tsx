@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { supabase } from "@/lib/supabase/client";
+import { NuevoProfesionalPanel } from "@/components/admin/profesionales/NuevoProfesionalPanel";
 
 export const Route = createFileRoute("/admin/profesionales/")({
   component: ProfesionalesAdminPage,
@@ -27,6 +28,8 @@ function ProfesionalesAdminPage() {
   const [profesionales, setProfesionales] = useState<ProfesionalRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [panelOpen, setPanelOpen] = useState(false);
 
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -166,45 +169,46 @@ function ProfesionalesAdminPage() {
   return (
     <AdminLayout pageTitle="Profesionales">
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ marginBottom: "0.5rem" }}>
+          <div>
+            <p
               style={{
-                width: 48,
-                height: 48,
-                borderRadius: "var(--radius-xl)",
-                backgroundColor: "rgba(232,201,122,0.15)",
-                color: "var(--color-primary)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                fontFamily: "var(--font-mono)",
+                fontSize: "var(--text-sm)",
+                color: "var(--color-text-on-light-faint)",
+                marginTop: "0.25rem",
               }}
             >
-              <Star size={24} />
-            </div>
-            <div>
-              <h1 className="font-display italic font-semibold text-2xl text-[var(--color-text-on-light)]">Profesionales</h1>
-              <p className="font-body text-sm text-[var(--color-text-on-light-muted)]">
-                Gestiona el equipo de trabajo y sus especialidades
-              </p>
-            </div>
+              {filtrado.length} {filtrado.length === 1 ? "profesional registrado" : "profesionales registrados"}
+            </p>
           </div>
-          <Button variant="accent" size="lg" onClick={() => navigate({ to: "/admin/profesionales/nuevo" })}>
-            + Añadir Profesional
-          </Button>
+          <div className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto" variant="accent" size="md" onClick={() => setPanelOpen(true)}>
+              Nuevo profesional +
+            </Button>
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-on-light-muted)]" />
+        <div className="flex flex-col sm:flex-row flex-wrap sm:items-center gap-3" style={{ margin: "1.5rem 0" }}>
+          <div className="relative w-full sm:w-auto sm:max-w-[360px]">
+            <Search
+              size={18}
+              style={{
+                position: "absolute",
+                left: 14,
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "var(--color-text-on-light-faint)",
+              }}
+            />
             <input
               type="text"
-              placeholder="Buscar por nombre o especialidad..."
+              placeholder="Buscar profesional..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               style={{
                 width: "100%",
-                padding: "10px 14px 10px 40px",
+                padding: "10px 14px 10px 42px",
                 backgroundColor: "var(--color-surface-light)",
                 border: "1px solid var(--color-border-light)",
                 borderRadius: "var(--radius-lg)",
@@ -223,12 +227,10 @@ function ProfesionalesAdminPage() {
           <ErrorState message={error} onRetry={fetchData} />
         ) : (
           <div
-            className="overflow-x-auto"
+            className="overflow-x-auto w-full"
             style={{
-              backgroundColor: "var(--color-surface-light)",
-              borderRadius: "var(--radius-2xl)",
+              borderRadius: "var(--radius-xl)",
               border: "1px solid var(--color-border-light)",
-              boxShadow: "var(--shadow-sm)",
             }}
           >
             {filtrado.length === 0 ? (
@@ -236,32 +238,47 @@ function ProfesionalesAdminPage() {
                 <p className="font-body text-[var(--color-text-on-light-muted)]">No hay profesionales que coincidan con la búsqueda.</p>
               </div>
             ) : (
-              <table className="w-full text-left border-collapse min-w-[700px]">
+              <table className="w-full min-w-[700px]" style={{ borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid var(--color-border-light)" }}>
-                    <th className="p-4 font-mono text-xs uppercase tracking-wider text-[var(--color-text-on-light-muted)]">Orden</th>
-                    <th className="p-4 font-mono text-xs uppercase tracking-wider text-[var(--color-text-on-light-muted)]">Profesional</th>
-                    <th className="p-4 font-mono text-xs uppercase tracking-wider text-[var(--color-text-on-light-muted)]">Especialidades</th>
-                    <th className="p-4 font-mono text-xs uppercase tracking-wider text-[var(--color-text-on-light-muted)]">Color</th>
-                    <th className="p-4 font-mono text-xs uppercase tracking-wider text-[var(--color-text-on-light-muted)]">Estado</th>
-                    <th className="p-4 font-mono text-xs uppercase tracking-wider text-[var(--color-text-on-light-muted)] text-right">Acciones</th>
+                  <tr style={{ backgroundColor: "#0A0A0B" }}>
+                    {["Orden", "Profesional", "Especialidades", "Color", "Estado", "Acciones"].map(
+                      (h) => (
+                        <th
+                          key={h}
+                          style={{
+                            textAlign: h === "Acciones" ? "right" : "left",
+                            padding: "12px 16px",
+                            fontFamily: "var(--font-mono)",
+                            fontSize: "var(--text-xs)",
+                            textTransform: "uppercase",
+                            letterSpacing: "var(--tracking-wider)",
+                            color: "var(--color-primary)",
+                          }}
+                        >
+                          {h}
+                        </th>
+                      )
+                    )}
                   </tr>
                 </thead>
                 <tbody>
                   {filtrado.map((p, index) => (
                     <tr
                       key={p.id}
-                      style={{ borderBottom: "1px solid var(--color-border-light)", transition: "background-color 0.2s" }}
+                      style={{
+                        backgroundColor: index % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)",
+                        transition: "background-color var(--transition-fast)",
+                      }}
                       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg-light-alt)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = index % 2 === 0 ? "var(--color-surface-light)" : "var(--color-bg-light)")}
                     >
-                      <td className="p-4">
+                      <td style={{ padding: "14px 16px" }}>
                         <div className="flex flex-col gap-1">
                           <button onClick={() => moverOrden(p.id, -1)} disabled={index === 0} className="text-[var(--color-text-on-light-muted)] hover:text-[var(--color-primary)] disabled:opacity-30">▲</button>
                           <button onClick={() => moverOrden(p.id, 1)} disabled={index === profesionales.length - 1} className="text-[var(--color-text-on-light-muted)] hover:text-[var(--color-primary)] disabled:opacity-30">▼</button>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td style={{ padding: "14px 16px" }}>
                         <div className="flex items-center gap-3">
                           {p.foto_url ? (
                             <img src={p.foto_url} alt={p.nombre} className="w-10 h-10 object-cover rounded-full" />
@@ -270,22 +287,39 @@ function ProfesionalesAdminPage() {
                               <Star size={16} />
                             </div>
                           )}
-                          <span className="font-body font-semibold text-[var(--color-text-on-light)]">{p.nombre}</span>
+                          <button
+                            type="button"
+                            onClick={() => navigate({ to: "/admin/profesionales/$profesionalId", params: { profesionalId: p.id } })}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              cursor: "pointer",
+                              fontFamily: "var(--font-body)",
+                              fontWeight: 600,
+                              fontSize: "var(--text-sm)",
+                              color: "var(--color-text-on-light)",
+                              textDecoration: "none",
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light)")}
+                          >
+                            {p.nombre}
+                          </button>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td style={{ padding: "14px 16px" }}>
                         <div className="flex flex-wrap gap-1">
                           {p.especialidades.map(e => (
-                            <span key={e} className="px-2 py-1 text-[10px] uppercase tracking-wider font-mono bg-[var(--color-bg-light-alt)] text-[var(--color-text-on-light)] rounded-full">
+                            <span key={e} className="px-2 py-1 text-[10px] uppercase tracking-wider font-mono bg-[var(--color-bg-light-alt)] text-[var(--color-text-on-light)] rounded-full border border-[var(--color-border-light)]">
                               {e}
                             </span>
                           ))}
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td style={{ padding: "14px 16px" }}>
                         <div className="w-6 h-6 rounded-full shadow-sm" style={{ backgroundColor: p.color_calendario }} title={p.color_calendario} />
                       </td>
-                      <td className="p-4">
+                      <td style={{ padding: "14px 16px" }}>
                         <button
                           onClick={() => handleToggleEstadoRequest(p)}
                           className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${
@@ -297,10 +331,19 @@ function ProfesionalesAdminPage() {
                           {p.activo ? "Activo" : "Inactivo"}
                         </button>
                       </td>
-                      <td className="p-4 text-right">
-                        <Button variant="ghost" size="sm" onClick={() => navigate({ to: `/admin/profesionales/${p.id}` })}>
-                          <Edit size={16} />
-                        </Button>
+                      <td style={{ padding: "14px 16px", textAlign: "right" }}>
+                        <div className="flex items-center justify-end gap-3">
+                          <button
+                            type="button"
+                            aria-label="Editar"
+                            onClick={() => navigate({ to: `/admin/profesionales/${p.id}` })}
+                            style={{ color: "var(--color-text-on-light-faint)", background: "transparent", border: "none", cursor: "pointer" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-dim)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-on-light-faint)")}
+                          >
+                            <Edit size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -310,6 +353,16 @@ function ProfesionalesAdminPage() {
           </div>
         )}
       </div>
+
+      <NuevoProfesionalPanel
+        isOpen={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        onCreated={() => {
+          showToast("Profesional registrado exitosamente");
+          fetchData();
+        }}
+        onError={(msg) => showToast(msg, "error")}
+      />
 
       {isConfirmOpen && actionProf && (
         <ConfirmModal

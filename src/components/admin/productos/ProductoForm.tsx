@@ -113,7 +113,7 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Información Básica */}
       <section>
-        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "1rem" }}>
           Información básica
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -145,7 +145,7 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
 
       {/* Descripciones */}
       <section>
-        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "1rem" }}>
           Detalles del producto
         </h3>
         <div className="space-y-4">
@@ -164,7 +164,7 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
 
       {/* Imágenes */}
       <section>
-        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "1rem" }}>
           Imágenes del Producto
         </h3>
         <ImageUploader
@@ -180,7 +180,7 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
       {/* Características */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)" }}>
+          <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)" }}>
             Características (Ficha técnica)
           </h3>
           <button type="button" onClick={handleAddCaracteristica} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: "var(--radius-full)", backgroundColor: "rgba(200,168,74,0.1)", color: "var(--color-primary-dim)", border: "none", cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: 500, fontSize: "var(--text-xs)" }}>
@@ -207,7 +207,7 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
 
       {/* Opciones y Visibilidad */}
       <section>
-        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-primary-dim)", marginBottom: "1rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "1rem" }}>
           Visibilidad y Etiquetas
         </h3>
         <div className="flex flex-wrap gap-6">
