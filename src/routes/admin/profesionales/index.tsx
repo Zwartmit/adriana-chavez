@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, Star, Edit, Trash, AlertTriangle } from "lucide-react";
+import { Search, Edit, Trash, AlertTriangle } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { Button } from "@/components/ui/Button";
@@ -316,8 +316,8 @@ function ProfesionalesAdminPage() {
                           {p.foto_url ? (
                             <img src={p.foto_url} alt={p.nombre} className="w-10 h-10 object-cover rounded-full" />
                           ) : (
-                            <div className="w-10 h-10 rounded-full bg-[var(--color-bg-light-alt)] flex items-center justify-center text-[var(--color-text-on-light-muted)]">
-                              <Star size={16} />
+                            <div className="w-10 h-10 rounded-full bg-[var(--color-bg-light-alt)] flex items-center justify-center text-[var(--color-text-on-light-muted)] font-display font-semibold text-lg border border-[var(--color-border-light)] shadow-sm">
+                              {p.nombre.charAt(0).toUpperCase()}
                             </div>
                           )}
                           <button
@@ -355,13 +355,15 @@ function ProfesionalesAdminPage() {
                       <td style={{ padding: "14px 16px" }}>
                         <button
                           onClick={() => handleToggleEstadoRequest(p)}
-                          className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${
-                            p.activo
-                              ? "bg-[rgba(76,175,128,0.15)] text-[var(--color-success)]"
-                              : "bg-[rgba(224,82,82,0.15)] text-[var(--color-error)]"
-                          }`}
+                          className="flex items-center gap-2 group cursor-pointer border-none bg-transparent p-1 -m-1"
+                          title={`Hacer clic para ${p.activo ? "desactivar" : "activar"}`}
                         >
-                          {p.activo ? "Activo" : "Inactivo"}
+                          <div className={`relative inline-flex h-[22px] w-[40px] items-center rounded-full transition-colors duration-200 ${p.activo ? "bg-[var(--color-success)]" : "bg-[var(--color-text-on-light-faint)]"}`}>
+                            <span className={`inline-block h-[16px] w-[16px] transform rounded-full bg-white transition-transform duration-200 ${p.activo ? "translate-x-[21px]" : "translate-x-[3px]"}`} />
+                          </div>
+                          <span className={`text-xs font-semibold transition-opacity group-hover:opacity-80 ${p.activo ? "text-[var(--color-success)]" : "text-[var(--color-text-on-light-muted)]"}`}>
+                            {p.activo ? "Activo" : "Inactivo"}
+                          </span>
                         </button>
                       </td>
                       <td style={{ padding: "14px 16px", textAlign: "right" }}>
