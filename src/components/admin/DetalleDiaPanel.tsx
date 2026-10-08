@@ -72,7 +72,7 @@ export function DetalleDiaPanel({
               style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-sm)",
-                color: "var(--color-text-on-light-muted)",
+                color: "var(--color-text-secondary)",
               }}
             >
               {format(date, "EEEE, d 'de' MMMM", { locale: es })}
