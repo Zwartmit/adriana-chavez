@@ -99,6 +99,10 @@ function ClienteDetallePage() {
   const [citas, setCitas] = useState<CitaHistUI[]>([]);
   const [citasLoading, setCitasLoading] = useState(true);
 
+  const [filtroEstado, setFiltroEstado] = useState<"todas" | "completada" | "cancelada" | "no_asistio">("todas");
+  const [busqueda, setBusqueda] = useState("");
+  const [verTodoHistorial, setVerTodoHistorial] = useState(false);
+
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
@@ -245,11 +249,24 @@ function ClienteDetallePage() {
   };
 
   const proximas = citas
-    .filter((c) => c.estado === "pendiente" || c.estado === "confirmada")
+    .filter((c) => c.estado === "pendiente" || c.estado === "confirmada" || c.estado === "en_proceso")
     .sort((a, b) => a.fechaHora.getTime() - b.fechaHora.getTime());
 
-  const historial = citas.filter((c) => c.estado === "completada" || c.estado === "cancelada").slice(0, 10);
-  const historialTotal = historial.reduce((sum, c) => sum + (c.precioCobrado ?? 0), 0);
+  const historialBase = citas.filter((c) => c.estado === "completada" || c.estado === "cancelada" || c.estado === "no_asistio");
+
+  const normalizeStr = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const historialFiltrado = historialBase
+    .filter((c) => filtroEstado === "todas" || c.estado === filtroEstado)
+    .filter((c) => {
+      if (!busqueda.trim()) return true;
+      const q = normalizeStr(busqueda);
+      return normalizeStr(c.servicioNombre).includes(q) || normalizeStr(c.profesionalNombre).includes(q);
+    })
+    .sort((a, b) => b.fechaHora.getTime() - a.fechaHora.getTime());
+
+  const historialVisible = verTodoHistorial ? historialFiltrado : historialFiltrado.slice(0, 10);
+  const historialTotal = historialFiltrado.reduce((sum, c) => sum + (c.estado === "completada" ? (c.precioCobrado ?? 0) : 0), 0);
 
   return (
     <AdminLayout pageTitle="Ficha de clienta">
@@ -499,53 +516,135 @@ function ClienteDetallePage() {
 
               {citasLoading ? (
                 <LoadingState variant="light" />
-              ) : historial.length === 0 ? (
+              ) : historialBase.length === 0 ? (
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)" }}>
                   Sin historial de citas
                 </p>
               ) : (
                 <>
-                  <div className="flex flex-col gap-3">
-                    {historial.map((c) => (
-                      <div
-                        key={c.id}
-                        className="flex items-center justify-between gap-3"
+                  <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                    <select
+                      value={filtroEstado}
+                      onChange={(e) => {
+                        setFiltroEstado(e.target.value as any);
+                        setVerTodoHistorial(false);
+                      }}
+                      style={{
+                        padding: "0.5rem",
+                        borderRadius: "var(--radius-md)",
+                        border: "1px solid var(--color-border-light)",
+                        backgroundColor: "var(--color-surface-light)",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-sm)",
+                        color: "var(--color-text-on-light)",
+                        outline: "none",
+                      }}
+                    >
+                      <option value="todas">Todas</option>
+                      <option value="completada">{estadoLabel("completada")}</option>
+                      <option value="cancelada">{estadoLabel("cancelada")}</option>
+                      <option value="no_asistio">{estadoLabel("no_asistio")}</option>
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="Buscar por servicio o profesional"
+                      value={busqueda}
+                      onChange={(e) => {
+                        setBusqueda(e.target.value);
+                        setVerTodoHistorial(false);
+                      }}
+                      style={{
+                        flex: 1,
+                        padding: "0.5rem 0.75rem",
+                        borderRadius: "var(--radius-md)",
+                        border: "1px solid var(--color-border-light)",
+                        backgroundColor: "var(--color-surface-light)",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-sm)",
+                        color: "var(--color-text-on-light)",
+                        outline: "none",
+                      }}
+                    />
+                  </div>
+
+                  {historialFiltrado.length === 0 ? (
+                    <div className="text-center py-4">
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)", marginBottom: "0.75rem" }}>
+                        Ninguna cita coincide con tu búsqueda
+                      </p>
+                      <Button variant="secondary" size="sm" onClick={() => { setFiltroEstado("todas"); setBusqueda(""); setVerTodoHistorial(false); }}>
+                        Limpiar filtros
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex flex-col gap-3">
+                        {historialVisible.map((c) => (
+                          <div
+                            key={c.id}
+                            className="flex items-center justify-between gap-3"
+                            style={{
+                              padding: "0.85rem 1rem",
+                              backgroundColor: "var(--color-bg-light)",
+                              borderRadius: "var(--radius-lg)",
+                            }}
+                          >
+                            <div>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
+                                {c.fechaHora.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
+                              </p>
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
+                                {c.servicioNombre}
+                              </p>
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
+                                {c.profesionalNombre}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                              <EstadoBadge estado={c.estado} />
+                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
+                                {c.precioCobrado ? formatPrice(c.precioCobrado) : "—"}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {historialFiltrado.length > 10 && (
+                        <div className="flex justify-center mt-3">
+                          <button
+                            type="button"
+                            onClick={() => setVerTodoHistorial(!verTodoHistorial)}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              cursor: "pointer",
+                              fontFamily: "var(--font-body)",
+                              fontSize: "var(--text-sm)",
+                              fontWeight: 500,
+                              color: "var(--color-primary-dim)",
+                            }}
+                          >
+                            {verTodoHistorial ? "Ver menos" : "Ver más"}
+                          </button>
+                        </div>
+                      )}
+
+                      <p
                         style={{
-                          padding: "0.85rem 1rem",
-                          backgroundColor: "var(--color-bg-light)",
-                          borderRadius: "var(--radius-lg)",
+                          marginTop: "1rem",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "var(--text-sm)",
+                          color: "var(--color-text-on-light-faint)",
                         }}
                       >
-                        <div>
-                          <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
-                            {c.fechaHora.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
-                          </p>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
-                            {c.servicioNombre}
-                          </p>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)" }}>
-                            {c.profesionalNombre}
-                          </p>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          <EstadoBadge estado={c.estado} />
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
-                            {c.precioCobrado ? formatPrice(c.precioCobrado) : "—"}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <p
-                    style={{
-                      marginTop: "1rem",
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-sm)",
-                      color: "var(--color-text-on-light-faint)",
-                    }}
-                  >
-                    {historial.length} {historial.length === 1 ? "cita" : "citas"} · Total: {formatPrice(historialTotal)}
-                  </p>
+                        {!verTodoHistorial && historialFiltrado.length > 10
+                          ? `10 de ${historialFiltrado.length} citas · Total gastado: ${formatPrice(historialTotal)}`
+                          : `${historialFiltrado.length} ${historialFiltrado.length === 1 ? "cita" : "citas"} · Total gastado: ${formatPrice(historialTotal)}`
+                        }
+                      </p>
+                    </>
+                  )}
                 </>
               )}
             </div>
