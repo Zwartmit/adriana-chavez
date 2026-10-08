@@ -326,52 +326,145 @@ function ReportesPage() {
     return rows;
   }, [completadas, canceladas, profesionalesNombre]);
 
-  // ── Exportar CSV ──
-  const handleExportarCSV = () => {
-    const headers = ["Fecha", "Hora", "Clienta", "Servicio", "Profesional", "Canal", "Estado", "Precio cobrado (COP)"];
+  // ── Exportar Excel ──
+  const handleExportarExcel = async () => {
+    const ExcelJS = (await import("exceljs")).default;
     const canalLabel: Record<string, string> = {
       web: "Web",
       whatsapp: "WhatsApp",
       telefono: "Teléfono",
       presencial: "Presencial",
     };
-    // Escapa comillas, envuelve en comillas y evita que Excel interprete texto como fórmula.
-    const escape = (v: string) => {
-      const seguro = /^[=+\-@\t\r]/.test(v) ? `'${v}` : v;
-      return `"${seguro.replace(/"/g, '""')}"`;
+    const estadoColor: Record<string, string> = {
+      completada: "FFD9EAD3",
+      pendiente: "FFFFF2CC",
+      confirmada: "FFDDEBF7",
+      en_proceso: "FFDDEBF7",
+      cancelada: "FFE7E6E6",
+      no_asistio: "FFF8D7DA",
     };
+    const borde = { style: "thin" as const, color: { argb: "FFD9D4C8" } };
+
     const ordenadas = [...citas].sort(
-      (a, b) => new Date(a.fecha_hora).getTime() - new Date(b.fecha_hora).getTime(),
+      (x, y) => new Date(x.fecha_hora).getTime() - new Date(y.fecha_hora).getTime(),
     );
-    const rows = ordenadas.map((c) => {
-      const fecha = new Date(c.fecha_hora);
-      const clienteNombre = c.clientes ? `${c.clientes.nombre} ${c.clientes.apellido ?? ""}`.trim() : "";
-      // El precio solo se informa en citas completadas.
-      const precio = c.estado === "completada" && c.precio_cobrado != null ? String(c.precio_cobrado) : "";
-      return [
-        format(fecha, "yyyy-MM-dd"),
-        format(fecha, "HH:mm"),
-        escape(clienteNombre),
-        escape(c.servicio_id ? serviciosNombre.get(c.servicio_id) ?? "" : ""),
-        escape(c.profesional_id ? profesionalesNombre.get(c.profesional_id) ?? "" : ""),
-        canalLabel[c.canal_origen ?? ""] ?? "",
-        estadoLabel(c.estado),
-        precio,
-      ].join(",");
+
+    const wb = new ExcelJS.Workbook();
+    wb.creator = "Adriana Chávez";
+    wb.created = new Date();
+
+    // ── Hoja 1: Citas ──
+    const ws = wb.addWorksheet("Citas", { views: [{ state: "frozen", ySplit: 1 }] });
+    ws.columns = [
+      { header: "Fecha", key: "fecha", width: 13 },
+      { header: "Hora", key: "hora", width: 9 },
+      { header: "Clienta", key: "clienta", width: 26 },
+      { header: "Servicio", key: "servicio", width: 30 },
+      { header: "Profesional", key: "profesional", width: 22 },
+      { header: "Canal", key: "canal", width: 13 },
+      { header: "Estado", key: "estado", width: 14 },
+      { header: "Precio cobrado (COP)", key: "precio", width: 22 },
+    ];
+    const header = ws.getRow(1);
+    header.height = 24;
+    header.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFE8C97A" }, size: 11 };
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0A0A0B" } };
+      cell.alignment = { vertical: "middle", horizontal: "center" };
     });
-    // BOM UTF-8 para que Excel muestre bien tildes y ñ; CRLF como fin de línea.
-    const csv = "\uFEFF" + [headers.join(","), ...rows].join("\r\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    ordenadas.forEach((c) => {
+      const f = new Date(c.fecha_hora);
+      const clienteNombre = c.clientes ? `${c.clientes.nombre} ${c.clientes.apellido ?? ""}`.trim() : "";
+      const row = ws.addRow({
+        // Fecha como valor real de Excel (sin desfase de zona horaria).
+        fecha: new Date(Date.UTC(f.getFullYear(), f.getMonth(), f.getDate())),
+        hora: (f.getHours() * 60 + f.getMinutes()) / 1440,
+        clienta: clienteNombre,
+        servicio: c.servicio_id ? serviciosNombre.get(c.servicio_id) ?? "" : "",
+        profesional: c.profesional_id ? profesionalesNombre.get(c.profesional_id) ?? "" : "",
+        canal: canalLabel[c.canal_origen ?? ""] ?? "",
+        estado: estadoLabel(c.estado),
+        // El precio solo se informa en citas completadas.
+        precio: c.estado === "completada" && c.precio_cobrado != null ? c.precio_cobrado : null,
+      });
+      row.getCell("fecha").numFmt = "dd/mm/yyyy";
+      row.getCell("hora").numFmt = "hh:mm";
+      row.getCell("precio").numFmt = '"$" #,##0';
+      row.getCell("fecha").alignment = { horizontal: "center" };
+      row.getCell("hora").alignment = { horizontal: "center" };
+      row.getCell("estado").alignment = { horizontal: "center" };
+      row.getCell("estado").fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: estadoColor[c.estado] ?? "FFFFFFFF" },
+      };
+      row.eachCell((cell) => {
+        cell.border = { top: borde, bottom: borde, left: borde, right: borde };
+      });
+    });
+
+    const ultima = ordenadas.length + 1;
+    ws.autoFilter = { from: "A1", to: `H${ultima}` };
+
+    const total = ws.addRow({ clienta: "TOTAL INGRESOS" });
+    total.getCell("precio").value = { formula: `SUM(H2:H${ultima})`, result: totalIngresosExport(ordenadas) };
+    total.getCell("precio").numFmt = '"$" #,##0';
+    total.eachCell({ includeEmpty: true }, (cell) => {
+      cell.font = { bold: true };
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFF5F0E8" } };
+      cell.border = { top: { style: "medium", color: { argb: "FFC8A84A" } } };
+    });
+
+    // ── Hoja 2: Resumen ──
+    const rs = wb.addWorksheet("Resumen");
+    rs.columns = [
+      { header: "Concepto", key: "concepto", width: 28 },
+      { header: "Valor", key: "valor", width: 18 },
+    ];
+    const rh = rs.getRow(1);
+    rh.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFE8C97A" } };
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0A0A0B" } };
+      cell.alignment = { horizontal: "center" };
+    });
+    const cuenta = (e: string) => ordenadas.filter((c) => c.estado === e).length;
+    const completadasN = cuenta("completada");
+    const filas: [string, number, string?][] = [
+      ["Total de citas", ordenadas.length],
+      ["Completadas", completadasN],
+      ["Canceladas", cuenta("cancelada")],
+      ["No asistieron", cuenta("no_asistio")],
+      ["Pendientes / confirmadas", cuenta("pendiente") + cuenta("confirmada") + cuenta("en_proceso")],
+      ["Ingresos (COP)", totalIngresosExport(ordenadas), '"$" #,##0'],
+      ["Ticket promedio (COP)", completadasN > 0 ? Math.round(totalIngresosExport(ordenadas) / completadasN) : 0, '"$" #,##0'],
+    ];
+    filas.forEach(([concepto, valor, fmt]) => {
+      const r = rs.addRow({ concepto, valor });
+      if (fmt) r.getCell("valor").numFmt = fmt;
+      r.getCell("valor").alignment = { horizontal: "right" };
+      r.eachCell((cell) => {
+        cell.border = { top: borde, bottom: borde, left: borde, right: borde };
+      });
+    });
+
+    const buffer = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     const sufijo = periodo === "mes" ? format(new Date(), "yyyy-MM") : `${periodo}-${format(new Date(), "yyyy-MM-dd")}`;
-    a.download = `citas-${sufijo}.csv`;
+    a.download = `citas-${sufijo}.xlsx`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+
+  const totalIngresosExport = (lista: CitaReporteRow[]) =>
+    lista.reduce((sum, c) => sum + (c.estado === "completada" ? c.precio_cobrado ?? 0 : 0), 0);
 
   // ── Generar cierre de hoy ──
   const handleGenerarCierre = async () => {
@@ -494,9 +587,9 @@ function ReportesPage() {
               );
             })}
           </div>
-          <Button className="w-full sm:w-auto shrink-0" variant="accent" size="sm" onClick={handleExportarCSV} disabled={loading || citas.length === 0}>
+          <Button className="w-full sm:w-auto shrink-0" variant="accent" size="sm" onClick={handleExportarExcel} disabled={loading || citas.length === 0}>
             <Download size={14} style={{ marginRight: 6 }} />
-            Exportar CSV
+            Exportar Excel
           </Button>
         </div>
       </div>
