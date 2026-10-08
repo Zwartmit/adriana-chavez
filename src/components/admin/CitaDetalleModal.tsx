@@ -5,6 +5,7 @@ import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { supabase } from "@/lib/supabase/client";
 import type { EstadoCita } from "@/lib/supabase/types";
 import type { CitaUI } from "@/components/admin/CalendarioCitas";
+import { estadoLabel } from "@/lib/utils";
 
 const ESTADO_STYLES: Record<EstadoCita, { label: string; bg: string; color: string }> = {
   pendiente: { label: "Pendiente", bg: "rgba(212,168,75,0.15)", color: "var(--color-warning)" },
@@ -126,7 +127,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
               borderRadius: "var(--radius-full)",
             }}
           >
-            {estadoStyle.label}
+            {estadoLabel(cita.estado)}
           </span>
         </div>
 

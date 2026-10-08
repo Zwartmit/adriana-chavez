@@ -2,6 +2,7 @@ import { X, Plus, Clock, User, Scissors } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/Button";
+import { estadoLabel } from "@/lib/utils";
 import type { CitaUI, BloqueoUI } from "./CalendarioCitas";
 
 interface DetalleDiaPanelProps {
@@ -160,7 +161,7 @@ export function DetalleDiaPanel({
                                 : "var(--color-primary-dim)",
                             }}
                           >
-                            {cita.estado}
+                            {estadoLabel(cita.estado)}
                           </span>
                         </div>
 

@@ -8,7 +8,7 @@ import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
 import type { EstadoCita } from "@/lib/supabase/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, estadoLabel } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/clientes/$clienteId")({
   component: ClienteDetallePage,
@@ -77,7 +77,7 @@ function EstadoBadge({ estado }: { estado: EstadoCita }) {
         whiteSpace: "nowrap",
       }}
     >
-      {s.label}
+      {estadoLabel(estado)}
     </span>
   );
 }
@@ -252,7 +252,7 @@ function ClienteDetallePage() {
   const historialTotal = historial.reduce((sum, c) => sum + (c.precioCobrado ?? 0), 0);
 
   return (
-    <AdminLayout pageTitle={cliente ? `${cliente.nombre} ${cliente.apellido ?? ""}`.trim() : "Clienta"}>
+    <AdminLayout pageTitle="Ficha de clienta">
       <button
         type="button"
         onClick={() => navigate({ to: "/admin/clientes" })}

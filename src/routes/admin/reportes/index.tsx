@@ -23,6 +23,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { IngresosChart, type ChartPoint } from "@/components/admin/reportes/IngresosChart";
 import { Button } from "@/components/ui/Button";
+import { estadoLabel } from "@/lib/utils";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 import { getUser } from "@/lib/supabase/auth";
@@ -47,6 +48,7 @@ interface CitaReporteRow {
   estado: EstadoCita;
   precio_cobrado: number | null;
   fecha_hora: string;
+  canal_origen: string | null;
   servicio_id: string | null;
   profesional_id: string | null;
   clientes: { nombre: string; apellido: string | null } | null;
@@ -157,7 +159,7 @@ function ReportesPage() {
     const [{ data: citasData, error: citasError }, { data: previasData, error: previasError }] = await Promise.all([
       supabase
         .from("citas")
-        .select("id, estado, precio_cobrado, fecha_hora, servicio_id, profesional_id, clientes(nombre, apellido)")
+        .select("id, estado, precio_cobrado, fecha_hora, canal_origen, servicio_id, profesional_id, clientes(nombre, apellido)")
         .gte("fecha_hora", inicio.toISOString())
         .lte("fecha_hora", fin.toISOString()),
       supabase
@@ -326,27 +328,45 @@ function ReportesPage() {
 
   // ── Exportar CSV ──
   const handleExportarCSV = () => {
-    const headers = ["Fecha", "Hora", "Clienta", "Servicio", "Profesional", "Estado", "Precio cobrado"];
-    const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
-    const rows = citas.map((c) => {
+    const headers = ["Fecha", "Hora", "Clienta", "Servicio", "Profesional", "Canal", "Estado", "Precio cobrado (COP)"];
+    const canalLabel: Record<string, string> = {
+      web: "Web",
+      whatsapp: "WhatsApp",
+      telefono: "Teléfono",
+      presencial: "Presencial",
+    };
+    // Escapa comillas, envuelve en comillas y evita que Excel interprete texto como fórmula.
+    const escape = (v: string) => {
+      const seguro = /^[=+\-@\t\r]/.test(v) ? `'${v}` : v;
+      return `"${seguro.replace(/"/g, '""')}"`;
+    };
+    const ordenadas = [...citas].sort(
+      (a, b) => new Date(a.fecha_hora).getTime() - new Date(b.fecha_hora).getTime(),
+    );
+    const rows = ordenadas.map((c) => {
       const fecha = new Date(c.fecha_hora);
       const clienteNombre = c.clientes ? `${c.clientes.nombre} ${c.clientes.apellido ?? ""}`.trim() : "";
+      // El precio solo se informa en citas completadas.
+      const precio = c.estado === "completada" && c.precio_cobrado != null ? String(c.precio_cobrado) : "";
       return [
         format(fecha, "yyyy-MM-dd"),
         format(fecha, "HH:mm"),
         escape(clienteNombre),
         escape(c.servicio_id ? serviciosNombre.get(c.servicio_id) ?? "" : ""),
         escape(c.profesional_id ? profesionalesNombre.get(c.profesional_id) ?? "" : ""),
-        c.estado,
-        String(c.precio_cobrado ?? ""),
+        canalLabel[c.canal_origen ?? ""] ?? "",
+        estadoLabel(c.estado),
+        precio,
       ].join(",");
     });
-    const csv = [headers.join(","), ...rows].join("\n");
+    // BOM UTF-8 para que Excel muestre bien tildes y ñ; CRLF como fin de línea.
+    const csv = "\uFEFF" + [headers.join(","), ...rows].join("\r\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `reporte-${format(new Date(), "yyyy-MM")}.csv`;
+    const sufijo = periodo === "mes" ? format(new Date(), "yyyy-MM") : `${periodo}-${format(new Date(), "yyyy-MM-dd")}`;
+    a.download = `citas-${sufijo}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
