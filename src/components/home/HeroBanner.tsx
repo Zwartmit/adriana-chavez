@@ -70,7 +70,7 @@ export function HeroBanner() {
               color: "var(--color-text-primary)",
             }}
           >
-            Belleza, estilo y
+            Prueba de desarrollo
             <br />
             confianza en un solo lugar.
           </h1>
