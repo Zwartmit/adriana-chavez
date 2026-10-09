@@ -175,6 +175,8 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
                 {cita.fechaHora.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" })}
                 {" · "}
                 {cita.fechaHora.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true })}
+                {" – "}
+                {cita.fechaFin.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true })}
               </p>
             </div>
             <div>

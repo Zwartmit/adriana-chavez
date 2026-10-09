@@ -127,7 +127,7 @@ export function DetalleDiaPanel({
                         onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-alt)")}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg-alt)")}
                       >
-                        <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center justify-between w-full flex-wrap gap-2">
                           <span
                             style={{
                               fontFamily: "var(--font-mono)",
@@ -136,7 +136,7 @@ export function DetalleDiaPanel({
                               color: "var(--color-text-primary)",
                             }}
                           >
-                            {formatTime(cita.fechaHora)}
+                            {formatTime(cita.fechaHora)} – {formatTime(cita.fechaFin)}
                           </span>
                           <span
                             style={{

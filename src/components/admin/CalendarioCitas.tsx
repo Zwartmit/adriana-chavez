@@ -28,6 +28,7 @@ import { BloqueoDetalleModal } from "@/components/admin/BloqueoDetalleModal";
 export interface CitaUI {
   id: string;
   fechaHora: Date;
+  fechaFin: Date;
   duracionMin: number;
   estado: EstadoCita;
   estadoReal: EstadoCita;
@@ -60,8 +61,9 @@ function mapCita(row: CitaRow): CitaUI {
   // la mostramos visualmente como "completada" sin tocar la BD.
   let estadoVisual: EstadoCita = row.estado;
   const estadosActivos: EstadoCita[] = ["pendiente", "confirmada", "en_proceso"];
+  const finalizacion = new TZDate(fechaHora.getTime() + row.duracion_min * 60_000, "America/Bogota");
+  
   if (estadosActivos.includes(row.estado)) {
-    const finalizacion = new Date(fechaHora.getTime() + row.duracion_min * 60_000);
     if (finalizacion < new Date()) {
       estadoVisual = "completada";
     }
@@ -70,6 +72,7 @@ function mapCita(row: CitaRow): CitaUI {
   return {
     id: row.id,
     fechaHora,
+    fechaFin: finalizacion,
     duracionMin: row.duracion_min,
     estado: estadoVisual,
     estadoReal: row.estado,
