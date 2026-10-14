@@ -4,6 +4,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { ProfesionalForm, type ProfesionalFormData } from "@/components/admin/profesionales/ProfesionalForm";
 import { BloqueosPanel } from "@/components/admin/profesionales/BloqueosPanel";
+import { ExcepcionesPanel } from "@/components/admin/profesionales/ExcepcionesPanel";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 
@@ -22,7 +23,7 @@ function EditarProfesionalPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   
-  const [activeTab, setActiveTab] = useState<"info" | "bloqueos">("info");
+  const [activeTab, setActiveTab] = useState<"info" | "bloqueos" | "excepciones">("info");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -153,6 +154,16 @@ function EditarProfesionalPage() {
           >
             Bloqueos de horario
           </button>
+          <button
+            onClick={() => setActiveTab("excepciones")}
+            className={`pb-3 font-semibold font-body text-sm transition-colors ${
+              activeTab === "excepciones" 
+                ? "text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]" 
+                : "text-[var(--color-text-on-light-muted)] hover:text-[var(--color-text-on-light)]"
+            }`}
+          >
+            Excepciones de horario
+          </button>
         </div>
 
         <div>
@@ -170,6 +181,8 @@ function EditarProfesionalPage() {
             />
           ) : activeTab === "bloqueos" ? (
             <BloqueosPanel profesionalId={profesionalId} />
+          ) : activeTab === "excepciones" ? (
+            <ExcepcionesPanel profesionalId={profesionalId} />
           ) : null}
         </div>
       </div>
