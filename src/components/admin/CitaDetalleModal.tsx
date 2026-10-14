@@ -1,5 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { DayPicker } from "react-day-picker";
+import { es } from "react-day-picker/locale";
+import "react-day-picker/style.css";
+import { TZDate } from "@date-fns/tz";
 import { Button } from "@/components/ui/Button";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { supabase } from "@/lib/supabase/client";
@@ -37,11 +41,208 @@ const rowValue: React.CSSProperties = {
   color: "var(--color-text-on-light)",
 };
 
+const fieldLabel: React.CSSProperties = {
+  ...rowLabel,
+  display: "block",
+  marginBottom: "6px",
+};
+
+const fieldInput: React.CSSProperties = {
+  width: "100%",
+  padding: "10px 14px",
+  backgroundColor: "var(--color-surface-light)",
+  border: "1px solid var(--color-border-light)",
+  borderRadius: "var(--radius-lg)",
+  fontFamily: "var(--font-body)",
+  fontSize: "var(--text-sm)",
+  color: "var(--color-text-on-light)",
+  outline: "none",
+};
+
+const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const MESES = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
+
+function format12h(time24: string) {
+  const [h, m] = time24.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
+function pad2(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function toYmd(d: Date) {
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+/** Texto para WhatsApp: "jueves 15 de octubre a las 3:00 pm" */
+function textoFechaHora(fecha: Date, hora24: string) {
+  return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} a las ${format12h(hora24).toLowerCase()}`;
+}
+
+/** Deja solo dígitos y agrega 57 (Colombia) a los celulares de 10 dígitos. */
+function telefonoWhatsapp(telefono: string | null) {
+  if (!telefono) return null;
+  const digits = telefono.replace(/\D/g, "");
+  if (digits.length === 10) return `57${digits}`;
+  if (digits.length >= 11) return digits;
+  return null;
+}
+
+interface ProfesionalOption {
+  id: string;
+  nombre: string;
+}
+
+interface CitaMovida {
+  fecha: Date;
+  hora: string;
+  profesionalNombre: string;
+}
+
 export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDetalleModalProps) {
   const [updating, setUpdating] = useState(false);
   const [confirmAction, setConfirmAction] = useState<EstadoCita | null>(null);
 
+  // Reprogramación
+  const [vista, setVista] = useState<"detalle" | "reprogramar" | "movida">("detalle");
+  const [profesionales, setProfesionales] = useState<ProfesionalOption[]>([]);
+  const [nuevaFecha, setNuevaFecha] = useState<Date | undefined>(undefined);
+  const [nuevaProfesionalId, setNuevaProfesionalId] = useState("");
+  const [nuevaHora, setNuevaHora] = useState("");
+  const [horasLibres, setHorasLibres] = useState<string[]>([]);
+  const [loadingHoras, setLoadingHoras] = useState(false);
+  const [horasError, setHorasError] = useState<string | null>(null);
+  const [moveError, setMoveError] = useState<string | null>(null);
+  const [moving, setMoving] = useState(false);
+  const [movida, setMovida] = useState<CitaMovida | null>(null);
+
+  const citaId = cita?.id;
+
+  // Cada vez que se abre otra cita, se vuelve a la vista de detalle
+  useEffect(() => {
+    setVista("detalle");
+    setMovida(null);
+    setMoveError(null);
+    setConfirmAction(null);
+  }, [citaId]);
+
+  // Horas libres para la profesional y el día elegidos (la propia cita no cuenta como ocupada)
+  useEffect(() => {
+    if (vista !== "reprogramar" || !cita || !nuevaFecha || !nuevaProfesionalId) {
+      setHorasLibres([]);
+      return;
+    }
+    let cancelled = false;
+    setLoadingHoras(true);
+    setHorasError(null);
+    supabase
+      .rpc("horarios_libres", {
+        p_servicio: cita.servicioId,
+        p_fecha: toYmd(nuevaFecha),
+        p_profesional: nuevaProfesionalId,
+        p_incluir_pasadas: false,
+        p_excluir_cita: cita.id,
+      })
+      .then(({ data, error }: { data: { inicio_local: string }[] | null; error: { message: string } | null }) => {
+        if (cancelled) return;
+        setLoadingHoras(false);
+        if (error) {
+          console.error("[CitaDetalleModal] error al cargar horas libres:", error.message);
+          setHorasLibres([]);
+          setHorasError("No se pudieron cargar las horas libres. Intenta de nuevo.");
+          return;
+        }
+        const horas = (data ?? []).map((r) => r.inicio_local);
+        setHorasLibres(horas);
+        setNuevaHora((prev) => (horas.includes(prev) ? prev : ""));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [vista, cita, nuevaFecha, nuevaProfesionalId]);
+
   if (!cita) return null;
+
+  const puedeReprogramar =
+    ["pendiente", "confirmada", "en_proceso"].includes(cita.estadoReal) && cita.fechaFin > new Date();
+
+  const abrirReprogramar = async () => {
+    setMoveError(null);
+    setHorasError(null);
+    // fechaHora es un TZDate de Bogotá: sus getters devuelven la fecha y hora de Bogotá
+    setNuevaFecha(new Date(cita.fechaHora.getFullYear(), cita.fechaHora.getMonth(), cita.fechaHora.getDate()));
+    setNuevaProfesionalId(cita.profesionalId);
+    setNuevaHora(`${pad2(cita.fechaHora.getHours())}:${pad2(cita.fechaHora.getMinutes())}`);
+    setVista("reprogramar");
+    const { data } = await supabase
+      .from("profesionales")
+      .select("id, nombre")
+      .eq("activo", true)
+      .order("orden", { ascending: true });
+    setProfesionales((data as ProfesionalOption[] | null) ?? []);
+  };
+
+  const horaActual = `${pad2(cita.fechaHora.getHours())}:${pad2(cita.fechaHora.getMinutes())}`;
+  const sinCambios =
+    !!nuevaFecha &&
+    toYmd(nuevaFecha) === toYmd(new Date(cita.fechaHora.getFullYear(), cita.fechaHora.getMonth(), cita.fechaHora.getDate())) &&
+    nuevaProfesionalId === cita.profesionalId &&
+    nuevaHora === horaActual;
+
+  const handleReprogramar = async () => {
+    setMoveError(null);
+    if (!nuevaFecha || !nuevaProfesionalId || !nuevaHora) {
+      setMoveError("Elige profesional, fecha y hora.");
+      return;
+    }
+    const [hh, mm] = nuevaHora.split(":").map(Number);
+    // Forzamos Bogotá sin importar la zona horaria del computador
+    const fechaHora = new TZDate(
+      nuevaFecha.getFullYear(), nuevaFecha.getMonth(), nuevaFecha.getDate(), hh, mm, 0, 0, "America/Bogota",
+    );
+
+    setMoving(true);
+    // Al mover la cita se reinician los recordatorios para que se envíen según la nueva hora
+    const { error } = await supabase
+      .from("citas")
+      .update({
+        fecha_hora: fechaHora.toISOString(),
+        profesional_id: nuevaProfesionalId,
+        recordatorio_24h_enviado: false,
+        recordatorio_2h_enviado: false,
+        seguimiento_enviado: false,
+      } as any)
+      .eq("id", cita.id);
+    setMoving(false);
+
+    if (error) {
+      console.error("[CitaDetalleModal] error al reprogramar:", error.message);
+      setMoveError(error.code === "23P01" ? error.message : "No se pudo reprogramar la cita. Intenta de nuevo.");
+      return;
+    }
+
+    setMovida({
+      fecha: nuevaFecha,
+      hora: nuevaHora,
+      profesionalNombre: profesionales.find((p) => p.id === nuevaProfesionalId)?.nombre ?? cita.profesionalNombre,
+    });
+    setVista("movida");
+    onUpdated();
+  };
+
+  const waNumero = telefonoWhatsapp(cita.clienteTelefono);
+  const waUrl =
+    movida && waNumero
+      ? `https://wa.me/${waNumero}?text=${encodeURIComponent(
+          `Hola ${cita.clienteNombre.split(" ")[0]}! Te escribimos del salón de Adriana Chávez. Tu cita de ${cita.servicioNombre} quedó reprogramada para el ${textoFechaHora(movida.fecha, movida.hora)}. Si no te funciona, avísanos y la cambiamos. Un abrazo!`,
+        )}`
+      : null;
 
   const handleUpdateEstado = async (estado: EstadoCita) => {
     setUpdating(true);
@@ -87,6 +288,8 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
           position: "relative",
           boxShadow: "var(--shadow-xl)",
           border: "1px solid var(--color-border-light)",
+          maxHeight: "calc(100vh - 3rem)",
+          overflowY: "auto",
         }}
       >
         <button
@@ -113,9 +316,9 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
               color: "var(--color-text-on-light)",
             }}
           >
-            Detalle de cita
+            {vista === "reprogramar" ? "Reprogramar cita" : vista === "movida" ? "Cita reprogramada" : "Detalle de cita"}
           </h2>
-          <span
+          {vista === "detalle" && <span
             style={{
               backgroundColor: estadoStyle.bg,
               color: estadoStyle.color,
@@ -128,9 +331,10 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             }}
           >
             {estadoLabel(cita.estado)}
-          </span>
+          </span>}
         </div>
 
+        {vista === "detalle" && (<>
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div>
             <p style={rowLabel}>Clienta</p>
@@ -198,7 +402,18 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
           )}
         </div>
 
-        <div className="flex gap-2 w-full" style={{ marginTop: "2rem" }}>
+        <div className="flex flex-wrap gap-2 w-full" style={{ marginTop: "2rem" }}>
+          {puedeReprogramar && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="flex-1"
+              disabled={updating}
+              onClick={abrirReprogramar}
+            >
+              Reprogramar
+            </Button>
+          )}
           <Button
             variant="secondary"
             size="sm"
@@ -226,6 +441,142 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             </Button>
           )}
         </div>
+        </>)}
+
+        {vista === "reprogramar" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div>
+              <p style={rowLabel}>Clienta · Servicio</p>
+              <p style={rowValue}>
+                {cita.clienteNombre} · {cita.servicioNombre} ({cita.duracionMin} min)
+              </p>
+            </div>
+
+            <div>
+              <label style={fieldLabel}>Profesional</label>
+              <select
+                value={nuevaProfesionalId}
+                onChange={(e) => setNuevaProfesionalId(e.target.value)}
+                style={fieldInput}
+              >
+                {profesionales.length === 0 && <option value={cita.profesionalId}>{cita.profesionalNombre}</option>}
+                {profesionales.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={fieldLabel}>Nueva fecha</label>
+              <div
+                className="flex justify-center overflow-x-auto w-full"
+                style={{
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-lg)",
+                  backgroundColor: "var(--color-bg-alt)",
+                  padding: "0.5rem",
+                }}
+              >
+                <DayPicker
+                  className="admin-daypicker"
+                  mode="single"
+                  locale={es}
+                  selected={nuevaFecha}
+                  onSelect={(d) => d && setNuevaFecha(d)}
+                  weekStartsOn={1}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={fieldLabel}>Nueva hora</label>
+              <select
+                value={nuevaHora}
+                onChange={(e) => setNuevaHora(e.target.value)}
+                disabled={loadingHoras}
+                style={fieldInput}
+              >
+                <option value="">
+                  {loadingHoras
+                    ? "Buscando horas..."
+                    : horasLibres.length === 0
+                      ? "No hay horas libres ese día"
+                      : "Selecciona una hora"}
+                </option>
+                {horasLibres.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {format12h(slot)}
+                  </option>
+                ))}
+              </select>
+              {horasError && (
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-error)", marginTop: 6 }}>
+                  {horasError}
+                </p>
+              )}
+            </div>
+
+            {moveError && (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-error)" }}>
+                {moveError}
+              </p>
+            )}
+
+            <div className="flex gap-2 w-full">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="flex-1"
+                disabled={moving}
+                onClick={() => setVista("detalle")}
+              >
+                Volver
+              </Button>
+              <Button
+                variant="accent"
+                size="sm"
+                className="flex-1"
+                disabled={moving || !nuevaHora || sinCambios}
+                onClick={handleReprogramar}
+              >
+                {moving ? "Guardando..." : "Guardar cambio"}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {vista === "movida" && movida && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div>
+              <p style={rowLabel}>Nuevo horario</p>
+              <p style={rowValue}>
+                {textoFechaHora(movida.fecha, movida.hora)} · {movida.profesionalNombre}
+              </p>
+              <p style={{ ...rowValue, fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)", marginTop: 4 }}>
+                Los recordatorios se enviarán según la nueva hora. A la clienta no se le ha avisado todavía.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2 w-full">
+              {waUrl ? (
+                <a href={waUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+                  <Button variant="accent" size="sm" className="w-full">
+                    Avisar a la clienta
+                  </Button>
+                </a>
+              ) : (
+                <p style={{ ...rowValue, fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
+                  Esta clienta no tiene un teléfono válido para avisarle por WhatsApp.
+                </p>
+              )}
+              <Button variant="secondary" size="sm" className="flex-1" onClick={onClose}>
+                Listo
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {confirmAction && (

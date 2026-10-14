@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { format } from "date-fns";
 import { X } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { es } from "react-day-picker/locale";
@@ -36,18 +35,6 @@ interface NuevaCitaPanelProps {
   onError: (message: string) => void;
 }
 
-function generarSlots(): string[] {
-  const slots: string[] = [];
-  for (let h = 0; h <= 23; h++) {
-    for (const m of [0, 30]) {
-      slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-    }
-  }
-  return slots;
-}
-
-const SLOTS = generarSlots();
-
 function format12h(time24: string) {
   const [h, m] = time24.split(":").map(Number);
   const ampm = h >= 12 ? "PM" : "AM";
@@ -76,7 +63,7 @@ const labelStyle: React.CSSProperties = {
   marginBottom: "6px",
 };
 
-export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onError }: NuevaCitaPanelProps) {
+export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: NuevaCitaPanelProps) {
   const [clienteQuery, setClienteQuery] = useState("");
   const [clienteResults, setClienteResults] = useState<ClienteResult[]>([]);
   const [selectedCliente, setSelectedCliente] = useState<ClienteResult | null>(null);
@@ -99,6 +86,11 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
   const [isServiciosModalOpen, setIsServiciosModalOpen] = useState(false);
   const [isProfesionalsModalOpen, setIsProfesionalsModalOpen] = useState(false);
+
+  // Horas de inicio válidas (horario del salón, almuerzo, excepciones, citas y bloqueos), calculadas en la base
+  const [horasLibres, setHorasLibres] = useState<string[]>([]);
+  const [loadingHoras, setLoadingHoras] = useState(false);
+  const [horasError, setHorasError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -141,6 +133,42 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
     };
   }, [clienteQuery]);
 
+  useEffect(() => {
+    if (!isOpen || !selectedServicioId || !selectedProfesionalId || !selectedDate) {
+      setHorasLibres([]);
+      setSelectedHora("");
+      setHorasError(null);
+      return;
+    }
+    let cancelled = false;
+    const fecha = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+    setLoadingHoras(true);
+    setHorasError(null);
+    supabase
+      .rpc("horarios_libres", {
+        p_servicio: selectedServicioId,
+        p_fecha: fecha,
+        p_profesional: selectedProfesionalId,
+        p_incluir_pasadas: true,
+      })
+      .then(({ data, error }: { data: { inicio_local: string }[] | null; error: { message: string } | null }) => {
+        if (cancelled) return;
+        setLoadingHoras(false);
+        if (error) {
+          console.error("[NuevaCitaPanel] error al cargar horas libres:", error.message);
+          setHorasLibres([]);
+          setHorasError("No se pudieron cargar las horas libres. Intenta de nuevo.");
+          return;
+        }
+        const horas = (data ?? []).map((r) => r.inicio_local);
+        setHorasLibres(horas);
+        setSelectedHora((prev) => (horas.includes(prev) ? prev : ""));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, selectedServicioId, selectedProfesionalId, selectedDate]);
+
   const resetForm = useCallback(() => {
     setClienteQuery("");
     setClienteResults([]);
@@ -182,58 +210,6 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
     setSubmitting(true);
 
-    // --- VALIDACIÓN DE SOLAPAMIENTOS ---
-    const startOfDay = new TZDate(year, month, date, 0, 0, 0, 0, "America/Bogota");
-    const endOfDay = new TZDate(year, month, date, 23, 59, 59, 999, "America/Bogota");
-    const startNew = fechaHora.getTime();
-    const endNew = startNew + (servicio?.duracion_min ?? 60) * 60_000;
-    const profName = profesionales.find((p: ProfesionalOption) => p.id === selectedProfesionalId)?.nombre ?? "La profesional";
-
-    const [citasRes, bloqueosRes] = await Promise.all([
-      supabase
-        .from("citas")
-        .select("fecha_hora, duracion_min, estado")
-        .eq("profesional_id", selectedProfesionalId)
-        .in("estado", ["pendiente", "confirmada", "en_proceso"])
-        .gte("fecha_hora", startOfDay.toISOString())
-        .lte("fecha_hora", endOfDay.toISOString()),
-      supabase
-        .from("bloqueos_horario")
-        .select("fecha_inicio, fecha_fin")
-        .eq("profesional_id", selectedProfesionalId)
-        .gte("fecha_fin", startOfDay.toISOString())
-        .lte("fecha_inicio", endOfDay.toISOString())
-    ]);
-
-    if (bloqueosRes.data) {
-      for (const b of bloqueosRes.data) {
-        const bs = new Date(b.fecha_inicio).getTime();
-        const be = new Date(b.fecha_fin).getTime();
-        if (startNew < be && endNew > bs) {
-          const formatBs = format(new TZDate(b.fecha_inicio, "America/Bogota"), "hh:mm a");
-          const formatBe = format(new TZDate(b.fecha_fin, "America/Bogota"), "hh:mm a");
-          setFormError(`${profName} tiene un bloqueo de ${formatBs} a ${formatBe}.`);
-          setSubmitting(false);
-          return;
-        }
-      }
-    }
-
-    if (citasRes.data) {
-      for (const c of citasRes.data) {
-        const cs = new Date(c.fecha_hora).getTime();
-        const ce = cs + c.duracion_min * 60_000;
-        if (startNew < ce && endNew > cs) {
-          const formatCs = format(new TZDate(c.fecha_hora, "America/Bogota"), "hh:mm a");
-          const formatCe = format(new TZDate(new Date(ce).toISOString(), "America/Bogota"), "hh:mm a");
-          setFormError(`${profName} ya tiene una cita de ${formatCs} a ${formatCe}.`);
-          setSubmitting(false);
-          return;
-        }
-      }
-    }
-    // -----------------------------------
-
     const { error } = await supabase.from("citas").insert({
       cliente_id: selectedCliente.id,
       profesional_id: selectedProfesionalId,
@@ -253,8 +229,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
 
     if (error) {
       console.error("[NuevaCitaPanel] error al crear cita:", error.message);
-      setFormError(error.message);
-      onError(error.code === "23P01" ? error.message : "No se pudo crear la cita.");
+      setFormError(error.code === "23P01" ? error.message : "No se pudo crear la cita. Intenta de nuevo.");
       return;
     }
 
@@ -553,14 +528,32 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated, onErro
           {/* Hora */}
           <div>
             <label style={labelStyle}>Hora *</label>
-            <select value={selectedHora} onChange={(e) => setSelectedHora(e.target.value)} style={inputStyle}>
-              <option value="">Selecciona una hora</option>
-              {SLOTS.map((slot) => (
+            <select
+              value={selectedHora}
+              onChange={(e) => setSelectedHora(e.target.value)}
+              disabled={!selectedServicioId || !selectedProfesionalId || loadingHoras}
+              style={inputStyle}
+            >
+              <option value="">
+                {!selectedServicioId || !selectedProfesionalId
+                  ? "Elige servicio y profesional primero"
+                  : loadingHoras
+                    ? "Buscando horas..."
+                    : horasLibres.length === 0
+                      ? "No hay horas libres ese día"
+                      : "Selecciona una hora"}
+              </option>
+              {horasLibres.map((slot) => (
                 <option key={slot} value={slot}>
                   {format12h(slot)}
                 </option>
               ))}
             </select>
+            {horasError && (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-error)", marginTop: 6 }}>
+                {horasError}
+              </p>
+            )}
           </div>
 
           {/* Notas */}

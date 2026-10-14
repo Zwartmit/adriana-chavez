@@ -33,6 +33,8 @@ export interface CitaUI {
   estado: EstadoCita;
   estadoReal: EstadoCita;
   notasCliente: string | null;
+  profesionalId: string;
+  servicioId: string;
   clienteNombre: string;
   clienteTelefono: string | null;
   profesionalNombre: string;
@@ -46,6 +48,8 @@ interface CitaRow {
   duracion_min: number;
   estado: EstadoCita;
   notas_cliente: string | null;
+  profesional_id: string;
+  servicio_id: string;
   clientes: { nombre: string; apellido: string | null; telefono: string | null } | null;
   profesionales: { nombre: string; color_calendario: string } | null;
   servicios: { nombre: string; duracion_min: number } | null;
@@ -77,6 +81,8 @@ function mapCita(row: CitaRow): CitaUI {
     estado: estadoVisual,
     estadoReal: row.estado,
     notasCliente: row.notas_cliente,
+    profesionalId: row.profesional_id,
+    servicioId: row.servicio_id,
     clienteNombre: cliente ? `${cliente.nombre} ${cliente.apellido ?? ""}`.trim() : "Clienta",
     clienteTelefono: cliente?.telefono ?? null,
     profesionalNombre: row.profesionales?.nombre ?? "Sin asignar",
@@ -138,7 +144,7 @@ export function CalendarioCitas() {
       supabase
         .from("citas")
         .select(`
-          id, fecha_hora, duracion_min, estado, notas_cliente,
+          id, fecha_hora, duracion_min, estado, notas_cliente, profesional_id, servicio_id,
           clientes(nombre, apellido, telefono),
           profesionales(nombre, color_calendario),
           servicios(nombre, duracion_min)
