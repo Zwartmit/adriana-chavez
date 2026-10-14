@@ -25,6 +25,7 @@ import { Route as TiendaOrdenConfirmadaRouteImport } from './routes/tienda/orden
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/index'
 import { Route as AdminClientesClienteIdRouteImport } from './routes/admin/clientes/$clienteId'
 import { Route as AdminGaleriaIndexRouteImport } from './routes/admin/galeria/index'
+import { Route as AdminHorarioIndexRouteImport } from './routes/admin/horario/index'
 import { Route as AdminInventarioIndexRouteImport } from './routes/admin/inventario/index'
 import { Route as AdminOrdenesIndexRouteImport } from './routes/admin/ordenes/index'
 import { Route as AdminProductosIndexRouteImport } from './routes/admin/productos/index'
@@ -117,6 +118,11 @@ const AdminGaleriaIndexRoute = AdminGaleriaIndexRouteImport.update({
   path: '/admin/galeria/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminHorarioIndexRoute = AdminHorarioIndexRouteImport.update({
+  id: '/admin/horario/',
+  path: '/admin/horario/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminInventarioIndexRoute = AdminInventarioIndexRouteImport.update({
   id: '/admin/inventario/',
   path: '/admin/inventario/',
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/galeria/': typeof AdminGaleriaIndexRoute
+  '/admin/horario/': typeof AdminHorarioIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
   '/admin/ordenes/': typeof AdminOrdenesIndexRoute
   '/admin/productos/': typeof AdminProductosIndexRoute
@@ -227,6 +234,7 @@ export interface FileRoutesByTo {
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
   '/admin/galeria': typeof AdminGaleriaIndexRoute
+  '/admin/horario': typeof AdminHorarioIndexRoute
   '/admin/inventario': typeof AdminInventarioIndexRoute
   '/admin/ordenes': typeof AdminOrdenesIndexRoute
   '/admin/productos': typeof AdminProductosIndexRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/galeria/': typeof AdminGaleriaIndexRoute
+  '/admin/horario/': typeof AdminHorarioIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
   '/admin/ordenes/': typeof AdminOrdenesIndexRoute
   '/admin/productos/': typeof AdminProductosIndexRoute
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
     | '/admin/servicios/nuevo'
     | '/admin/clientes/'
     | '/admin/galeria/'
+    | '/admin/horario/'
     | '/admin/inventario/'
     | '/admin/ordenes/'
     | '/admin/productos/'
@@ -317,6 +327,7 @@ export interface FileRouteTypes {
     | '/admin/servicios/nuevo'
     | '/admin/clientes'
     | '/admin/galeria'
+    | '/admin/horario'
     | '/admin/inventario'
     | '/admin/ordenes'
     | '/admin/productos'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/admin/servicios/nuevo'
     | '/admin/clientes/'
     | '/admin/galeria/'
+    | '/admin/horario/'
     | '/admin/inventario/'
     | '/admin/ordenes/'
     | '/admin/productos/'
@@ -376,6 +388,7 @@ export interface RootRouteChildren {
   AdminServiciosNuevoRoute: typeof AdminServiciosNuevoRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
   AdminGaleriaIndexRoute: typeof AdminGaleriaIndexRoute
+  AdminHorarioIndexRoute: typeof AdminHorarioIndexRoute
   AdminInventarioIndexRoute: typeof AdminInventarioIndexRoute
   AdminOrdenesIndexRoute: typeof AdminOrdenesIndexRoute
   AdminProductosIndexRoute: typeof AdminProductosIndexRoute
@@ -498,6 +511,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGaleriaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/horario/': {
+      id: '/admin/horario/'
+      path: '/admin/horario'
+      fullPath: '/admin/horario/'
+      preLoaderRoute: typeof AdminHorarioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/inventario/': {
       id: '/admin/inventario/'
       path: '/admin/inventario'
@@ -600,6 +620,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminServiciosNuevoRoute: AdminServiciosNuevoRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,
   AdminGaleriaIndexRoute: AdminGaleriaIndexRoute,
+  AdminHorarioIndexRoute: AdminHorarioIndexRoute,
   AdminInventarioIndexRoute: AdminInventarioIndexRoute,
   AdminOrdenesIndexRoute: AdminOrdenesIndexRoute,
   AdminProductosIndexRoute: AdminProductosIndexRoute,

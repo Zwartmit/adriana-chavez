@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
-import { ServicioForm, type ServicioFormData } from "@/components/admin/servicios/ServicioForm";
+import { ServicioForm, horarioServicioPayload, type ServicioFormData } from "@/components/admin/servicios/ServicioForm";
 import { supabase } from "@/lib/supabase/client";
 
 export const Route = createFileRoute("/admin/servicios/nuevo")({
@@ -55,6 +55,7 @@ function NuevoServicioPage() {
       requiere_cita: data.requiere_cita,
       destacado: data.destacado,
       activo: data.activo,
+      ...horarioServicioPayload(data),
       slug,
       orden: 0,
     };

@@ -3,7 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 import { Trash2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
-import { ServicioForm, type ServicioFormData } from "@/components/admin/servicios/ServicioForm";
+import { ServicioForm, horarioServicioPayload, type ServicioFormData } from "@/components/admin/servicios/ServicioForm";
+import { recortarHora } from "@/lib/horario";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 
@@ -52,6 +53,10 @@ function EditarServicioPage() {
       requiere_cita: servicioRes.data.requiere_cita,
       destacado: servicioRes.data.destacado,
       activo: servicioRes.data.activo,
+      ventana_inicio: !!servicioRes.data.inicio_desde,
+      inicio_desde: recortarHora(servicioRes.data.inicio_desde),
+      inicio_hasta: recortarHora(servicioRes.data.inicio_hasta),
+      puede_cruzar_almuerzo: servicioRes.data.puede_cruzar_almuerzo ?? false,
     });
     setLoading(false);
   }, [servicioId]);
@@ -79,6 +84,7 @@ function EditarServicioPage() {
       requiere_cita: data.requiere_cita,
       destacado: data.destacado,
       activo: data.activo,
+      ...horarioServicioPayload(data),
     };
 
     const { error } = await supabase

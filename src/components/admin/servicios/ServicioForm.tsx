@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { generarSlots, format12h } from "@/lib/horario";
 
 interface CategoriaOption {
   id: string;
@@ -18,7 +19,23 @@ export interface ServicioFormData {
   requiere_cita: boolean;
   destacado: boolean;
   activo: boolean;
+  /** Reglas de horario (se guardan en inicio_desde, inicio_hasta y puede_cruzar_almuerzo) */
+  ventana_inicio: boolean;
+  inicio_desde: string; // "HH:MM"
+  inicio_hasta: string; // "HH:MM"
+  puede_cruzar_almuerzo: boolean;
 }
+
+/** Columnas de horario del servicio listas para insert/update en la base. */
+export function horarioServicioPayload(data: ServicioFormData) {
+  return {
+    inicio_desde: data.ventana_inicio ? data.inicio_desde : null,
+    inicio_hasta: data.ventana_inicio ? data.inicio_hasta : null,
+    puede_cruzar_almuerzo: data.puede_cruzar_almuerzo,
+  };
+}
+
+const SLOTS_VENTANA = generarSlots("05:00", "22:00");
 
 interface ServicioFormProps {
   initialData?: Partial<ServicioFormData>;
@@ -64,7 +81,12 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     requiere_cita: initialData?.requiere_cita ?? true,
     destacado: initialData?.destacado ?? false,
     activo: initialData?.activo ?? true,
+    ventana_inicio: initialData?.ventana_inicio ?? false,
+    inicio_desde: initialData?.inicio_desde ?? "",
+    inicio_hasta: initialData?.inicio_hasta ?? "",
+    puede_cruzar_almuerzo: initialData?.puede_cruzar_almuerzo ?? false,
   });
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -81,6 +103,17 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
+    if (formData.ventana_inicio) {
+      if (!formData.inicio_desde || !formData.inicio_hasta) {
+        setFormError("Elige la hora desde y hasta de la franja de inicio.");
+        return;
+      }
+      if (formData.inicio_desde > formData.inicio_hasta) {
+        setFormError("En la franja de inicio, la hora \"hasta\" debe ser igual o posterior a \"desde\".");
+        return;
+      }
+    }
     onSubmit(formData);
   };
 
@@ -119,6 +152,56 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
             <label style={labelStyle}>Duración (minutos) *</label>
             <input required type="number" min={5} step={5} name="duracion_min" value={formData.duracion_min} onChange={handleChange} style={inputStyle} />
           </div>
+        </div>
+      </section>
+
+      <div style={{ height: "1px", backgroundColor: "var(--color-border-light)", margin: "2rem 0" }} />
+
+      {/* Horario del servicio */}
+      <section>
+        <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "0.5rem" }}>
+          Horario del servicio
+        </h3>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)", marginBottom: "1rem" }}>
+          Reglas para agendar este servicio. Las citas que ya existen no se mueven ni se cancelan al cambiarlas.
+        </p>
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="ventana_inicio" checked={formData.ventana_inicio} onChange={handleChange} style={{ width: 18, height: 18, accentColor: "var(--color-primary)" }} />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
+                Solo puede empezar dentro de una franja del día
+              </span>
+            </label>
+            {formData.ventana_inicio && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3" style={{ maxWidth: 420 }}>
+                <div>
+                  <label style={labelStyle}>Puede empezar desde</label>
+                  <select name="inicio_desde" value={formData.inicio_desde} onChange={handleChange} style={inputStyle}>
+                    <option value="">--:--</option>
+                    {SLOTS_VENTANA.map((slot) => (
+                      <option key={slot} value={slot}>{format12h(slot)}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={labelStyle}>Hasta</label>
+                  <select name="inicio_hasta" value={formData.inicio_hasta} onChange={handleChange} style={inputStyle}>
+                    <option value="">--:--</option>
+                    {SLOTS_VENTANA.map((slot) => (
+                      <option key={slot} value={slot}>{format12h(slot)}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" name="puede_cruzar_almuerzo" checked={formData.puede_cruzar_almuerzo} onChange={handleChange} style={{ width: 18, height: 18, accentColor: "var(--color-primary)" }} />
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
+              Puede cruzar la hora de almuerzo
+            </span>
+          </label>
         </div>
       </section>
 
@@ -172,6 +255,12 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
           </label>
         </div>
       </section>
+
+      {formError && (
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-error)" }}>
+          {formError}
+        </p>
+      )}
 
       <div className="flex items-center justify-end gap-3 pt-6">
         <button
