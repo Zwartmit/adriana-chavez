@@ -91,7 +91,7 @@ function SidebarLink({ href, label, icon: Icon, active, isCollapsed, hovered, on
           alignItems: "center",
           justifyContent: isCollapsed ? "center" : "flex-start",
           gap: isCollapsed ? 0 : "0.75rem",
-          padding: isCollapsed ? "0.75rem" : "0.75rem 1rem",
+          padding: isCollapsed ? "clamp(0.375rem, 1.1vh, 0.75rem) 0.75rem" : "clamp(0.375rem, 1.1vh, 0.75rem) 1rem",
           width: "100%",
           borderRadius: "var(--radius-lg)",
           fontFamily: "var(--font-body)",
@@ -181,16 +181,16 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
     <>
       <aside
         className={`fixed top-0 left-0 bottom-0 z-40 flex flex-col transition-all duration-250 ease-in-out ${
-          isCollapsed ? "-translate-x-full md:translate-x-0 w-[240px] md:w-[64px]" : "translate-x-0 w-[240px]"
+          isCollapsed ? "-translate-x-full md:translate-x-0 w-[240px] md:w-[64px]" : "translate-x-0 w-[240px] overflow-y-auto overflow-x-hidden"
         }`}
         style={{
           backgroundColor: "var(--color-bg-alt)",
           borderRight: "1px solid var(--color-border)",
-          padding: "1.75rem 1rem",
+          padding: "clamp(0.75rem, 2vh, 1.75rem) 1rem",
         }}
       >
         {/* Logo */}
-        <div style={{ padding: isCollapsed ? "0" : "0 0.5rem", marginBottom: "2.5rem", overflow: "hidden" }}>
+        <div style={{ padding: isCollapsed ? "0" : "0 0.5rem", marginBottom: "clamp(0.75rem, 2vh, 2rem)", overflow: "hidden", flexShrink: 0 }}>
           {isCollapsed ? (
             <p
               style={{
@@ -257,7 +257,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
             );
           })}
 
-          <div style={{ borderTop: "1px solid var(--color-border)", margin: "0.75rem 0.25rem" }} />
+          <div style={{ borderTop: "1px solid var(--color-border)", margin: "clamp(0.25rem, 1vh, 0.75rem) 0.25rem" }} />
 
           <SidebarLink
             href="/"
@@ -269,7 +269,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
             onHoverChange={(hovered) => setHoveredHref(hovered ? "/" : null)}
           />
 
-          <div style={{ borderTop: "1px solid var(--color-border)", margin: "0.75rem 0.25rem" }} />
+          <div style={{ borderTop: "1px solid var(--color-border)", margin: "clamp(0.25rem, 1vh, 0.75rem) 0.25rem" }} />
 
         </nav>
 
@@ -289,8 +289,8 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
               gap: isCollapsed ? 0 : "0.75rem",
               width: "100%",
               padding: isCollapsed ? "0.75rem" : "0.75rem 1rem",
-              marginTop: "0.75rem",
-              paddingTop: "1.25rem",
+              marginTop: "clamp(0.25rem, 1vh, 0.75rem)",
+              paddingTop: "clamp(0.5rem, 1.5vh, 1.25rem)",
               background: "transparent",
               border: "none",
               borderTop: "1px solid var(--color-border)",
