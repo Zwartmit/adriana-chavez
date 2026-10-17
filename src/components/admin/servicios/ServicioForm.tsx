@@ -88,6 +88,14 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     inicio_hasta: initialData?.inicio_hasta ?? "",
     puede_cruzar_almuerzo: initialData?.puede_cruzar_almuerzo ?? false,
   });
+  // Precio y duración se editan como texto para que los campos nuevos aparezcan vacíos (sin "0").
+  const [precioTxt, setPrecioTxt] = useState(initialData?.precio ? String(initialData.precio) : "");
+  const [horasTxt, setHorasTxt] = useState(
+    initialData?.duracion_min ? String(Math.floor(initialData.duracion_min / 60)) : "",
+  );
+  const [minutosTxt, setMinutosTxt] = useState(
+    initialData?.duracion_min ? String(initialData.duracion_min % 60) : "",
+  );
   const [formError, setFormError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -106,7 +114,17 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
-    if (formData.precio_hasta != null && formData.precio_hasta < formData.precio) {
+    const precio = Number(precioTxt);
+    const duracion = (Number(horasTxt) || 0) * 60 + (Number(minutosTxt) || 0);
+    if (precioTxt.trim() === "" || !Number.isFinite(precio) || precio < 0) {
+      setFormError('Escribe el precio "desde".');
+      return;
+    }
+    if (duracion < 5) {
+      setFormError("La duración debe ser de al menos 5 minutos.");
+      return;
+    }
+    if (formData.precio_hasta != null && formData.precio_hasta < precio) {
       setFormError('El precio "hasta" no puede ser menor que el precio "desde".');
       return;
     }
@@ -120,7 +138,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
         return;
       }
     }
-    onSubmit(formData);
+    onSubmit({ ...formData, precio, duracion_min: duracion });
   };
 
   return (
@@ -147,7 +165,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
           <div>
             <label style={labelStyle}>Precio desde *</label>
             <div className="flex gap-2 items-center">
-              <input required type="number" min={0} name="precio" value={formData.precio} onChange={handleChange} style={{ ...inputStyle, flex: 1 }} />
+              <input required type="number" min={0} name="precio" value={precioTxt} onChange={(e) => setPrecioTxt(e.target.value)} placeholder="Ej: 60000" style={{ ...inputStyle, flex: 1 }} />
             </div>
             <label className="flex items-center gap-2 mt-2 cursor-pointer">
               <input type="checkbox" name="precio_desde" checked={formData.precio_desde} onChange={handleChange} style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }} />
@@ -162,8 +180,13 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
             </p>
           </div>
           <div>
-            <label style={labelStyle}>Duración (minutos) *</label>
-            <input required type="number" min={5} step={5} name="duracion_min" value={formData.duracion_min} onChange={handleChange} style={inputStyle} />
+            <label style={labelStyle}>Duración *</label>
+            <div className="flex gap-3 items-center">
+              <input type="number" min={0} max={12} step={1} aria-label="Horas" value={horasTxt} onChange={(e) => setHorasTxt(e.target.value)} placeholder="0" style={{ ...inputStyle, flex: 1 }} />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>h</span>
+              <input type="number" min={0} max={59} step={5} aria-label="Minutos" value={minutosTxt} onChange={(e) => setMinutosTxt(e.target.value)} placeholder="0" style={{ ...inputStyle, flex: 1 }} />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>min</span>
+            </div>
           </div>
         </div>
       </section>
