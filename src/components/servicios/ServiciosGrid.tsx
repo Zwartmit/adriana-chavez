@@ -26,6 +26,8 @@ interface ServicioUI {
   description: string;
   duration: number;
   price: number;
+  priceTo: number | null;
+  priceFrom: boolean;
   image: string;
   href: string;
   orden: number;
@@ -80,6 +82,8 @@ export function ServiciosGrid({
         description: s.descripcion ?? "",
         duration: s.duracion_min,
         price: s.precio,
+        priceTo: s.precio_hasta,
+        priceFrom: s.precio_desde,
         image: s.imagen_url ?? "",
         href: "/servicios",
         orden: s.orden,

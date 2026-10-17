@@ -6,6 +6,7 @@ import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { Button } from "@/components/ui/Button";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
+import { formatPriceRange } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/servicios/")({
   component: ServiciosAdminPage,
@@ -18,6 +19,8 @@ interface ServicioRow {
   nombre: string;
   categoria_id: string | null;
   precio: number;
+  precio_hasta: number | null;
+  precio_desde: boolean;
   duracion_min: number;
   activo: boolean;
   destacado: boolean;
@@ -71,7 +74,7 @@ function ServiciosAdminPage() {
     const [serviciosRes, categoriasRes] = await Promise.all([
       supabase
         .from("servicios")
-        .select("id, nombre, categoria_id, precio, duracion_min, activo, destacado, created_at, categorias_servicios(nombre)")
+        .select("id, nombre, categoria_id, precio, precio_hasta, precio_desde, duracion_min, activo, destacado, created_at, categorias_servicios(nombre)")
         .order("created_at", { ascending: false }),
       supabase
         .from("categorias_servicios")
@@ -256,7 +259,7 @@ function ServiciosAdminPage() {
                         {s.duracion_min} min
                       </td>
                       <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
-                        {new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(s.precio)}
+                        {formatPriceRange(s.precio, s.precio_hasta, s.precio_desde)}
                       </td>
                       <td style={{ padding: "14px 16px" }}>
                         <div className="flex gap-2">

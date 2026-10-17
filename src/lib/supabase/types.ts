@@ -49,6 +49,7 @@ export interface ServiciosRow {
           duracion_min: number;
           precio: number;
           precio_desde: boolean;
+          precio_hasta: number | null;
           imagen_url: string | null;
           requiere_cita: boolean;
           activo: boolean;
@@ -69,6 +70,7 @@ export interface ClientesRow {
           alergias: string | null;
           preferencias: string | null;
           profesional_preferido_id: string | null;
+          apodo: string | null;
           acepta_datos: boolean;
           fecha_acepta: string | null;
           activo: boolean;

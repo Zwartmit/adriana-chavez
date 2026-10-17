@@ -49,6 +49,7 @@ function NuevoServicioPage() {
       categoria_id: data.categoria_id,
       precio: data.precio,
       precio_desde: data.precio_desde,
+      precio_hasta: data.precio_hasta,
       duracion_min: data.duracion_min,
       descripcion: data.descripcion,
       imagen_url: data.imagen_url,

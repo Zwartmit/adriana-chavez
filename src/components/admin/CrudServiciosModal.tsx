@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X, Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
+import { formatPriceRange } from "@/lib/utils";
 
 interface CrudServiciosModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface ServicioItem {
   nombre: string;
   duracion_min: number;
   precio: number;
+  precio_hasta: number | null;
   activo: boolean;
 }
 
@@ -37,6 +39,7 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
   const [nombre, setNombre] = useState("");
   const [duracion, setDuracion] = useState("60");
   const [precio, setPrecio] = useState("");
+  const [precioHasta, setPrecioHasta] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,7 +53,7 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
     setLoading(true);
     const { data, error } = await supabase
       .from("servicios")
-      .select("id, nombre, duracion_min, precio, activo")
+      .select("id, nombre, duracion_min, precio, precio_hasta, activo")
       .order("nombre", { ascending: true });
     
     if (error) {
@@ -67,6 +70,10 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nombre || !precio || !duracion) return;
+    if (precioHasta && parseFloat(precioHasta) < parseFloat(precio)) {
+      setError('El precio "hasta" no puede ser menor que el precio "desde".');
+      return;
+    }
 
     setSubmitting(true);
     setError(null);
@@ -77,6 +84,7 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
       duracion_min: parseInt(duracion, 10),
       precio: parseFloat(precio),
       precio_desde: false,
+      precio_hasta: precioHasta ? parseFloat(precioHasta) : null,
       requiere_cita: true,
       activo: true,
       destacado: false,
@@ -91,6 +99,7 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
     } else {
       setNombre("");
       setPrecio("");
+      setPrecioHasta("");
       setDuracion("60");
       fetchServicios();
       onUpdated();
@@ -147,11 +156,18 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
               />
               <input
                 type="number"
-                placeholder="Precio ($) *"
+                placeholder="Precio desde ($) *"
                 value={precio}
                 onChange={(e) => setPrecio(e.target.value)}
                 style={inputStyle}
                 required
+              />
+              <input
+                type="number"
+                placeholder="Precio hasta ($) (opcional)"
+                value={precioHasta}
+                onChange={(e) => setPrecioHasta(e.target.value)}
+                style={inputStyle}
               />
               <select value={duracion} onChange={(e) => setDuracion(e.target.value)} style={inputStyle}>
                 <option value="15">15 min</option>
@@ -202,7 +218,7 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
                   <div key={s.id} className="flex items-center justify-between p-3 rounded-lg bg-[#FFFFFF] border border-[#E5E7EB] shadow-sm">
                     <div className="flex flex-col">
                       <span className={`font-semibold text-sm ${!s.activo ? "line-through text-[#9CA3AF]" : "text-[#111827]"}`}>{s.nombre}</span>
-                      <span className="text-xs text-[#6B7280]">{s.duracion_min} min • ${s.precio}</span>
+                      <span className="text-xs text-[#6B7280]">{s.duracion_min} min • {formatPriceRange(s.precio, s.precio_hasta)}</span>
                     </div>
                     <Button 
                       variant="secondary" 

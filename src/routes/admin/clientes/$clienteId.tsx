@@ -24,14 +24,8 @@ interface ClienteRow {
   notas: string | null;
   alergias: string | null;
   preferencias: string | null;
-  profesional_preferido_id: string | null;
+  apodo: string | null;
   activo: boolean;
-  profesionales: { nombre: string } | null;
-}
-
-interface ProfesionalOption {
-  id: string;
-  nombre: string;
 }
 
 interface CitaHistUI {
@@ -94,7 +88,6 @@ function ClienteDetallePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [profesionales, setProfesionals] = useState<ProfesionalOption[]>([]);
 
   const [citas, setCitas] = useState<CitaHistUI[]>([]);
   const [citasLoading, setCitasLoading] = useState(true);
@@ -106,7 +99,7 @@ function ClienteDetallePage() {
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [profesionalPreferidoId, setProfesionalPreferidoId] = useState("");
+  const [apodo, setApodo] = useState("");
   const [savingDatos, setSavingDatos] = useState(false);
 
   const [notas, setNotas] = useState("");
@@ -128,7 +121,7 @@ function ClienteDetallePage() {
     setError(null);
     const { data, error } = await supabase
       .from("clientes")
-      .select("*, profesionales(nombre)")
+      .select("*")
       .eq("id", clienteId)
       .single();
 
@@ -144,7 +137,7 @@ function ClienteDetallePage() {
     setEmail(row.email ?? "");
     setTelefono(row.telefono ?? "");
     setFechaNacimiento(row.fecha_nacimiento ?? "");
-    setProfesionalPreferidoId(row.profesional_preferido_id ?? "");
+    setApodo(row.apodo ?? "");
     setNotas(row.notas ?? "");
     setAlergias(row.alergias ?? "");
     setPreferencias(row.preferencias ?? "");
@@ -180,12 +173,6 @@ function ClienteDetallePage() {
   useEffect(() => {
     fetchCliente();
     fetchCitas();
-    supabase
-      .from("profesionales")
-      .select("id, nombre")
-      .eq("activo", true)
-      .order("orden", { ascending: true })
-      .then(({ data }) => setProfesionals(data ?? []));
   }, [fetchCliente, fetchCitas]);
 
   const handleGuardarDatos = async () => {
@@ -196,7 +183,7 @@ function ClienteDetallePage() {
         email: email.trim() || null,
         telefono: telefono.trim() || null,
         fecha_nacimiento: fechaNacimiento || null,
-        profesional_preferido_id: profesionalPreferidoId || null,
+        apodo: apodo.trim() || null,
       })
       .eq("id", clienteId);
     setSavingDatos(false);
@@ -351,13 +338,7 @@ function ClienteDetallePage() {
                       : "—"
                   }
                 />
-                <InlineEditField
-                  label="Profesional preferida"
-                  value={profesionalPreferidoId}
-                  onChange={setProfesionalPreferidoId}
-                  options={profesionales.map((e) => ({ value: e.id, label: e.nombre }))}
-                  displayValue={profesionales.find((e) => e.id === profesionalPreferidoId)?.nombre ?? "Sin preferencia"}
-                />
+                <InlineEditField label="Apodo" value={apodo} onChange={setApodo} placeholder="Sin apodo (así la llamará el asistente de WhatsApp)" />
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4" style={{ marginTop: "1.75rem" }}>

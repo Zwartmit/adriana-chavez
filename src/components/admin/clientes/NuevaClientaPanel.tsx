@@ -1,12 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
-
-interface ProfesionalOption {
-  id: string;
-  nombre: string;
-}
 
 interface NuevaClientaPanelProps {
   isOpen: boolean;
@@ -44,22 +39,11 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [profesionales, setProfesionals] = useState<ProfesionalOption[]>([]);
-  const [profesionalId, setProfesionalId] = useState("");
+  const [apodo, setApodo] = useState("");
   const [notas, setNotas] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    supabase
-      .from("profesionales")
-      .select("id, nombre")
-      .eq("activo", true)
-      .order("orden", { ascending: true })
-      .then(({ data }) => setProfesionals(data ?? []));
-  }, [isOpen]);
 
   const resetForm = useCallback(() => {
     setNombre("");
@@ -67,7 +51,7 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
     setEmail("");
     setTelefono("");
     setFechaNacimiento("");
-    setProfesionalId("");
+    setApodo("");
     setNotas("");
     setFormError(null);
     setEmailError(null);
@@ -116,7 +100,8 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
       email: email.trim() || null,
       telefono: telefono.trim(),
       fecha_nacimiento: fechaNacimiento || null,
-      profesional_preferido_id: profesionalId || null,
+      profesional_preferido_id: null,
+      apodo: apodo.trim() || null,
       notas: notas.trim() || null,
       alergias: null,
       preferencias: null,
@@ -230,15 +215,8 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
           </div>
 
           <div>
-            <label style={labelStyle}>Profesional preferida <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
-            <select value={profesionalId} onChange={(e) => setProfesionalId(e.target.value)} style={inputStyle}>
-              <option value="">Sin preferencia</option>
-              {profesionales.map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.nombre}
-                </option>
-              ))}
-            </select>
+            <label style={labelStyle}>Apodo <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span></label>
+            <input type="text" value={apodo} onChange={(e) => setApodo(e.target.value)} style={inputStyle} />
           </div>
 
           <div>

@@ -32,3 +32,12 @@ export function estadoLabel(estado: string): string {
   };
   return map[estado] || estado;
 }
+
+/**
+ * Precio de un servicio: "$X" (fijo), "Desde $X" (variable) o "$X – $Y" (rango).
+ * `desde` es servicios.precio; `hasta` es servicios.precio_hasta (opcional).
+ */
+export function formatPriceRange(desde: number, hasta?: number | null, esDesde = false): string {
+  if (hasta != null && hasta > desde) return `${formatPrice(desde)} – ${formatPrice(hasta)}`;
+  return esDesde ? `Desde ${formatPrice(desde)}` : formatPrice(desde);
+}

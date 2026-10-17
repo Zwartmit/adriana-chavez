@@ -9,6 +9,8 @@ interface ServicioDestacadoUI {
   description: string;
   duration: number;
   price: number;
+  priceTo: number | null;
+  priceFrom: boolean;
   image: string;
   href: string;
   requiresAppointment: boolean;
@@ -36,6 +38,8 @@ export function ServiciosDestacados() {
             description: s.descripcion ?? "",
             duration: s.duracion_min,
             price: s.precio,
+            priceTo: s.precio_hasta,
+            priceFrom: s.precio_desde,
             image: s.imagen_url ?? "",
             href: "/servicios",
             requiresAppointment: s.requiere_cita ?? false,

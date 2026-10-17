@@ -9,6 +9,10 @@ export interface ServiceCardProps {
   description: string;
   duration: number;
   price: number;
+  /** Tope opcional del rango de precio (price es el "desde"). */
+  priceTo?: number | null;
+  /** true si el precio es variable (se muestra "Desde"). */
+  priceFrom?: boolean;
   image: string;
   href: string;
   /** "dark" (default, glass card) for dark sections, "light" for --color-bg-light sections. */
@@ -30,6 +34,8 @@ export function ServiceCard({
   description,
   duration,
   price,
+  priceTo = null,
+  priceFrom = false,
   image,
   href,
   theme = "dark",
@@ -120,7 +126,11 @@ export function ServiceCard({
               color: isLight ? "var(--color-primary-dim)" : "var(--color-primary)",
             }}
           >
-            {formatCOP(price)}
+            {priceTo != null && priceTo > price
+              ? `${formatCOP(price)} – ${formatCOP(priceTo)}`
+              : priceFrom
+                ? `Desde ${formatCOP(price)}`
+                : formatCOP(price)}
           </span>
         </div>
 

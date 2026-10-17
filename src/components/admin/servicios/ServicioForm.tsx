@@ -13,6 +13,7 @@ export interface ServicioFormData {
   categoria_id: string;
   precio: number;
   precio_desde: boolean;
+  precio_hasta: number | null;
   duracion_min: number;
   descripcion: string;
   imagen_url: string | null;
@@ -75,6 +76,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     categoria_id: initialData?.categoria_id ?? "",
     precio: initialData?.precio ?? 0,
     precio_desde: initialData?.precio_desde ?? false,
+    precio_hasta: initialData?.precio_hasta ?? null,
     duracion_min: initialData?.duracion_min ?? 60,
     descripcion: initialData?.descripcion ?? "",
     imagen_url: initialData?.imagen_url ?? null,
@@ -104,6 +106,10 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
+    if (formData.precio_hasta != null && formData.precio_hasta < formData.precio) {
+      setFormError('El precio "hasta" no puede ser menor que el precio "desde".');
+      return;
+    }
     if (formData.ventana_inicio) {
       if (!formData.inicio_desde || !formData.inicio_hasta) {
         setFormError("Elige la hora desde y hasta de la franja de inicio.");
@@ -139,7 +145,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
             </select>
           </div>
           <div>
-            <label style={labelStyle}>Precio *</label>
+            <label style={labelStyle}>Precio desde *</label>
             <div className="flex gap-2 items-center">
               <input required type="number" min={0} name="precio" value={formData.precio} onChange={handleChange} style={{ ...inputStyle, flex: 1 }} />
             </div>
@@ -147,6 +153,13 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
               <input type="checkbox" name="precio_desde" checked={formData.precio_desde} onChange={handleChange} style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }} />
               <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>El precio es un "Desde" (variable)</span>
             </label>
+          </div>
+          <div>
+            <label style={labelStyle}>Precio hasta <span style={{ fontWeight: 400, color: "var(--color-text-on-light-muted)" }}>(opcional)</span></label>
+            <input type="number" min={0} name="precio_hasta" value={formData.precio_hasta ?? ""} onChange={handleChange} placeholder="Déjalo vacío si no hay rango" style={inputStyle} />
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-muted)", marginTop: 6 }}>
+              Si lo llenas, el servicio se muestra y se informa como rango (desde – hasta).
+            </p>
           </div>
           <div>
             <label style={labelStyle}>Duración (minutos) *</label>
