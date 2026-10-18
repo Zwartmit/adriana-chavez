@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase/client";
 import { TZDate } from "@date-fns/tz";
 import { CrudServiciosModal } from "./CrudServiciosModal";
 import { CrudProfesionalesModal } from "./CrudProfesionalesModal";
+import { formatDuration, formatPriceRange } from "@/lib/utils";
 
 interface ClienteResult {
   id: string;
@@ -20,6 +21,18 @@ interface ServicioOption {
   id: string;
   nombre: string;
   duracion_min: number;
+  precio: number;
+  precio_hasta: number | null;
+  precio_desde: boolean;
+}
+
+interface AdicionalOption {
+  id: string;
+  nombre: string;
+  duracion_min: number;
+  precio: number;
+  precio_hasta: number | null;
+  precio_desde: boolean;
 }
 
 interface ProfesionalOption {
@@ -74,6 +87,10 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
   const [servicioQuery, setServicioQuery] = useState("");
   const [showServicioResults, setShowServicioResults] = useState(false);
 
+  // Adicionales activos del servicio elegido y los que se marcaron
+  const [adicionalesDisponibles, setAdicionalesDisponibles] = useState<AdicionalOption[]>([]);
+  const [selectedAdicionales, setSelectedAdicionales] = useState<string[]>([]);
+
   const [profesionales, setProfesionals] = useState<ProfesionalOption[]>([]);
   const [selectedProfesionalId, setSelectedProfesionalId] = useState("");
   const [profesionalQuery, setProfesionalQuery] = useState("");
@@ -99,7 +116,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
 
   const fetchOptions = useCallback(async () => {
     const [{ data: serviciosData }, { data: profesionalesData }] = await Promise.all([
-      supabase.from("servicios").select("id, nombre, duracion_min").eq("activo", true).order("orden", { ascending: true }),
+      supabase.from("servicios").select("id, nombre, duracion_min, precio, precio_hasta, precio_desde").eq("activo", true).order("orden", { ascending: true }),
       supabase.from("profesionales").select("id, nombre").eq("activo", true).order("orden", { ascending: true }),
     ]);
     setServicios(serviciosData ?? []);
@@ -110,6 +127,39 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     if (!isOpen) return;
     fetchOptions();
   }, [isOpen, fetchOptions]);
+
+  useEffect(() => {
+    setSelectedAdicionales([]);
+    if (!isOpen || !selectedServicioId) {
+      setAdicionalesDisponibles([]);
+      return;
+    }
+    let cancelled = false;
+    supabase
+      .from("servicio_adicionales")
+      .select("orden, adicionales(id, nombre, duracion_min, precio, precio_hasta, precio_desde, activo)")
+      .eq("servicio_id", selectedServicioId)
+      .order("orden", { ascending: true })
+      .then(({ data, error }: { data: any; error: { message: string } | null }) => {
+        if (cancelled) return;
+        if (error) {
+          console.error("[NuevaCitaPanel] error al cargar adicionales:", error.message);
+          setAdicionalesDisponibles([]);
+          return;
+        }
+        const lista = ((data ?? []) as { adicionales: (AdicionalOption & { activo: boolean }) | null }[])
+          .map((r) => r.adicionales)
+          .filter((a): a is AdicionalOption & { activo: boolean } => !!a && a.activo)
+          .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+        setAdicionalesDisponibles(lista);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, selectedServicioId]);
+
+  const adicionalesElegidos = adicionalesDisponibles.filter((a) => selectedAdicionales.includes(a.id));
+  const minutosExtra = adicionalesElegidos.reduce((acc, a) => acc + a.duracion_min, 0);
 
   useEffect(() => {
     let cancelled = false;
@@ -150,6 +200,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
         p_fecha: fecha,
         p_profesional: selectedProfesionalId,
         p_incluir_pasadas: true,
+        p_duracion_extra: minutosExtra,
       })
       .then(({ data, error }: { data: { inicio_local: string }[] | null; error: { message: string } | null }) => {
         if (cancelled) return;
@@ -167,7 +218,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     return () => {
       cancelled = true;
     };
-  }, [isOpen, selectedServicioId, selectedProfesionalId, selectedDate]);
+  }, [isOpen, selectedServicioId, selectedProfesionalId, selectedDate, minutosExtra]);
 
   const resetForm = useCallback(() => {
     setClienteQuery("");
@@ -176,6 +227,8 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     setSelectedServicioId("");
     setServicioQuery("");
     setShowServicioResults(false);
+    setAdicionalesDisponibles([]);
+    setSelectedAdicionales([]);
     setSelectedProfesionalId("");
     setProfesionalQuery("");
     setShowProfesionalResults(false);
@@ -210,26 +263,29 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
 
     setSubmitting(true);
 
-    const { error } = await supabase.from("citas").insert({
-      cliente_id: selectedCliente.id,
-      profesional_id: selectedProfesionalId,
-      servicio_id: selectedServicioId,
-      fecha_hora: fechaHora.toISOString(),
-      duracion_min: servicio?.duracion_min ?? 60,
-      estado: "confirmada",
-      precio_cobrado: null,
-      notas_cliente: notas || null,
-      notas_internas: null,
-      canal_origen: "presencial",
-      recordatorio_24h_enviado: false,
-      recordatorio_2h_enviado: false,
-      seguimiento_enviado: false,
+    // Una sola operación: crea la cita con su duración total (servicio + adicionales) y guarda los adicionales
+    const { error } = await supabase.rpc("crear_cita_con_adicionales", {
+      p_cliente: selectedCliente.id,
+      p_profesional: selectedProfesionalId,
+      p_servicio: selectedServicioId,
+      p_inicio: fechaHora.toISOString(),
+      p_duracion_base: servicio?.duracion_min ?? 60,
+      p_adicionales: selectedAdicionales,
+      p_canal: "presencial",
+      p_estado: "confirmada",
+      p_notas_cliente: notas || null,
     });
     setSubmitting(false);
 
     if (error) {
       console.error("[NuevaCitaPanel] error al crear cita:", error.message);
-      setFormError(error.code === "23P01" ? error.message : "No se pudo crear la cita. Intenta de nuevo.");
+      setFormError(
+        error.code === "23P01"
+          ? error.message
+          : error.code === "22023"
+            ? "Uno de los adicionales ya no está disponible para este servicio. Revisa la selección."
+            : "No se pudo crear la cita. Intenta de nuevo.",
+      );
       return;
     }
 
@@ -426,6 +482,60 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
               </div>
             )}
           </div>
+
+          {/* Adicionales del servicio */}
+          {adicionalesDisponibles.length > 0 && (
+            <div>
+              <label style={labelStyle}>
+                Adicionales <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(opcional)</span>
+              </label>
+              <div
+                className="flex flex-col gap-2"
+                style={{
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-lg)",
+                  backgroundColor: "var(--color-bg-alt)",
+                  padding: "10px 14px",
+                }}
+              >
+                {adicionalesDisponibles.map((a) => (
+                  <label key={a.id} className="flex items-start gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedAdicionales.includes(a.id)}
+                      onChange={() =>
+                        setSelectedAdicionales((prev) =>
+                          prev.includes(a.id) ? prev.filter((x) => x !== a.id) : [...prev, a.id],
+                        )
+                      }
+                      style={{ width: 16, height: 16, marginTop: 2, accentColor: "var(--color-primary)" }}
+                    />
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-primary)" }}>
+                      {a.nombre}
+                      <span style={{ color: "var(--color-text-muted)", fontSize: "var(--text-xs)", marginLeft: 6 }}>
+                        {formatPriceRange(a.precio, a.precio_hasta, a.precio_desde)}
+                        {a.duracion_min > 0 ? ` · +${formatDuration(a.duracion_min)}` : ""}
+                      </span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              {selectedServicioId && adicionalesElegidos.length > 0 && (() => {
+                const srv = servicios.find((s) => s.id === selectedServicioId);
+                if (!srv) return null;
+                const desde = srv.precio + adicionalesElegidos.reduce((acc, a) => acc + a.precio, 0);
+                const hasta =
+                  (srv.precio_hasta ?? srv.precio) +
+                  adicionalesElegidos.reduce((acc, a) => acc + (a.precio_hasta ?? a.precio), 0);
+                return (
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", marginTop: 6 }}>
+                    Duración total: {formatDuration(srv.duracion_min + minutosExtra)} · Precio estimado:{" "}
+                    {formatPriceRange(desde, hasta, srv.precio_desde)}
+                  </p>
+                );
+              })()}
+            </div>
+          )}
 
           {/* Profesional */}
           <div style={{ position: "relative" }}>

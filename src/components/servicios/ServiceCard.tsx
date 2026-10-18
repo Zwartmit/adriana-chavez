@@ -2,6 +2,17 @@ import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
+export interface AdicionalUI {
+  id: string;
+  name: string;
+  price: number;
+  /** Tope opcional del rango (price es el "desde"). */
+  priceTo: number | null;
+  priceFrom: boolean;
+  /** Minutos que suma a la cita (0 = no suma tiempo). */
+  duration: number;
+}
+
 export interface ServiceCardProps {
   id: string;
   name: string;
@@ -18,6 +29,8 @@ export interface ServiceCardProps {
   /** "dark" (default, glass card) for dark sections, "light" for --color-bg-light sections. */
   theme?: "dark" | "light";
   requiresAppointment?: boolean;
+  /** Extras que se pueden sumar a este servicio. */
+  adicionales?: AdicionalUI[];
 }
 
 function formatCOP(n: number) {
@@ -40,6 +53,7 @@ export function ServiceCard({
   href,
   theme = "dark",
   requiresAppointment = false,
+  adicionales = [],
 }: ServiceCardProps) {
   const isLight = theme === "light";
 
@@ -133,6 +147,55 @@ export function ServiceCard({
                 : formatCOP(price)}
           </span>
         </div>
+
+        {adicionales.length > 0 && (
+          <div
+            className="hidden sm:block w-full mt-3 pt-3"
+            style={{ borderTop: `1px solid ${isLight ? "var(--color-border-light)" : "var(--color-border)"}` }}
+          >
+            <span
+              className="uppercase text-[10px] tracking-wider block mb-1"
+              style={{
+                fontFamily: "var(--font-mono)",
+                color: isLight ? "var(--color-primary-dim)" : "var(--color-accent)",
+              }}
+            >
+              Adicionales
+            </span>
+            <ul className="flex flex-col gap-0.5" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {adicionales.slice(0, 3).map((a) => (
+                <li
+                  key={a.id}
+                  className="flex items-baseline justify-between gap-2 text-xs"
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    color: isLight ? "var(--color-text-on-light-muted)" : "var(--color-text-secondary)",
+                  }}
+                >
+                  <span className="truncate">{a.name}</span>
+                  <span className="shrink-0" style={{ fontFamily: "var(--font-mono)" }}>
+                    {a.priceTo != null && a.priceTo > a.price
+                      ? `+${formatCOP(a.price)} – ${formatCOP(a.priceTo)}`
+                      : a.priceFrom
+                        ? `+Desde ${formatCOP(a.price)}`
+                        : `+${formatCOP(a.price)}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {adicionales.length > 3 && (
+              <span
+                className="text-[11px] block mt-1"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  color: isLight ? "var(--color-text-on-light-faint)" : "rgba(247, 245, 240, 0.5)",
+                }}
+              >
+                y {adicionales.length - 3} más al reservar
+              </span>
+            )}
+          </div>
+        )}
 
         <Button
           variant="accent"

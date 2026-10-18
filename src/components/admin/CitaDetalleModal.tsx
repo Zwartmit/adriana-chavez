@@ -352,6 +352,11 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             <div>
               <p style={rowLabel}>Servicio</p>
               <p style={rowValue}>{cita.servicioNombre}</p>
+              {cita.adicionales.length > 0 && (
+                <p style={{ ...rowValue, fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
+                  + {cita.adicionales.join(", ")}
+                </p>
+              )}
             </div>
             <div>
               <p style={rowLabel}>Profesional</p>

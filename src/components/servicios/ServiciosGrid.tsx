@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { ServiceCard } from "@/components/servicios/ServiceCard";
+import { ServiceCard, type AdicionalUI } from "@/components/servicios/ServiceCard";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
 
@@ -32,6 +32,7 @@ interface ServicioUI {
   href: string;
   orden: number;
   requiere_cita: boolean;
+  adicionales: AdicionalUI[];
 }
 
 interface ServiciosGridProps {
@@ -56,23 +57,51 @@ export function ServiciosGrid({
   const fetchServicios = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const { data, error } = await supabase
+    const columnas = "*, categorias_servicios(nombre, slug, orden)";
+    // Con adicionales; si esa consulta falla (por ejemplo, la migración aún no se ejecutó), se cargan los servicios sin ellos.
+    let { data, error } = await supabase
       .from("servicios")
-      .select("*, categorias_servicios(nombre, slug, orden)")
+      .select(`${columnas}, servicio_adicionales(orden, adicionales(id, nombre, precio, precio_hasta, precio_desde, duracion_min, activo))`)
       .eq("activo", true);
-
     if (error) {
-      console.error("[ServiciosGrid] error al cargar:", error.message);
+      console.warn("[ServiciosGrid] sin adicionales:", error.message);
+      ({ data, error } = await supabase.from("servicios").select(columnas).eq("activo", true));
+    }
+
+    if (error || !data) {
+      console.error("[ServiciosGrid] error al cargar:", error?.message);
       setError("Lo sentimos, en este momento tenemos problemas para cargar los servicios. Intenta más tarde.");
       setLoading(false);
       return;
     }
 
 
-    const mapped: ServicioUI[] = data.map((s) => {
+    const mapped: ServicioUI[] = data.map((s: any) => {
       const cat = (s as unknown as {
         categorias_servicios: { nombre: string; slug: string; orden: number } | null;
       }).categorias_servicios;
+      const adicionales: AdicionalUI[] = ((s.servicio_adicionales ?? []) as {
+        orden: number;
+        adicionales: {
+          id: string;
+          nombre: string;
+          precio: number;
+          precio_hasta: number | null;
+          precio_desde: boolean;
+          duracion_min: number;
+          activo: boolean;
+        } | null;
+      }[])
+        .filter((l) => l.adicionales && l.adicionales.activo)
+        .sort((a, b) => a.orden - b.orden || a.adicionales!.nombre.localeCompare(b.adicionales!.nombre, "es"))
+        .map((l) => ({
+          id: l.adicionales!.id,
+          name: l.adicionales!.nombre,
+          price: l.adicionales!.precio,
+          priceTo: l.adicionales!.precio_hasta,
+          priceFrom: l.adicionales!.precio_desde,
+          duration: l.adicionales!.duracion_min,
+        }));
       return {
         id: s.id,
         name: s.nombre,
@@ -88,6 +117,7 @@ export function ServiciosGrid({
         href: "/servicios",
         orden: s.orden,
         requiere_cita: s.requiere_cita ?? false,
+        adicionales,
       };
     });
 

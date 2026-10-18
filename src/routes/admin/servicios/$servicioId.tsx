@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { ServicioForm, horarioServicioPayload, type ServicioFormData } from "@/components/admin/servicios/ServicioForm";
+import { AdicionalesSection } from "@/components/admin/servicios/AdicionalesSection";
 import { recortarHora } from "@/lib/horario";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
@@ -190,6 +191,13 @@ function EditarServicioPage() {
                 onCancel={() => navigate({ to: "/admin/servicios" })}
               />
             </div>
+
+            <AdicionalesSection
+              servicioId={servicioId}
+              servicioNombre={initialData.nombre ?? "este servicio"}
+              onError={(message) => showToast(message, "error")}
+              onSuccess={(message) => showToast(message)}
+            />
           </>
         ) : null}
       </div>

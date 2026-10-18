@@ -40,6 +40,8 @@ export interface CitaUI {
   profesionalNombre: string;
   profesionalColor: string;
   servicioNombre: string;
+  /** Nombres de los adicionales elegidos en la cita (la duración ya los incluye). */
+  adicionales: string[];
 }
 
 interface CitaRow {
@@ -53,6 +55,7 @@ interface CitaRow {
   clientes: { nombre: string; apellido: string | null; telefono: string | null } | null;
   profesionales: { nombre: string; color_calendario: string } | null;
   servicios: { nombre: string; duracion_min: number } | null;
+  cita_adicionales?: { nombre: string }[] | null;
 }
 
 const DIAS_SEMANA = ["L", "M", "X", "J", "V", "S", "D"];
@@ -88,6 +91,7 @@ function mapCita(row: CitaRow): CitaUI {
     profesionalNombre: row.profesionales?.nombre ?? "Sin asignar",
     profesionalColor: row.profesionales?.color_calendario ?? "#E8C97A",
     servicioNombre: row.servicios?.nombre ?? "Servicio",
+    adicionales: (row.cita_adicionales ?? []).map((a) => a.nombre),
   };
 }
 
@@ -147,7 +151,8 @@ export function CalendarioCitas() {
           id, fecha_hora, duracion_min, estado, notas_cliente, profesional_id, servicio_id,
           clientes(nombre, apellido, telefono),
           profesionales(nombre, color_calendario),
-          servicios(nombre, duracion_min)
+          servicios(nombre, duracion_min),
+          cita_adicionales(nombre)
         `)
         .gte("fecha_hora", inicioDelMes.toISOString())
         .lte("fecha_hora", finDelMes.toISOString())

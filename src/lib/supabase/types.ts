@@ -58,6 +58,35 @@ export interface ServiciosRow {
           created_at: string;
           updated_at: string;
         }
+export interface AdicionalesRow {
+          id: string;
+          nombre: string;
+          descripcion: string | null;
+          duracion_min: number;
+          precio: number;
+          precio_hasta: number | null;
+          precio_desde: boolean;
+          activo: boolean;
+          orden: number;
+          created_at: string;
+          updated_at: string;
+        }
+export interface Servicio_adicionalesRow {
+          servicio_id: string;
+          adicional_id: string;
+          orden: number;
+          created_at: string;
+        }
+export interface Cita_adicionalesRow {
+          id: string;
+          cita_id: string;
+          adicional_id: string | null;
+          nombre: string;
+          precio: number;
+          precio_hasta: number | null;
+          duracion_min: number;
+          created_at: string;
+        }
 export interface ClientesRow {
           id: string;
           perfil_id: string | null;
@@ -278,6 +307,21 @@ export interface Database {
         Row: CitasRow;
         Insert: Omit<CitasRow, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<CitasRow, "id" | "created_at" | "updated_at">>;
+      };
+      adicionales: {
+        Row: AdicionalesRow;
+        Insert: Omit<AdicionalesRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<AdicionalesRow, "id" | "created_at" | "updated_at">>;
+      };
+      servicio_adicionales: {
+        Row: Servicio_adicionalesRow;
+        Insert: Omit<Servicio_adicionalesRow, "created_at">;
+        Update: Partial<Omit<Servicio_adicionalesRow, "created_at">>;
+      };
+      cita_adicionales: {
+        Row: Cita_adicionalesRow;
+        Insert: Omit<Cita_adicionalesRow, "id" | "created_at">;
+        Update: Partial<Omit<Cita_adicionalesRow, "id" | "created_at">>;
       };
       bloqueos_horario: {
         Row: Bloqueos_horarioRow;
