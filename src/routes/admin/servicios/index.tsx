@@ -14,6 +14,14 @@ export const Route = createFileRoute("/admin/servicios/")({
 
 const PAGE_SIZE = 20;
 
+// Para buscar sin importar mayúsculas ni tildes ("diseno" encuentra "Diseño").
+const normalizar = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+interface AdicionalLite {
+  nombre: string;
+  activo: boolean;
+}
+
 interface ServicioRow {
   id: string;
   nombre: string;
@@ -26,6 +34,11 @@ interface ServicioRow {
   destacado: boolean;
   created_at: string;
   categorias_servicios: { nombre: string } | null;
+  servicio_adicionales: { adicionales: AdicionalLite | null }[] | null;
+}
+
+function adicionalesDe(s: ServicioRow): AdicionalLite[] {
+  return (s.servicio_adicionales ?? []).map((l) => l.adicionales).filter((a): a is AdicionalLite => !!a);
 }
 
 const selectStyle: React.CSSProperties = {
@@ -50,6 +63,7 @@ function ServiciosAdminPage() {
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
+  const [filtroAdicionales, setFiltroAdicionales] = useState<"" | "con" | "sin">("");
   const [sortOrder, setSortOrder] = useState(() => typeof window !== "undefined" ? localStorage.getItem("admin_servicios_sort") || "nuevos" : "nuevos");
   const [page, setPage] = useState(1);
 
@@ -74,7 +88,7 @@ function ServiciosAdminPage() {
     const [serviciosRes, categoriasRes] = await Promise.all([
       supabase
         .from("servicios")
-        .select("id, nombre, categoria_id, precio, precio_hasta, precio_desde, duracion_min, activo, destacado, created_at, categorias_servicios(nombre)")
+        .select("id, nombre, categoria_id, precio, precio_hasta, precio_desde, duracion_min, activo, destacado, created_at, categorias_servicios(nombre), servicio_adicionales(adicionales(nombre, activo))")
         .order("created_at", { ascending: false }),
       supabase
         .from("categorias_servicios")
@@ -101,9 +115,12 @@ function ServiciosAdminPage() {
   const filtrado = useMemo(() => {
     const filtered = servicios.filter((s) => {
       const matchCat = !filtroCategoria || s.categoria_id === filtroCategoria;
-      const q = searchQuery.toLowerCase();
-      const matchSearch = !q || s.nombre.toLowerCase().includes(q);
-      return matchCat && matchSearch;
+      const q = normalizar(searchQuery);
+      const adicionales = adicionalesDe(s);
+      const matchSearch = !q || normalizar(s.nombre).includes(q) || adicionales.some((a) => normalizar(a.nombre).includes(q));
+      const activos = adicionales.filter((a) => a.activo).length;
+      const matchAdicionales = !filtroAdicionales || (filtroAdicionales === "con" ? activos > 0 : activos === 0);
+      return matchCat && matchSearch && matchAdicionales;
     });
 
     return filtered.sort((a, b) => {
@@ -113,7 +130,7 @@ function ServiciosAdminPage() {
       // por defecto 'nuevos'
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  }, [servicios, filtroCategoria, searchQuery, sortOrder]);
+  }, [servicios, filtroCategoria, filtroAdicionales, searchQuery, sortOrder]);
 
   const totalPages = Math.max(1, Math.ceil(filtrado.length / PAGE_SIZE));
   const serviciosPagina = useMemo(
@@ -145,13 +162,24 @@ function ServiciosAdminPage() {
 
       {/* Filtros y Búsqueda */}
       <div className="flex flex-col sm:flex-row flex-wrap sm:items-center gap-3" style={{ margin: "1.5rem 0" }}>
-        <select className="w-full sm:w-auto" value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} style={selectStyle}>
+        <select className="w-full sm:w-auto" value={filtroCategoria} onChange={(e) => { setFiltroCategoria(e.target.value); setPage(1); }} style={selectStyle}>
           <option value="">Todas las categorías</option>
           {categorias.map((c) => (
             <option key={c.id} value={c.id}>
               {c.nombre}
             </option>
           ))}
+        </select>
+        <select
+          className="w-full sm:w-auto"
+          value={filtroAdicionales}
+          onChange={(e) => { setFiltroAdicionales(e.target.value as "" | "con" | "sin"); setPage(1); }}
+          style={selectStyle}
+          aria-label="Filtrar por adicionales"
+        >
+          <option value="">Con o sin adicionales</option>
+          <option value="con">Con adicionales</option>
+          <option value="sin">Sin adicionales</option>
         </select>
         <select className="w-full sm:w-auto" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} style={selectStyle}>
           <option value="nuevos">Más nuevos primero</option>
@@ -174,7 +202,7 @@ function ServiciosAdminPage() {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Buscar servicio..."
+            placeholder="Buscar servicio o adicional..."
             style={{
               ...selectStyle,
               padding: "10px 14px 10px 42px",
@@ -197,10 +225,10 @@ function ServiciosAdminPage() {
               border: "1px solid var(--color-border-light)",
             }}
           >
-            <table className="w-full min-w-[800px]" style={{ borderCollapse: "collapse" }}>
+            <table className="w-full min-w-[900px]" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#0A0A0B" }}>
-                  {["Nombre", "Categoría", "Duración", "Precio", "Etiquetas", "Estado", "Acciones"].map((h) => (
+                  {["Nombre", "Categoría", "Duración", "Precio", "Adicionales", "Etiquetas", "Estado", "Acciones"].map((h) => (
                     <th
                       key={h}
                       style={{
@@ -222,7 +250,7 @@ function ServiciosAdminPage() {
               <tbody>
                 {serviciosPagina.length === 0 ? (
                   <tr>
-                    <td colSpan={7}>
+                    <td colSpan={8}>
                       <div className="flex flex-col items-center gap-3" style={{ padding: "4rem 0" }}>
                         <Scissors size={40} color="var(--color-text-on-light-faint)" />
                         <p
@@ -260,6 +288,28 @@ function ServiciosAdminPage() {
                       </td>
                       <td style={{ padding: "14px 16px", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
                         {formatPriceRange(s.precio, s.precio_hasta, s.precio_desde)}
+                      </td>
+                      <td style={{ padding: "14px 16px", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>
+                        {(() => {
+                          const todos = adicionalesDe(s);
+                          const activos = todos.filter((a) => a.activo);
+                          const q = normalizar(searchQuery);
+                          const coincidencias = q ? todos.filter((a) => normalizar(a.nombre).includes(q)) : [];
+                          const detalle = todos.map((a) => (a.activo ? a.nombre : `${a.nombre} (inactivo)`)).join(", ");
+                          if (activos.length === 0) {
+                            return <span style={{ color: "var(--color-text-on-light-faint)" }} title={detalle || undefined}>Sin adicionales</span>;
+                          }
+                          return (
+                            <div title={detalle}>
+                              <span>{activos.length} {activos.length === 1 ? "adicional" : "adicionales"}</span>
+                              {coincidencias.length > 0 && (
+                                <p style={{ fontSize: "var(--text-xs)", color: "var(--color-primary-dim)", marginTop: 2 }}>
+                                  Coincide: {coincidencias.map((a) => a.nombre).join(", ")}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </td>
                       <td style={{ padding: "14px 16px" }}>
                         <div className="flex gap-2">

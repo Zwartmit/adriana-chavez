@@ -100,6 +100,8 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     initialData?.duracion_min ? String(initialData.duracion_min % 60) : "",
   );
   const [formError, setFormError] = useState<string | null>(null);
+  // Con un rango (hasta mayor que desde) el precio ya se muestra como "$X – $Y": la casilla "Desde" no aplica.
+  const hayRango = formData.precio_hasta != null && formData.precio_hasta > (Number(precioTxt) || 0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -145,7 +147,8 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
         return;
       }
     }
-    onSubmit({ ...formData, precio, duracion_min: duracion });
+    const hayRangoFinal = formData.precio_hasta != null && formData.precio_hasta > precio;
+    onSubmit({ ...formData, precio, duracion_min: duracion, precio_desde: hayRangoFinal ? false : formData.precio_desde });
   };
 
   return (
@@ -174,17 +177,25 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
             <div className="flex gap-2 items-center">
               <input required type="number" min={0} name="precio" value={precioTxt} onChange={(e) => setPrecioTxt(e.target.value)} placeholder="Ej: 60000" style={{ ...inputStyle, flex: 1 }} />
             </div>
-            <label className="flex items-center gap-2 mt-2 cursor-pointer">
-              <input type="checkbox" name="precio_desde" checked={formData.precio_desde} onChange={handleChange} style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }} />
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>El precio es un "Desde" (variable)</span>
-            </label>
+            {hayRango ? (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-muted)", marginTop: 8 }}>
+                Con "Precio hasta" el servicio se muestra como rango; no hace falta marcar "Desde".
+              </p>
+            ) : (
+              <>
+                <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                  <input type="checkbox" name="precio_desde" checked={formData.precio_desde} onChange={handleChange} style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }} />
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>El precio es un "Desde" (variable)</span>
+                </label>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-muted)", marginTop: 4 }}>
+                  Márcalo si el precio no tiene tope: se muestra "Desde $X".
+                </p>
+              </>
+            )}
           </div>
           <div>
             <label style={labelStyle}>Precio hasta <span style={{ fontWeight: 400, color: "var(--color-text-on-light-muted)" }}>(opcional)</span></label>
             <input type="number" min={0} name="precio_hasta" value={formData.precio_hasta ?? ""} onChange={handleChange} placeholder="Déjalo vacío si no hay rango" style={inputStyle} />
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-muted)", marginTop: 6 }}>
-              Si lo llenas, el servicio se muestra y se informa como rango (desde – hasta).
-            </p>
           </div>
           <div>
             <label style={labelStyle}>Duración *</label>
@@ -197,10 +208,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
           </div>
           <div>
             <label style={labelStyle}>Retoque a los (días) <span style={{ fontWeight: 400, color: "var(--color-text-on-light-muted)" }}>(opcional)</span></label>
-            <input type="number" min={1} max={365} step={1} name="dias_retoque" value={formData.dias_retoque ?? ""} onChange={handleChange} placeholder="Ej: 21. Vacío si no tiene retoque" style={inputStyle} />
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-muted)", marginTop: 6 }}>
-              Cada cuántos días se recomienda volver (uñas 21, cejas y pestañas 15). El asistente de WhatsApp lo usa para orientar a las clientas.
-            </p>
+            <input type="number" name="dias_retoque" value={formData.dias_retoque ?? ""} onChange={handleChange} placeholder="Ej: 21 (déjalo vacío si no tiene retoque)" style={inputStyle} />
           </div>
         </div>
       </section>

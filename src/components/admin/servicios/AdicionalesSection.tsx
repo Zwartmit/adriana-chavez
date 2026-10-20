@@ -204,7 +204,7 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
       descripcion: form.descripcion.trim() || null,
       precio,
       precio_hasta: precioHasta,
-      precio_desde: form.precioDesde,
+      precio_desde: precioHasta != null && precioHasta > precio ? false : form.precioDesde,
       duracion_min: duracion,
       dias_retoque: diasRetoque,
       activo: form.activo,
@@ -443,10 +443,14 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
                 <div>
                   <label style={labelStyle}>Precio desde *</label>
                   <input required type="number" min={0} value={form.precioTxt} onChange={(e) => setForm({ ...form, precioTxt: e.target.value })} placeholder="Ej: 10000" style={inputStyle} />
-                  <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                    <input type="checkbox" checked={form.precioDesde} onChange={(e) => setForm({ ...form, precioDesde: e.target.checked })} style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }} />
-                    <span style={mutedText}>El precio es un "Desde" (variable)</span>
-                  </label>
+                  {Number(form.precioHastaTxt) > Number(form.precioTxt) ? (
+                    <p style={{ ...mutedText, marginTop: 8 }}>Con "Precio hasta" se muestra como rango; no hace falta marcar "Desde".</p>
+                  ) : (
+                    <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                      <input type="checkbox" checked={form.precioDesde} onChange={(e) => setForm({ ...form, precioDesde: e.target.checked })} style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }} />
+                      <span style={mutedText}>El precio es un "Desde" (sin tope)</span>
+                    </label>
+                  )}
                 </div>
                 <div>
                   <label style={labelStyle}>Precio hasta <span style={{ fontWeight: 400 }}>(opcional)</span></label>
@@ -454,7 +458,7 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
                 </div>
                 <div>
                   <label style={labelStyle}>Retoque a los (días) <span style={{ fontWeight: 400 }}>(opcional)</span></label>
-                  <input type="number" min={1} max={365} step={1} value={form.retoqueTxt} onChange={(e) => setForm({ ...form, retoqueTxt: e.target.value })} placeholder="Vacío si no cambia el retoque del servicio" style={inputStyle} />
+                  <input type="number" value={form.retoqueTxt} onChange={(e) => setForm({ ...form, retoqueTxt: e.target.value })} placeholder="Vacío si no cambia el retoque del servicio" style={inputStyle} />
                 </div>
               </div>
               <div>
