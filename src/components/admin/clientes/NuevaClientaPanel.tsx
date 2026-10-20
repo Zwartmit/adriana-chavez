@@ -100,7 +100,6 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
       email: email.trim() || null,
       telefono: telefono.trim(),
       fecha_nacimiento: fechaNacimiento || null,
-      profesional_preferido_id: null,
       apodo: apodo.trim() || null,
       notas: notas.trim() || null,
       alergias: null,

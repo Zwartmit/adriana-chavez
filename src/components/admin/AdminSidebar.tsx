@@ -180,15 +180,19 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
   return (
     <>
       <aside
-        className={`fixed top-0 left-0 bottom-0 z-40 flex flex-col transition-all duration-250 ease-in-out ${
-          isCollapsed ? "-translate-x-full md:translate-x-0 w-[240px] md:w-[64px]" : "translate-x-0 w-[240px] overflow-y-auto overflow-x-hidden"
+        className={`fixed top-0 left-0 bottom-0 z-40 transition-all duration-250 ease-in-out ${
+          isCollapsed ? "-translate-x-full md:translate-x-0 w-[240px] md:w-[64px]" : "translate-x-0 w-[240px]"
         }`}
         style={{
           backgroundColor: "var(--color-bg-alt)",
           borderRight: "1px solid var(--color-border)",
-          padding: "clamp(0.75rem, 2vh, 1.75rem) 1rem",
         }}
       >
+        {/* El scroll vive en este contenedor interno: así el botón flotante (abajo) no queda recortado */}
+        <div
+          className={`flex h-full flex-col ${isCollapsed ? "" : "overflow-y-auto overflow-x-hidden"}`}
+          style={{ padding: "clamp(0.75rem, 2vh, 1.75rem) 1rem" }}
+        >
         {/* Logo */}
         <div style={{ padding: isCollapsed ? "0" : "0 0.5rem", marginBottom: "clamp(0.75rem, 2vh, 2rem)", overflow: "hidden", flexShrink: 0 }}>
           {isCollapsed ? (
@@ -343,6 +347,8 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
               Cerrar sesión
             </span>
           )}
+        </div>
+
         </div>
 
         {/* Botón flotante colapsar/expandir */}

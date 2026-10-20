@@ -98,7 +98,6 @@ export interface ClientesRow {
           notas: string | null;
           alergias: string | null;
           preferencias: string | null;
-          profesional_preferido_id: string | null;
           apodo: string | null;
           acepta_datos: boolean;
           fecha_acepta: string | null;
