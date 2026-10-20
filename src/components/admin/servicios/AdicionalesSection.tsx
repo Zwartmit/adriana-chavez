@@ -12,6 +12,7 @@ interface Adicional {
   precio: number;
   precio_hasta: number | null;
   precio_desde: boolean;
+  dias_retoque: number | null;
   activo: boolean;
 }
 
@@ -79,6 +80,7 @@ interface FormState {
   precioDesde: boolean;
   horasTxt: string;
   minutosTxt: string;
+  retoqueTxt: string;
   descripcion: string;
   activo: boolean;
   servicios: string[];
@@ -152,6 +154,7 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
       precioDesde: false,
       horasTxt: "",
       minutosTxt: "",
+      retoqueTxt: "",
       descripcion: "",
       activo: true,
       servicios: [servicioId],
@@ -168,6 +171,7 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
       precioDesde: a.precio_desde,
       horasTxt: a.duracion_min >= 60 ? String(Math.floor(a.duracion_min / 60)) : "",
       minutosTxt: a.duracion_min % 60 ? String(a.duracion_min % 60) : "",
+      retoqueTxt: a.dias_retoque != null ? String(a.dias_retoque) : "",
       descripcion: a.descripcion ?? "",
       activo: a.activo,
       servicios: vinculos.filter((l) => l.adicional_id === a.id).map((l) => l.servicio_id),
@@ -190,6 +194,10 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
       return setFormError('El precio "hasta" no puede ser menor que el precio "desde".');
     }
     if (duracion > 600) return setFormError("La duración no puede ser mayor a 10 horas.");
+    const diasRetoque = form.retoqueTxt.trim() === "" ? null : Number(form.retoqueTxt);
+    if (diasRetoque != null && (!Number.isInteger(diasRetoque) || diasRetoque < 1 || diasRetoque > 365)) {
+      return setFormError("Los días de retoque deben ser un número entero entre 1 y 365 (o déjalo vacío).");
+    }
 
     const payload = {
       nombre,
@@ -198,6 +206,7 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
       precio_hasta: precioHasta,
       precio_desde: form.precioDesde,
       duracion_min: duracion,
+      dias_retoque: diasRetoque,
       activo: form.activo,
     };
 
@@ -368,6 +377,7 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
                       <p style={mutedText}>
                         {formatPriceRange(a.precio, a.precio_hasta, a.precio_desde)} ·{" "}
                         {a.duracion_min > 0 ? `+${formatDuration(a.duracion_min)}` : "no suma tiempo"}
+                        {a.dias_retoque != null ? ` · retoque a los ${a.dias_retoque} días` : ""}
                         {n > 1 ? ` · también en ${n - 1} ${n - 1 === 1 ? "servicio más" : "servicios más"}` : ""}
                       </p>
                     </div>
@@ -441,6 +451,10 @@ export function AdicionalesSection({ servicioId, servicioNombre, onError, onSucc
                 <div>
                   <label style={labelStyle}>Precio hasta <span style={{ fontWeight: 400 }}>(opcional)</span></label>
                   <input type="number" min={0} value={form.precioHastaTxt} onChange={(e) => setForm({ ...form, precioHastaTxt: e.target.value })} placeholder="Déjalo vacío si no hay rango" style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Retoque a los (días) <span style={{ fontWeight: 400 }}>(opcional)</span></label>
+                  <input type="number" min={1} max={365} step={1} value={form.retoqueTxt} onChange={(e) => setForm({ ...form, retoqueTxt: e.target.value })} placeholder="Vacío si no cambia el retoque del servicio" style={inputStyle} />
                 </div>
               </div>
               <div>

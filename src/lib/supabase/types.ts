@@ -50,6 +50,7 @@ export interface ServiciosRow {
           precio: number;
           precio_desde: boolean;
           precio_hasta: number | null;
+          dias_retoque: number | null;
           imagen_url: string | null;
           requiere_cita: boolean;
           activo: boolean;
@@ -66,6 +67,7 @@ export interface AdicionalesRow {
           precio: number;
           precio_hasta: number | null;
           precio_desde: boolean;
+          dias_retoque: number | null;
           activo: boolean;
           orden: number;
           created_at: string;

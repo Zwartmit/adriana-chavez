@@ -15,6 +15,8 @@ export interface ServicioFormData {
   precio_desde: boolean;
   precio_hasta: number | null;
   duracion_min: number;
+  /** Días en que se recomienda el retoque; null = sin retoque */
+  dias_retoque: number | null;
   descripcion: string;
   imagen_url: string | null;
   requiere_cita: boolean;
@@ -78,6 +80,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     precio_desde: initialData?.precio_desde ?? false,
     precio_hasta: initialData?.precio_hasta ?? null,
     duracion_min: initialData?.duracion_min ?? 60,
+    dias_retoque: initialData?.dias_retoque ?? null,
     descripcion: initialData?.descripcion ?? "",
     imagen_url: initialData?.imagen_url ?? null,
     requiere_cita: initialData?.requiere_cita ?? true,
@@ -126,6 +129,10 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     }
     if (formData.precio_hasta != null && formData.precio_hasta < precio) {
       setFormError('El precio "hasta" no puede ser menor que el precio "desde".');
+      return;
+    }
+    if (formData.dias_retoque != null && (!Number.isInteger(formData.dias_retoque) || formData.dias_retoque < 1 || formData.dias_retoque > 365)) {
+      setFormError("Los días de retoque deben ser un número entero entre 1 y 365 (o déjalo vacío si no tiene retoque).");
       return;
     }
     if (formData.ventana_inicio) {
@@ -187,6 +194,13 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
               <input type="number" min={0} max={59} step={5} aria-label="Minutos" value={minutosTxt} onChange={(e) => setMinutosTxt(e.target.value)} placeholder="0" style={{ ...inputStyle, flex: 1 }} />
               <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>min</span>
             </div>
+          </div>
+          <div>
+            <label style={labelStyle}>Retoque a los (días) <span style={{ fontWeight: 400, color: "var(--color-text-on-light-muted)" }}>(opcional)</span></label>
+            <input type="number" min={1} max={365} step={1} name="dias_retoque" value={formData.dias_retoque ?? ""} onChange={handleChange} placeholder="Ej: 21. Vacío si no tiene retoque" style={inputStyle} />
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-muted)", marginTop: 6 }}>
+              Cada cuántos días se recomienda volver (uñas 21, cejas y pestañas 15). El asistente de WhatsApp lo usa para orientar a las clientas.
+            </p>
           </div>
         </div>
       </section>

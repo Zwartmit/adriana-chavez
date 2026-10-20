@@ -51,6 +51,7 @@ function NuevoServicioPage() {
       precio_desde: data.precio_desde,
       precio_hasta: data.precio_hasta,
       duracion_min: data.duracion_min,
+      dias_retoque: data.dias_retoque,
       descripcion: data.descripcion,
       imagen_url: data.imagen_url,
       requiere_cita: data.requiere_cita,
