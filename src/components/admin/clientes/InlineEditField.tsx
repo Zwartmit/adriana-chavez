@@ -14,6 +14,8 @@ interface InlineEditFieldProps {
   type?: "text" | "tel" | "email" | "date";
   options?: SelectOption[];
   placeholder?: string;
+  /** Texto de la opción vacía del selector (por defecto "Sin preferencia"). */
+  emptyLabel?: string;
 }
 
 const fieldInputStyle: React.CSSProperties = {
@@ -36,6 +38,7 @@ export function InlineEditField({
   type = "text",
   options,
   placeholder,
+  emptyLabel = "Sin preferencia",
 }: InlineEditFieldProps) {
   const [editing, setEditing] = useState(false);
 
@@ -62,7 +65,7 @@ export function InlineEditField({
             onBlur={() => setEditing(false)}
             style={fieldInputStyle}
           >
-            <option value="">Sin preferencia</option>
+            <option value="">{emptyLabel}</option>
             {options.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}

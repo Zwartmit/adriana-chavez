@@ -101,6 +101,8 @@ export interface ClientesRow {
           alergias: string | null;
           preferencias: string | null;
           apodo: string | null;
+          /** Anticipo: null = automático (clientas nuevas), si = siempre, no = nunca. */
+          anticipo_modo: "si" | "no" | null;
           acepta_datos: boolean;
           fecha_acepta: string | null;
           activo: boolean;
@@ -116,6 +118,8 @@ export interface CitasRow {
           duracion_min: number;
           estado: EstadoCita;
           precio_cobrado: number | null;
+          anticipo_monto: number | null;
+          anticipo_recibido_en: string | null;
           notas_cliente: string | null;
           notas_internas: string | null;
           canal_origen: CanalOrigen;

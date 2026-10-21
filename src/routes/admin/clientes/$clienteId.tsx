@@ -25,6 +25,7 @@ interface ClienteRow {
   alergias: string | null;
   preferencias: string | null;
   apodo: string | null;
+  anticipo_modo: "si" | "no" | null;
   activo: boolean;
 }
 
@@ -100,6 +101,7 @@ function ClienteDetallePage() {
   const [telefono, setTelefono] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [apodo, setApodo] = useState("");
+  const [anticipoModo, setAnticipoModo] = useState("");
   const [savingDatos, setSavingDatos] = useState(false);
 
   const [notas, setNotas] = useState("");
@@ -138,6 +140,7 @@ function ClienteDetallePage() {
     setTelefono(row.telefono ?? "");
     setFechaNacimiento(row.fecha_nacimiento ?? "");
     setApodo(row.apodo ?? "");
+    setAnticipoModo(row.anticipo_modo ?? "");
     setNotas(row.notas ?? "");
     setAlergias(row.alergias ?? "");
     setPreferencias(row.preferencias ?? "");
@@ -184,6 +187,7 @@ function ClienteDetallePage() {
         telefono: telefono.trim() || null,
         fecha_nacimiento: fechaNacimiento || null,
         apodo: apodo.trim() || null,
+        anticipo_modo: anticipoModo === "si" || anticipoModo === "no" ? anticipoModo : null,
       })
       .eq("id", clienteId);
     setSavingDatos(false);
@@ -339,6 +343,25 @@ function ClienteDetallePage() {
                   }
                 />
                 <InlineEditField label="Apodo" value={apodo} onChange={setApodo} placeholder="Sin apodo (así la llamará el asistente de WhatsApp)" />
+                <InlineEditField
+                  label="Anticipo para agendar"
+                  value={anticipoModo}
+                  onChange={setAnticipoModo}
+                  emptyLabel="Automático (se pide a clientas nuevas)"
+                  options={[
+                    { value: "si", label: "Siempre pedir anticipo" },
+                    { value: "no", label: "Nunca pedir anticipo" },
+                  ]}
+                  displayValue={
+                    anticipoModo === "si"
+                      ? "Siempre se le pide anticipo"
+                      : anticipoModo === "no"
+                        ? "Nunca se le pide anticipo"
+                        : citas.some((c) => c.estado === "completada")
+                          ? "Automático: no se le pide (ya fue atendida)"
+                          : "Automático: se le pide (clienta nueva)"
+                  }
+                />
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4" style={{ marginTop: "1.75rem" }}>

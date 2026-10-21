@@ -394,6 +394,16 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             </div>
           </div>
 
+          {cita.anticipoMonto != null && (
+            <>
+              <div style={{ borderTop: "1px solid var(--color-border-light)" }} />
+              <div>
+                <p style={rowLabel}>Anticipo recibido</p>
+                <p style={rowValue}>${cita.anticipoMonto.toLocaleString("es-CO")}</p>
+              </div>
+            </>
+          )}
+
           {cita.notasCliente && (
             <>
               <div style={{ borderTop: "1px solid var(--color-border-light)" }} />

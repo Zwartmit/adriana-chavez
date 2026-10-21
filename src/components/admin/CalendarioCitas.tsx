@@ -42,6 +42,8 @@ export interface CitaUI {
   servicioNombre: string;
   /** Nombres de los adicionales elegidos en la cita (la duración ya los incluye). */
   adicionales: string[];
+  /** Anticipo recibido para agendar esta cita (pesos), si lo hubo. */
+  anticipoMonto: number | null;
 }
 
 interface CitaRow {
@@ -50,6 +52,7 @@ interface CitaRow {
   duracion_min: number;
   estado: EstadoCita;
   notas_cliente: string | null;
+  anticipo_monto: number | null;
   profesional_id: string;
   servicio_id: string;
   clientes: { nombre: string; apellido: string | null; telefono: string | null } | null;
@@ -92,6 +95,7 @@ function mapCita(row: CitaRow): CitaUI {
     profesionalColor: row.profesionales?.color_calendario ?? "#E8C97A",
     servicioNombre: row.servicios?.nombre ?? "Servicio",
     adicionales: (row.cita_adicionales ?? []).map((a) => a.nombre),
+    anticipoMonto: row.anticipo_monto,
   };
 }
 
@@ -148,7 +152,7 @@ export function CalendarioCitas() {
       supabase
         .from("citas")
         .select(`
-          id, fecha_hora, duracion_min, estado, notas_cliente, profesional_id, servicio_id,
+          id, fecha_hora, duracion_min, estado, notas_cliente, anticipo_monto, profesional_id, servicio_id,
           clientes(nombre, apellido, telefono),
           profesionales(nombre, color_calendario),
           servicios(nombre, duracion_min),

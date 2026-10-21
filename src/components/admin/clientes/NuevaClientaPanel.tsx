@@ -101,6 +101,7 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
       telefono: telefono.trim(),
       fecha_nacimiento: fechaNacimiento || null,
       apodo: apodo.trim() || null,
+      anticipo_modo: null,
       notas: notas.trim() || null,
       alergias: null,
       preferencias: null,
