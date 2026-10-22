@@ -453,7 +453,7 @@ begin
     'Listo, quedó confirmada la cita de ' || v_nombre || ': ' || coalesce(v_serv, 'servicio') || ' con ' || coalesce(v_prof, 'la profesional') || ', ' || v_cuando
       || ', con anticipo de ' || public.formato_pesos(s.monto) || '.'
       || case when v_ventana then ' Le avisé por WhatsApp.' else ' Pasaron más de 24 horas desde su último mensaje, así que no pude avisarle por WhatsApp: escríbele tú: https://wa.me/' || regexp_replace(s.telefono, '[^0-9]', '', 'g') end,
-    'Recibimos tu anticipo, gracias. Tu cita quedó confirmada: ' || coalesce(v_serv, 'servicio') || ' con ' || coalesce(v_prof, 'la profesional') || ', ' || v_cuando || '.',
+    'Listooo 😊 Recibimos tu anticipo, gracias!' || E'\n\n' || 'Tu cita quedó confirmada:' || E'\n\n' || '- ' || coalesce(v_serv, 'servicio') || ' con ' || coalesce(v_prof, 'la profesional') || ', ' || v_cuando || '.',
     v_ventana;
 end;
 $$;
