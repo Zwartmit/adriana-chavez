@@ -15,7 +15,8 @@ import {
   Scissors,
   Image,
   Star,
-  Clock
+  Clock,
+  Wallet
 } from "lucide-react";
 import { signOut } from "@/lib/supabase/auth";
 import { supabase } from "@/lib/supabase/client";
@@ -29,6 +30,7 @@ const NAV_ITEMS = [
   { label: "Servicios", href: "/admin/servicios", icon: Scissors },
   { label: "Profesionales", href: "/admin/profesionales", icon: Star },
   { label: "Horario", href: "/admin/horario", icon: Clock },
+  { label: "Pagos", href: "/admin/anticipos", icon: Wallet },
   { label: "Galería", href: "/admin/galeria", icon: Image },
   { label: "Reportes", href: "/admin/reportes", icon: BarChart3 },
 ];

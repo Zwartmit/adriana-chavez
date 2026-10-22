@@ -22,6 +22,7 @@ import { Route as TiendaIndexRouteImport } from './routes/tienda/index'
 import { Route as TiendaSlugRouteImport } from './routes/tienda/$slug'
 import { Route as TiendaCarritoRouteImport } from './routes/tienda/carrito'
 import { Route as TiendaOrdenConfirmadaRouteImport } from './routes/tienda/orden-confirmada'
+import { Route as AdminAnticiposIndexRouteImport } from './routes/admin/anticipos/index'
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/index'
 import { Route as AdminClientesClienteIdRouteImport } from './routes/admin/clientes/$clienteId'
 import { Route as AdminGaleriaIndexRouteImport } from './routes/admin/galeria/index'
@@ -101,6 +102,11 @@ const TiendaCarritoRoute = TiendaCarritoRouteImport.update({
 const TiendaOrdenConfirmadaRoute = TiendaOrdenConfirmadaRouteImport.update({
   id: '/tienda/orden-confirmada',
   path: '/tienda/orden-confirmada',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAnticiposIndexRoute = AdminAnticiposIndexRouteImport.update({
+  id: '/admin/anticipos/',
+  path: '/admin/anticipos/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminClientesIndexRoute = AdminClientesIndexRouteImport.update({
@@ -202,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
+  '/admin/anticipos/': typeof AdminAnticiposIndexRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/galeria/': typeof AdminGaleriaIndexRoute
   '/admin/horario/': typeof AdminHorarioIndexRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
+  '/admin/anticipos': typeof AdminAnticiposIndexRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
   '/admin/galeria': typeof AdminGaleriaIndexRoute
   '/admin/horario': typeof AdminHorarioIndexRoute
@@ -263,6 +271,7 @@ export interface FileRoutesById {
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
   '/admin/servicios/$servicioId': typeof AdminServiciosServicioIdRoute
   '/admin/servicios/nuevo': typeof AdminServiciosNuevoRoute
+  '/admin/anticipos/': typeof AdminAnticiposIndexRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/galeria/': typeof AdminGaleriaIndexRoute
   '/admin/horario/': typeof AdminHorarioIndexRoute
@@ -295,6 +304,7 @@ export interface FileRouteTypes {
     | '/admin/profesionales/$profesionalId'
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
+    | '/admin/anticipos/'
     | '/admin/clientes/'
     | '/admin/galeria/'
     | '/admin/horario/'
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/admin/profesionales/$profesionalId'
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
+    | '/admin/anticipos'
     | '/admin/clientes'
     | '/admin/galeria'
     | '/admin/horario'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/admin/profesionales/$profesionalId'
     | '/admin/servicios/$servicioId'
     | '/admin/servicios/nuevo'
+    | '/admin/anticipos/'
     | '/admin/clientes/'
     | '/admin/galeria/'
     | '/admin/horario/'
@@ -386,6 +398,7 @@ export interface RootRouteChildren {
   AdminProfesionalesProfesionalIdRoute: typeof AdminProfesionalesProfesionalIdRoute
   AdminServiciosServicioIdRoute: typeof AdminServiciosServicioIdRoute
   AdminServiciosNuevoRoute: typeof AdminServiciosNuevoRoute
+  AdminAnticiposIndexRoute: typeof AdminAnticiposIndexRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
   AdminGaleriaIndexRoute: typeof AdminGaleriaIndexRoute
   AdminHorarioIndexRoute: typeof AdminHorarioIndexRoute
@@ -488,6 +501,13 @@ declare module '@tanstack/react-router' {
       path: '/tienda/orden-confirmada'
       fullPath: '/tienda/orden-confirmada'
       preLoaderRoute: typeof TiendaOrdenConfirmadaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/anticipos/': {
+      id: '/admin/anticipos/'
+      path: '/admin/anticipos'
+      fullPath: '/admin/anticipos/'
+      preLoaderRoute: typeof AdminAnticiposIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/clientes/': {
@@ -618,6 +638,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminProfesionalesProfesionalIdRoute: AdminProfesionalesProfesionalIdRoute,
   AdminServiciosServicioIdRoute: AdminServiciosServicioIdRoute,
   AdminServiciosNuevoRoute: AdminServiciosNuevoRoute,
+  AdminAnticiposIndexRoute: AdminAnticiposIndexRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,
   AdminGaleriaIndexRoute: AdminGaleriaIndexRoute,
   AdminHorarioIndexRoute: AdminHorarioIndexRoute,
