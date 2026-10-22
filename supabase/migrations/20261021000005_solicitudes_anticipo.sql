@@ -425,7 +425,7 @@ begin
     return query select 'rechazada'::text, s.id, s.telefono, s.numero_salon, v_nombre,
       'Listo, marqué como no recibido el anticipo de ' || v_nombre || ': no se agendó la cita y el horario quedó libre.'
         || case when v_ventana then ' Le avisé por WhatsApp.' else ' Pasaron más de 24 horas desde su último mensaje, así que no pude avisarle por WhatsApp: escríbele tú: https://wa.me/' || regexp_replace(s.telefono, '[^0-9]', '', 'g') end,
-      'No pudimos confirmar tu anticipo, por eso todavía no quedó agendada tu cita y el horario se liberó. Si ya hiciste el pago, envíanos el comprobante de nuevo y lo revisamos.',
+      'Lo siento, no pudimos confirmar tu anticipo, por eso todavía no quedó agendada tu cita y el horario se liberó. Si ya hiciste el pago, envíanos el comprobante de nuevo, porfa, y lo revisamos 😊',
       v_ventana;
     return;
   end if;
