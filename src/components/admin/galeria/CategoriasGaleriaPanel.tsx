@@ -205,7 +205,7 @@ export function CategoriasGaleriaPanel() {
                             setEditNombre(cat.nombre);
                             setEditOrden(cat.orden);
                           }}
-                          className="p-2 text-[var(--color-primary)] hover:bg-[var(--color-bg-light-alt)] rounded transition-colors cursor-pointer"
+                          className="p-2 text-[var(--color-gold-on-light)] hover:bg-[var(--color-bg-light-alt)] rounded transition-colors cursor-pointer"
                         >
                           <Edit2 size={16} />
                         </button>

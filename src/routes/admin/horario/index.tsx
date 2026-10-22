@@ -355,7 +355,7 @@ function HorarioSalonPage() {
             )}
 
             <div className="flex items-center justify-end gap-3">
-              <Button type="button" variant="secondary" size="md" disabled={!hayCambios || checking || saving} onClick={() => { setForm(original); setFormError(null); }}>
+              <Button type="button" variant="outline" size="md" disabled={!hayCambios || checking || saving} onClick={() => { setForm(original); setFormError(null); }}>
                 Descartar cambios
               </Button>
               <Button type="submit" variant="accent" size="md" disabled={!hayCambios || checking || saving}>

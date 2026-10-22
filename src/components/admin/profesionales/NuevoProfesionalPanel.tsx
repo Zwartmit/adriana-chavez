@@ -209,7 +209,7 @@ export function NuevoProfesionalPanel({ isOpen, onClose, onCreated, onError }: N
                   style={inputStyle}
                   placeholder="Ej. Colorimetría"
                 />
-                <Button type="button" variant="secondary" onClick={addEspecialidad}>
+                <Button type="button" variant="outline" onClick={addEspecialidad}>
                   <Plus size={18} />
                 </Button>
               </div>
@@ -217,7 +217,7 @@ export function NuevoProfesionalPanel({ isOpen, onClose, onCreated, onError }: N
                 {especialidades.map(esp => (
                   <span key={esp} className="inline-flex items-center gap-1 px-3 py-1 bg-[rgba(232,201,122,0.15)] rounded-full text-sm font-mono text-[var(--color-primary)] border border-[rgba(232,201,122,0.3)]">
                     {esp}
-                    <button type="button" onClick={() => removeEspecialidad(esp)} className="text-[var(--color-primary-dim)] hover:text-red-400 focus:outline-none" title="Eliminar">
+                    <button type="button" onClick={() => removeEspecialidad(esp)} className="text-[var(--color-gold-on-light)] hover:text-red-500 focus:outline-none" title="Eliminar">
                       <X size={14} />
                     </button>
                   </span>

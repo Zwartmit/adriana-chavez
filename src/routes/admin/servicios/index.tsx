@@ -303,7 +303,7 @@ function ServiciosAdminPage() {
                             <div title={detalle}>
                               <span>{activos.length} {activos.length === 1 ? "adicional" : "adicionales"}</span>
                               {coincidencias.length > 0 && (
-                                <p style={{ fontSize: "var(--text-xs)", color: "var(--color-primary-dim)", marginTop: 2 }}>
+                                <p style={{ fontSize: "var(--text-xs)", color: "var(--color-gold-on-light)", marginTop: 2 }}>
                                   Coincide: {coincidencias.map((a) => a.nombre).join(", ")}
                                 </p>
                               )}
@@ -314,7 +314,7 @@ function ServiciosAdminPage() {
                       <td style={{ padding: "14px 16px" }}>
                         <div className="flex gap-2">
                           {s.destacado && (
-                            <span style={{ backgroundColor: "rgba(200,168,74,0.18)", color: "var(--color-primary-dim)", padding: "2px 8px", borderRadius: "var(--radius-full)", fontSize: "10px", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>Destacado</span>
+                            <span style={{ backgroundColor: "rgba(200,168,74,0.18)", color: "var(--color-gold-on-light)", padding: "2px 8px", borderRadius: "var(--radius-full)", fontSize: "10px", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>Destacado</span>
                           )}
                         </div>
                       </td>

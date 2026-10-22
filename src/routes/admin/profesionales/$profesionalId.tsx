@@ -138,7 +138,7 @@ function EditarProfesionalPage() {
             onClick={() => setActiveTab("info")}
             className={`pb-3 font-semibold font-body text-sm transition-colors ${
               activeTab === "info" 
-                ? "text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]" 
+                ? "text-[var(--color-gold-on-light)] border-b-2 border-[var(--color-gold-on-light)]" 
                 : "text-[var(--color-text-on-light-muted)] hover:text-[var(--color-text-on-light)]"
             }`}
           >
@@ -148,7 +148,7 @@ function EditarProfesionalPage() {
             onClick={() => setActiveTab("bloqueos")}
             className={`pb-3 font-semibold font-body text-sm transition-colors ${
               activeTab === "bloqueos" 
-                ? "text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]" 
+                ? "text-[var(--color-gold-on-light)] border-b-2 border-[var(--color-gold-on-light)]" 
                 : "text-[var(--color-text-on-light-muted)] hover:text-[var(--color-text-on-light)]"
             }`}
           >
@@ -158,7 +158,7 @@ function EditarProfesionalPage() {
             onClick={() => setActiveTab("excepciones")}
             className={`pb-3 font-semibold font-body text-sm transition-colors ${
               activeTab === "excepciones" 
-                ? "text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]" 
+                ? "text-[var(--color-gold-on-light)] border-b-2 border-[var(--color-gold-on-light)]" 
                 : "text-[var(--color-text-on-light-muted)] hover:text-[var(--color-text-on-light)]"
             }`}
           >

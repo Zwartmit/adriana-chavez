@@ -147,7 +147,7 @@ export function ProfesionalForm({ initialData, onSubmit, onCancel, isSubmitting,
                 style={inputStyle}
                 placeholder="Ej. Colorimetría"
               />
-              <Button type="button" variant="secondary" onClick={addEspecialidad}>
+              <Button type="button" variant="outline" onClick={addEspecialidad}>
                 <Plus size={18} />
               </Button>
             </div>
@@ -155,7 +155,7 @@ export function ProfesionalForm({ initialData, onSubmit, onCancel, isSubmitting,
               {formData.especialidades.map(esp => (
                 <span key={esp} className="inline-flex items-center gap-1 px-3 py-1 bg-[rgba(232,201,122,0.15)] rounded-full text-sm font-mono text-[var(--color-primary)] border border-[rgba(232,201,122,0.3)]">
                   {esp}
-                  <button type="button" onClick={() => removeEspecialidad(esp)} className="text-[var(--color-primary-dim)] hover:text-red-400 focus:outline-none" title="Eliminar">
+                  <button type="button" onClick={() => removeEspecialidad(esp)} className="text-[var(--color-gold-on-light)] hover:text-red-500 focus:outline-none" title="Eliminar">
                     <X size={14} />
                   </button>
                 </span>
@@ -198,7 +198,7 @@ export function ProfesionalForm({ initialData, onSubmit, onCancel, isSubmitting,
 
         {/* Acciones */}
         <div className="flex items-center gap-3 sm:gap-4 mt-2">
-          <Button type="button" className="w-full sm:w-auto" variant="ghost" onClick={onCancel}>
+          <Button type="button" className="w-full sm:w-auto" variant="outline" onClick={onCancel}>
             Cancelar
           </Button>
           <Button type="submit" className="w-full sm:w-auto" variant="accent" disabled={isSubmitting}>

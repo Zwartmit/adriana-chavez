@@ -13,11 +13,11 @@ import { estadoLabel } from "@/lib/utils";
 
 const ESTADO_STYLES: Record<EstadoCita, { label: string; bg: string; color: string }> = {
   pendiente: { label: "Pendiente", bg: "rgba(212,168,75,0.15)", color: "var(--color-warning)" },
-  confirmada: { label: "Confirmada", bg: "var(--color-accent-lt)", color: "var(--color-primary)" },
-  en_proceso: { label: "En proceso", bg: "rgba(232,201,122,0.15)", color: "var(--color-primary)" },
+  confirmada: { label: "Confirmada", bg: "var(--color-accent-lt)", color: "var(--color-gold-on-light)" },
+  en_proceso: { label: "En proceso", bg: "rgba(232,201,122,0.15)", color: "var(--color-gold-on-light)" },
   completada: { label: "Completada", bg: "rgba(76,175,128,0.15)", color: "var(--color-success)" },
   cancelada: { label: "Cancelada", bg: "rgba(224,82,82,0.15)", color: "var(--color-error)" },
-  no_asistio: { label: "No asistió", bg: "rgba(245,242,235,0.08)", color: "var(--color-text-muted)" },
+  no_asistio: { label: "No asistió", bg: "rgba(10,10,11,0.08)", color: "var(--color-text-on-light-muted)" },
 };
 
 interface CitaDetalleModalProps {
@@ -420,7 +420,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
         <div className="flex flex-wrap gap-2 w-full" style={{ marginTop: "2rem" }}>
           {puedeReprogramar && (
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
               className="flex-1"
               disabled={updating}
@@ -541,7 +541,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
 
             <div className="flex gap-2 w-full">
               <Button
-                variant="secondary"
+                variant="outline"
                 size="sm"
                 className="flex-1"
                 disabled={moving}
@@ -586,7 +586,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
                   Esta clienta no tiene un teléfono válido para avisarle por WhatsApp.
                 </p>
               )}
-              <Button variant="secondary" size="sm" className="flex-1" onClick={onClose}>
+              <Button variant="outline" size="sm" className="flex-1" onClick={onClose}>
                 Listo
               </Button>
             </div>

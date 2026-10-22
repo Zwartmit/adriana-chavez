@@ -861,7 +861,7 @@ function ReportesPage() {
                         </td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(c.ingresos_servicios)}</td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{formatPrice(c.ingresos_productos)}</td>
-                        <td style={{ ...td, fontFamily: "var(--font-mono)", fontWeight: 600, color: "var(--color-primary-dim)" }}>
+                        <td style={{ ...td, fontFamily: "var(--font-mono)", fontWeight: 600, color: "var(--color-gold-on-light)" }}>
                           {formatPrice(c.total_ingresos)}
                         </td>
                         <td style={{ ...td, fontFamily: "var(--font-mono)" }}>{c.citas_completadas}</td>

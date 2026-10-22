@@ -42,10 +42,9 @@ export function ErrorState({
         {message ?? "No pudimos cargar la información. Intenta de nuevo."}
       </p>
       <Button
-        variant="secondary"
+        variant={variant === "light" ? "outline" : "secondary"}
         size="sm"
         onClick={onRetry}
-        style={variant === "light" ? { borderColor: "var(--color-primary-dim)", color: "var(--color-primary-dim)" } : undefined}
       >
         Reintentar
       </Button>

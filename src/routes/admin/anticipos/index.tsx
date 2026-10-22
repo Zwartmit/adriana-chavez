@@ -234,7 +234,7 @@ function AnticiposPage() {
             <div className="flex items-center justify-end gap-3">
               <Button
                 type="button"
-                variant="secondary"
+                variant="outline"
                 size="md"
                 disabled={!hayCambios || saving}
                 onClick={() => {

@@ -348,7 +348,7 @@ export function ImagenesGaleriaPanel() {
                   </button>
                 </div>
                 <div>
-                  <span className="inline-block px-2 py-1 bg-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs rounded mb-1">
+                  <span className="inline-block px-2 py-1 bg-[var(--color-primary)]/20 text-[var(--color-gold-on-light)] text-xs rounded mb-1">
                     {img.categorias_galeria?.nombre || "Sin categoría"}
                   </span>
                   {img.tag && <p className="text-white text-sm font-medium">{img.tag}</p>}

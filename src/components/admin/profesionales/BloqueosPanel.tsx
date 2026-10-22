@@ -269,7 +269,7 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-display italic text-xl text-[var(--color-text-on-light)]">{editingId ? "Editar bloqueo" : "Nuevo bloqueo"}</h3>
           {editingId && (
-            <Button type="button" variant="ghost" size="sm" onClick={handleCancelEdit} className="text-sm">
+            <Button type="button" variant="outline" size="sm" onClick={handleCancelEdit} className="text-sm">
               <X size={16} className="mr-1"/> Cancelar
             </Button>
           )}

@@ -18,7 +18,7 @@ function AdminGaleriaPage() {
           onClick={() => setActiveTab("imagenes")}
           className={`pb-3 px-1 text-sm font-medium transition-colors border-b-2 ${
             activeTab === "imagenes"
-              ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+              ? "border-[var(--color-gold-on-light)] text-[var(--color-gold-on-light)]"
               : "border-transparent text-[var(--color-text-on-light-muted)] hover:text-[var(--color-text-on-light)]"
           }`}
           style={{ fontFamily: "var(--font-body)" }}
@@ -29,7 +29,7 @@ function AdminGaleriaPage() {
           onClick={() => setActiveTab("categorias")}
           className={`pb-3 px-1 text-sm font-medium transition-colors border-b-2 ${
             activeTab === "categorias"
-              ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+              ? "border-[var(--color-gold-on-light)] text-[var(--color-gold-on-light)]"
               : "border-transparent text-[var(--color-text-on-light-muted)] hover:text-[var(--color-text-on-light)]"
           }`}
           style={{ fontFamily: "var(--font-body)" }}

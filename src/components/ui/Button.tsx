@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export type ButtonVariant = "primary" | "secondary" | "accent" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "accent" | "ghost" | "outline";
 export type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -39,6 +39,18 @@ const variantStyles: Record<ButtonVariant, string> = {
     "font-semibold",
     "tracking-[var(--tracking-wide)]",
     "shadow-[var(--shadow-gold)]",
+  ].join(" "),
+
+  // Botón secundario para superficies CLARAS (el "secondary" dorado es para fondos oscuros)
+  outline: [
+    "bg-transparent",
+    "border-2",
+    "border-[rgba(10,10,11,0.35)]",
+    "text-[var(--color-text-on-light)]",
+    "hover:bg-[rgba(10,10,11,0.06)]",
+    "hover:border-[var(--color-text-on-light)]",
+    "font-semibold",
+    "tracking-[var(--tracking-wide)]",
   ].join(" "),
 
   ghost: [

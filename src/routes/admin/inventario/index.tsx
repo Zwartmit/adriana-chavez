@@ -62,14 +62,14 @@ interface MovimientoRow {
 
 const ESTADO_STYLES: Record<EstadoStock, { label: string; bg: string; color: string }> = {
   disponible: { label: "Disponible", bg: "rgba(76,175,128,0.15)", color: "#3D8F66" },
-  critico: { label: "Crítico", bg: "rgba(200,168,74,0.18)", color: "var(--color-primary-dim)" },
+  critico: { label: "Crítico", bg: "rgba(200,168,74,0.18)", color: "var(--color-gold-on-light)" },
   agotado: { label: "Agotado", bg: "rgba(224,82,82,0.15)", color: "var(--color-error)" },
 };
 
 const TIPO_STYLES: Record<TipoMovimiento, { label: string; bg: string; color: string }> = {
   entrada: { label: "Entrada", bg: "rgba(76,175,128,0.15)", color: "#3D8F66" },
   salida: { label: "Salida", bg: "rgba(224,82,82,0.15)", color: "var(--color-error)" },
-  ajuste: { label: "Ajuste", bg: "rgba(200,168,74,0.18)", color: "var(--color-primary-dim)" },
+  ajuste: { label: "Ajuste", bg: "rgba(200,168,74,0.18)", color: "var(--color-gold-on-light)" },
 };
 
 const selectStyle: React.CSSProperties = {
@@ -285,7 +285,7 @@ function InventarioPage() {
                   />
                 )}
               </div>
-              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 600, fontSize: "var(--text-3xl)", color: "var(--color-primary-dim)", marginTop: "0.4rem" }}>
+              <p style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 600, fontSize: "var(--text-3xl)", color: "var(--color-gold-on-light)", marginTop: "0.4rem" }}>
                 {resumen.critico}
               </p>
             </div>

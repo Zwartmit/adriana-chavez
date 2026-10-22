@@ -49,8 +49,8 @@ interface CitaRow {
 
 const ESTADO_STYLES: Record<EstadoCita, { label: string; bg: string; color: string }> = {
   pendiente: { label: "Pendiente", bg: "rgba(212,168,75,0.15)", color: "var(--color-warning)" },
-  confirmada: { label: "Confirmada", bg: "var(--color-accent-lt)", color: "var(--color-primary)" },
-  en_proceso: { label: "En proceso", bg: "rgba(232,201,122,0.15)", color: "var(--color-primary)" },
+  confirmada: { label: "Confirmada", bg: "var(--color-accent-lt)", color: "var(--color-gold-on-light)" },
+  en_proceso: { label: "En proceso", bg: "rgba(232,201,122,0.15)", color: "var(--color-gold-on-light)" },
   completada: { label: "Completada", bg: "rgba(76,175,128,0.15)", color: "var(--color-success)" },
   cancelada: { label: "Cancelada", bg: "rgba(224,82,82,0.15)", color: "var(--color-error)" },
   no_asistio: { label: "No asistió", bg: "rgba(10,10,11,0.08)", color: "var(--color-text-on-light-faint)" },
@@ -316,7 +316,7 @@ function ClienteDetallePage() {
                     letterSpacing: "var(--tracking-wider)",
                     padding: "3px 10px",
                     borderRadius: "var(--radius-full)",
-                    color: cliente.activo ? "var(--color-primary-dim)" : "var(--color-text-on-light-faint)",
+                    color: cliente.activo ? "var(--color-gold-on-light)" : "var(--color-text-on-light-faint)",
                     backgroundColor: cliente.activo ? "rgba(200,168,74,0.15)" : "rgba(10,10,11,0.06)",
                   }}
                 >
@@ -397,7 +397,7 @@ function ClienteDetallePage() {
                   fontFamily: "var(--font-mono)",
                   fontSize: "var(--text-xs)",
                   letterSpacing: "var(--tracking-wider)",
-                  color: "var(--color-primary-dim)",
+                  color: "var(--color-gold-on-light)",
                   marginBottom: "1.25rem",
                 }}
               >
@@ -485,7 +485,7 @@ function ClienteDetallePage() {
                       }}
                     >
                       <div>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-primary-dim)" }}>
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-gold-on-light)" }}>
                           {c.fechaHora.toLocaleDateString("es-CO", { day: "numeric", month: "short" })}
                           {" · "}
                           {c.fechaHora.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: true })}
@@ -576,7 +576,7 @@ function ClienteDetallePage() {
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-faint)", marginBottom: "0.75rem" }}>
                         Ninguna cita coincide con tu búsqueda
                       </p>
-                      <Button variant="secondary" size="sm" onClick={() => { setFiltroEstado("todas"); setBusqueda(""); setVerTodoHistorial(false); }}>
+                      <Button variant="outline" size="sm" onClick={() => { setFiltroEstado("todas"); setBusqueda(""); setVerTodoHistorial(false); }}>
                         Limpiar filtros
                       </Button>
                     </div>
@@ -626,7 +626,7 @@ function ClienteDetallePage() {
                               fontFamily: "var(--font-body)",
                               fontSize: "var(--text-sm)",
                               fontWeight: 500,
-                              color: "var(--color-primary-dim)",
+                              color: "var(--color-gold-on-light)",
                             }}
                           >
                             {verTodoHistorial ? "Ver menos" : "Ver más"}

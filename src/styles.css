@@ -52,7 +52,8 @@
   /* ── TEXTO SOBRE FONDOS CLAROS ── */
   --color-text-on-light:         #0A0A0B;   /* Negro — texto principal sobre claro */
   --color-text-on-light-muted:   #5A5550;   /* Gris cálido — texto secundario sobre claro */
-  --color-text-on-light-faint:   #9A9590;   /* Gris suave — texto muted sobre claro */
+  --color-text-on-light-faint:   #726D67;   /* Gris suave — texto muted sobre claro (contraste AA sobre blanco) */
+  --color-gold-on-light:         #8A6A14;   /* Dorado oscuro — texto/acentos dorados legibles sobre claro */
 
   /* ── BORDES SOBRE FONDOS CLAROS ── */
   --color-border-light:          rgba(10,10,11,0.10);

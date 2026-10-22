@@ -267,7 +267,7 @@ function ProductosPage() {
                       <td style={{ padding: "14px 16px" }}>
                         <div className="flex gap-2">
                           {p.destacado && (
-                            <span style={{ backgroundColor: "rgba(200,168,74,0.18)", color: "var(--color-primary-dim)", padding: "2px 8px", borderRadius: "var(--radius-full)", fontSize: "10px", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>Destacado</span>
+                            <span style={{ backgroundColor: "rgba(200,168,74,0.18)", color: "var(--color-gold-on-light)", padding: "2px 8px", borderRadius: "var(--radius-full)", fontSize: "10px", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>Destacado</span>
                           )}
                           {p.es_nuevo && (
                             <span style={{ backgroundColor: "rgba(76,175,128,0.15)", color: "#3D8F66", padding: "2px 8px", borderRadius: "var(--radius-full)", fontSize: "10px", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>Nuevo</span>
