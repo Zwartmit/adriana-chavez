@@ -4,6 +4,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { InlineEditField } from "@/components/admin/clientes/InlineEditField";
+import { SaldoFavorCard } from "@/components/admin/clientes/SaldoFavorCard";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
@@ -381,6 +382,8 @@ function ClienteDetallePage() {
                 )}
               </div>
             </div>
+
+            <SaldoFavorCard clienteId={clienteId} onToast={showToast} />
 
             <div
               className="p-5 md:p-7"

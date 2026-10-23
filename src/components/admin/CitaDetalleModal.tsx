@@ -108,6 +108,7 @@ interface CitaMovida {
 export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDetalleModalProps) {
   const [updating, setUpdating] = useState(false);
   const [confirmAction, setConfirmAction] = useState<EstadoCita | null>(null);
+  const [pasarASaldo, setPasarASaldo] = useState(false);
 
   // Reprogramación
   const [vista, setVista] = useState<"detalle" | "reprogramar" | "movida">("detalle");
@@ -168,6 +169,8 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
   }, [vista, cita, nuevaFecha, nuevaProfesionalId]);
 
   if (!cita) return null;
+
+  const anticipoMenosDe24h = cita.anticipoMonto != null && cita.fechaHora.getTime() < Date.now() + 24 * 60 * 60 * 1000;
 
   const puedeReprogramar =
     ["pendiente", "confirmada", "en_proceso"].includes(cita.estadoReal) && cita.fechaFin > new Date();
@@ -247,16 +250,26 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
   const handleUpdateEstado = async (estado: EstadoCita) => {
     setUpdating(true);
     const { error } = await supabase.from("citas").update({ estado } as any).eq("id", cita.id);
-    setUpdating(false);
 
     if (error) {
+      setUpdating(false);
       console.error("[CitaDetalleModal] error al actualizar:", error.message);
       onError("No se pudo actualizar la cita.");
       setConfirmAction(null);
       return;
     }
 
+    // Con 24 horas o más, la base pasa el anticipo a saldo a favor sola (trigger). Con menos, solo si Adriana lo pide.
+    if (estado === "cancelada" && cita.anticipoMonto != null && anticipoMenosDe24h && pasarASaldo) {
+      const { error: errSaldo } = await supabase.rpc("acreditar_anticipo_cita", { p_cita_id: cita.id, p_forzar: true });
+      if (errSaldo) {
+        console.error("[CitaDetalleModal] error al pasar el anticipo a saldo:", errSaldo.message);
+        onError("La cita se canceló, pero no se pudo pasar el anticipo a saldo a favor. Regístralo desde la ficha de la clienta.");
+      }
+    }
+    setUpdating(false);
     setConfirmAction(null);
+    setPasarASaldo(false);
     onUpdated();
     onClose();
   };
@@ -601,13 +614,41 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
             confirmAction === "cancelada"
               ? cita.estadoReal === "completada"
                 ? "Esta cita ya figura como completada. Al cancelarla dejará de contar en el cierre de caja."
-                : "¿Deseas cancelar esta cita? Quedará guardada en el historial."
+                : (
+                    <>
+                      <p>¿Deseas cancelar esta cita? Quedará guardada en el historial.</p>
+                      {cita.anticipoMonto != null && !anticipoMenosDe24h && (
+                        <p style={{ marginTop: "0.75rem" }}>
+                          Faltan 24 horas o más: el anticipo de ${cita.anticipoMonto.toLocaleString("es-CO")} pasará a saldo a favor de la clienta para llevarse en productos.
+                        </p>
+                      )}
+                      {cita.anticipoMonto != null && anticipoMenosDe24h && (
+                        <>
+                          <p style={{ marginTop: "0.75rem" }}>
+                            Faltan menos de 24 horas: por política, el anticipo de ${cita.anticipoMonto.toLocaleString("es-CO")} se pierde.
+                          </p>
+                          <label
+                            className="flex items-start gap-2"
+                            style={{ marginTop: "0.75rem", textAlign: "left", cursor: "pointer" }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={pasarASaldo}
+                              onChange={(e) => setPasarASaldo(e.target.checked)}
+                              style={{ marginTop: "3px" }}
+                            />
+                            <span>Pasarlo a saldo a favor de todos modos (por ejemplo, si cancela el salón)</span>
+                          </label>
+                        </>
+                      )}
+                    </>
+                  )
               : "¿Marcar como no asistió? Esta cita dejará de contar en el cierre de caja."
           }
           confirmLabel={confirmAction === "cancelada" ? "Sí, cancelar" : "Sí, marcar no asistió"}
           loading={updating}
           onConfirm={() => handleUpdateEstado(confirmAction)}
-          onCancel={() => setConfirmAction(null)}
+          onCancel={() => { setConfirmAction(null); setPasarASaldo(false); }}
         />
       )}
     </div>
