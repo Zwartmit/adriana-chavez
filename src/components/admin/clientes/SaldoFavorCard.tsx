@@ -56,6 +56,7 @@ export function SaldoFavorCard({ clienteId, onToast }: SaldoFavorCardProps) {
   const [nota, setNota] = useState("");
   const [saving, setSaving] = useState(false);
   const [verTodo, setVerTodo] = useState(false);
+  const [horasAviso, setHorasAviso] = useState(24);
 
   const fetchMovimientos = useCallback(async () => {
     setLoading(true);
@@ -79,6 +80,12 @@ export function SaldoFavorCard({ clienteId, onToast }: SaldoFavorCardProps) {
   useEffect(() => {
     fetchMovimientos();
   }, [fetchMovimientos]);
+
+  useEffect(() => {
+    supabase.rpc("horas_aviso_anticipo").then(({ data }) => {
+      if (typeof data === "number") setHorasAviso(data);
+    });
+  }, []);
 
   const saldo = movimientos.reduce((sum, m) => sum + m.monto, 0);
   const valor = Number(monto.replace(/\D/g, ""));
@@ -180,8 +187,8 @@ export function SaldoFavorCard({ clienteId, onToast }: SaldoFavorCardProps) {
               color: "var(--color-text-on-light-faint)",
             }}
           >
-            El anticipo no se devuelve en dinero: si la clienta cancela con 24 horas o más, su valor queda aquí para
-            llevarse en productos (sin plazo). Con menos de 24 horas, el anticipo se pierde.
+            El anticipo no se devuelve en dinero: si la clienta cancela con {horasAviso} horas o más de aviso, su valor queda aquí para
+            llevarse en productos (sin plazo). Con menos horas, el anticipo se pierde.
           </p>
 
           {modo === null ? (
@@ -210,7 +217,7 @@ export function SaldoFavorCard({ clienteId, onToast }: SaldoFavorCardProps) {
                 <div>
                   <label style={labelStyle}>Tipo de ajuste</label>
                   <select value={signo} onChange={(e) => setSigno(e.target.value as "suma" | "resta")} style={inputStyle}>
-                    <option value="suma">Sumar saldo (por ejemplo, cancela el salón con menos de 24 h)</option>
+                    <option value="suma">Sumar saldo (por ejemplo, cancela el salón fuera del plazo de aviso)</option>
                     <option value="resta">Restar saldo (corrección)</option>
                   </select>
                 </div>

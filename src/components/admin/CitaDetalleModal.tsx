@@ -109,6 +109,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
   const [updating, setUpdating] = useState(false);
   const [confirmAction, setConfirmAction] = useState<EstadoCita | null>(null);
   const [pasarASaldo, setPasarASaldo] = useState(false);
+  const [horasAviso, setHorasAviso] = useState(24);
 
   // Reprogramación
   const [vista, setVista] = useState<"detalle" | "reprogramar" | "movida">("detalle");
@@ -132,6 +133,13 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
     setMoveError(null);
     setConfirmAction(null);
   }, [citaId]);
+
+  // Horas de aviso que Adriana definió para cancelar o mover una cita con anticipo
+  useEffect(() => {
+    supabase.rpc("horas_aviso_anticipo").then(({ data }) => {
+      if (typeof data === "number") setHorasAviso(data);
+    });
+  }, []);
 
   // Horas libres para la profesional y el día elegidos (la propia cita no cuenta como ocupada)
   useEffect(() => {
@@ -170,7 +178,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
 
   if (!cita) return null;
 
-  const anticipoMenosDe24h = cita.anticipoMonto != null && cita.fechaHora.getTime() < Date.now() + 24 * 60 * 60 * 1000;
+  const anticipoMenosDe24h = cita.anticipoMonto != null && cita.fechaHora.getTime() < Date.now() + horasAviso * 60 * 60 * 1000;
 
   const puedeReprogramar =
     ["pendiente", "confirmada", "en_proceso"].includes(cita.estadoReal) && cita.fechaFin > new Date();
@@ -619,13 +627,13 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
                       <p>¿Deseas cancelar esta cita? Quedará guardada en el historial.</p>
                       {cita.anticipoMonto != null && !anticipoMenosDe24h && (
                         <p style={{ marginTop: "0.75rem" }}>
-                          Faltan 24 horas o más: el anticipo de ${cita.anticipoMonto.toLocaleString("es-CO")} pasará a saldo a favor de la clienta para llevarse en productos.
+                          Faltan {horasAviso} horas o más: el anticipo de ${cita.anticipoMonto.toLocaleString("es-CO")} pasará a saldo a favor de la clienta para llevarse en productos.
                         </p>
                       )}
                       {cita.anticipoMonto != null && anticipoMenosDe24h && (
                         <>
                           <p style={{ marginTop: "0.75rem" }}>
-                            Faltan menos de 24 horas: por política, el anticipo de ${cita.anticipoMonto.toLocaleString("es-CO")} se pierde.
+                            Faltan menos de {horasAviso} horas: por política, el anticipo de ${cita.anticipoMonto.toLocaleString("es-CO")} se pierde.
                           </p>
                           <label
                             className="flex items-start gap-2"

@@ -14,6 +14,7 @@ export const Route = createFileRoute("/admin/anticipos/")({
 interface AnticiposForm {
   porcentaje: string;
   horasPago: string;
+  horasAviso: string;
   datos: string;
 }
 
@@ -67,6 +68,10 @@ function validar(f: AnticiposForm): string | null {
   if (!f.horasPago.trim() || !Number.isInteger(horas) || horas < 1 || horas > 72) {
     return "Las horas para pagar deben ser un número entero entre 1 y 72.";
   }
+  const aviso = Number(f.horasAviso);
+  if (!f.horasAviso.trim() || !Number.isInteger(aviso) || aviso < 1 || aviso > 168) {
+    return "Las horas de aviso deben ser un número entero entre 1 y 168.";
+  }
   if (f.datos.length > MAX_DATOS) return `Los datos de la cuenta no pueden pasar de ${MAX_DATOS} caracteres.`;
   return null;
 }
@@ -98,6 +103,7 @@ function AnticiposPage() {
     const cargado: AnticiposForm = {
       porcentaje: String(data.porcentaje),
       horasPago: String(data.horas_pago),
+      horasAviso: String(data.horas_aviso ?? 24),
       datos: (data.datos_transferencia as string | null) ?? "",
     };
     setOriginal(cargado);
@@ -133,6 +139,7 @@ function AnticiposPage() {
       .update({
         porcentaje: Number(form.porcentaje),
         horas_pago: Number(form.horasPago),
+        horas_aviso: Number(form.horasAviso),
         datos_transferencia: form.datos.trim() || null,
       })
       .eq("id", 1);
@@ -196,6 +203,31 @@ function AnticiposPage() {
                     inputMode="numeric"
                     value={form.horasPago}
                     onChange={(e) => setCampo("horasPago", e.target.value.replace(/[^0-9]/g, ""))}
+                    style={inputStyle}
+                  />
+                </div>
+              </div>
+            </section>
+
+            <div style={{ height: "1px", backgroundColor: "var(--color-border-light)" }} />
+
+            <section>
+              <h3 style={sectionTitle}>Cancelar o mover una cita con anticipo</h3>
+              <p style={helpText}>
+                El anticipo no se devuelve en dinero. Si la clienta cancela avisando con estas horas de anticipación o más,
+                el valor queda como saldo a favor para llevarse en productos; si mueve la cita, el anticipo pasa a la nueva
+                fecha. Si avisa con menos horas, el anticipo se pierde y el asistente de WhatsApp no cancela ni mueve la
+                cita: te avisa a ti. También se puede cambiar por Telegram.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label style={labelStyle} htmlFor="anticipo-horas-aviso">Horas de aviso</label>
+                  <input
+                    id="anticipo-horas-aviso"
+                    type="text"
+                    inputMode="numeric"
+                    value={form.horasAviso}
+                    onChange={(e) => setCampo("horasAviso", e.target.value.replace(/[^0-9]/g, ""))}
                     style={inputStyle}
                   />
                 </div>
