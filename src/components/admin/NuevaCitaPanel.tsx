@@ -183,6 +183,20 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     };
   }, [clienteQuery]);
 
+  // Las horas ya pasadas de hoy se siguen ofreciendo (Adriana puede registrar una cita que ya empezó),
+  // pero se marcan para que no se elijan por error.
+  const esHoraPasada = (slot: string) => {
+    if (!selectedDate) return false;
+    const ahora = new TZDate(Date.now(), "America/Bogota");
+    const esHoy =
+      selectedDate.getFullYear() === ahora.getFullYear() &&
+      selectedDate.getMonth() === ahora.getMonth() &&
+      selectedDate.getDate() === ahora.getDate();
+    if (!esHoy) return false;
+    const [hh, mm] = slot.split(":").map(Number);
+    return hh * 60 + mm <= ahora.getHours() * 60 + ahora.getMinutes();
+  };
+
   useEffect(() => {
     if (!isOpen || !selectedServicioId || !selectedProfesionalId || !selectedDate) {
       setHorasLibres([]);
@@ -656,6 +670,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
               {horasLibres.map((slot) => (
                 <option key={slot} value={slot}>
                   {format12h(slot)}
+                  {esHoraPasada(slot) ? " (ya pasó)" : ""}
                 </option>
               ))}
             </select>
