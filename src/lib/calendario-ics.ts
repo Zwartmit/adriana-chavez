@@ -1,5 +1,8 @@
-// Genera el archivo de calendario (.ics) que se abre desde el enlace que recibe la clienta por WhatsApp
-// (ruta /calendario). No guarda nada ni lleva datos personales: todo viaja en el enlace.
+// Genera lo que se abre desde el enlace que recibe la clienta por WhatsApp (ruta /calendario):
+//   · en iPhone, iPad y Mac, un archivo .ics que el sistema abre como "Agregar al calendario" (con la alarma puesta);
+//   · en Android y computador, un enlace de Google Calendar con el evento ya lleno (Google no permite fijar la
+//     hora de la alarma por enlace: usa la que la clienta tenga por defecto).
+// No guarda nada ni lleva datos personales: todo viaja en el enlace.
 // Colombia no tiene horario de verano: America/Bogota es siempre UTC-5.
 
 const SALON = "Centro de Belleza Adriana Chávez";
@@ -117,4 +120,49 @@ export function construirIcs(entrada: EntradaCalendario, ahora: Date = new Date(
   }
   lineas.push("END:VCALENDAR");
   return lineas.map(plegar).join("\r\n") + "\r\n";
+}
+
+// Enlace de Google Calendar con el evento ya lleno (la clienta solo pulsa "Guardar").
+export function construirGoogle(entrada: EntradaCalendario): string | null {
+  const tipo = entrada.t === "retoque" ? "retoque" : "cita";
+  const servicio = limpiar(entrada.x, 80) || "Tu cita";
+  const profesional = limpiar(entrada.p, 60);
+  let titulo: string;
+  let fechas: string;
+  let detalle: string;
+  if (tipo === "cita") {
+    const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})$/.exec(entrada.s ?? "");
+    if (!m) return null;
+    const [y, mo, d, h, mi] = [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4]), Number(m[5])];
+    if (!fechaValida(y, mo, d) || h > 23 || mi > 59) return null;
+    const duracion = Math.min(Math.max(Number.parseInt(entrada.m ?? "", 10) || 60, 5), 600);
+    fechas = `${aUtc(y, mo, d, h, mi)}/${aUtc(y, mo, d, h, mi + duracion)}`;
+    titulo = `${servicio} · ${SALON}`;
+    detalle = [profesional ? `Cita con ${profesional}.` : "Tu cita en el salón.", `Dónde: ${LUGAR}`, MAPA].join("\n");
+  } else {
+    const m = /^(\d{4})(\d{2})(\d{2})$/.exec(entrada.d ?? "");
+    if (!m) return null;
+    const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+    if (!fechaValida(y, mo, d)) return null;
+    const sig = new Date(Date.UTC(y, mo - 1, d + 1));
+    fechas = `${m[1]}${m[2]}${m[3]}/${sig.getUTCFullYear()}${dos(sig.getUTCMonth() + 1)}${dos(sig.getUTCDate())}`;
+    titulo = `Retoque de tu ${servicio.toLowerCase()} · ${SALON}`;
+    detalle = `Ya casi te toca renovar tu ${servicio.toLowerCase()}. Escríbenos por WhatsApp y te agendamos.\n${MAPA}`;
+  }
+  const q = [
+    ["action", "TEMPLATE"],
+    ["text", titulo],
+    ["dates", fechas],
+    ["ctz", "America/Bogota"],
+    ["details", detalle],
+    ["location", `${SALON}, ${LUGAR}`],
+  ]
+    .map(([k, v]) => `${k}=${k === "dates" ? v : encodeURIComponent(v)}`)
+    .join("&");
+  return `https://calendar.google.com/calendar/render?${q}`;
+}
+
+// iPhone, iPad y Mac abren el .ics como "Agregar al calendario"; el resto va a Google Calendar.
+export function prefiereIcs(userAgent: string | null | undefined): boolean {
+  return /iPhone|iPad|iPod|Macintosh|Mac OS X/i.test(userAgent ?? "");
 }

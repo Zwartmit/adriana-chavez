@@ -8,6 +8,8 @@
 -- Las funciones solo las ejecutan los flujos de n8n (rol postgres), no el navegador.
 begin;
 
+drop function if exists public.texto_calendario_cita(uuid, boolean);
+
 -- Codifica un texto para usarlo dentro de una URL (UTF-8, estilo %C3%A1).
 create or replace function public.url_codificar(p_texto text)
 returns text
@@ -27,16 +29,17 @@ revoke execute on function public.url_codificar(text) from public, anon, authent
 
 -- Texto listo para pegar al final del mensaje de confirmación: invitación + enlace de la cita
 -- y, si aplica, el enlace del retoque. Devuelve null si la cita no existe o no está activa.
-create or replace function public.texto_calendario_cita(p_cita_id uuid, p_reprogramada boolean default false)
+-- p_inicio: fecha y hora a usar en vez de la guardada; sirve cuando la cita se mueve en la misma consulta
+-- (la función es volátil a propósito: así ve la cita recién creada en la misma consulta).
+create or replace function public.texto_calendario_cita(p_cita_id uuid, p_reprogramada boolean default false, p_inicio timestamptz default null)
 returns text
 language plpgsql
-stable
 security definer
 set search_path = public
 as $$
 declare
   c          record;
-  v_base     constant text := 'https://adrianachavez.com/calendario';
+  v_base     constant text := 'https://cb-adrianachavez.vercel.app/calendario';
   v_ini      timestamp;
   v_alm_ini  time;
   v_alarma   timestamp;
@@ -62,7 +65,7 @@ begin
   select cfg.almuerzo_inicio into v_alm_ini from public.configuracion_horario cfg where cfg.id = 1;
   v_alm_ini := coalesce(v_alm_ini, time '13:00');
 
-  v_ini := c.fecha_hora at time zone 'America/Bogota';
+  v_ini := coalesce(p_inicio, c.fecha_hora) at time zone 'America/Bogota';
   if v_ini::time < v_alm_ini then
     v_alarma := (v_ini::date - 1) + time '18:00';
   else
@@ -106,7 +109,7 @@ begin
   return v_texto;
 end;
 $$;
-revoke execute on function public.texto_calendario_cita(uuid, boolean) from public, anon, authenticated;
+revoke execute on function public.texto_calendario_cita(uuid, boolean, timestamptz) from public, anon, authenticated;
 
 -- resolver_anticipo: igual que antes, pero el mensaje de "Recibido" a la clienta agrega el enlace del calendario.
 drop function if exists public.resolver_anticipo(bigint, text);
@@ -224,5 +227,5 @@ revoke execute on function public.resolver_anticipo(bigint, text) from public, a
 commit;
 
 -- Reversa (solo quita el enlace del mensaje; vuelve a ejecutar la definición de resolver_anticipo de 20261021000005):
---   drop function if exists public.texto_calendario_cita(uuid, boolean);
+--   drop function if exists public.texto_calendario_cita(uuid, boolean, timestamptz);
 --   drop function if exists public.url_codificar(text);
