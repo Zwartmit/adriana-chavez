@@ -27,6 +27,7 @@ export function ProductCard(props: ProductCardProps) {
     brand,
     description,
     price,
+    originalPrice,
     image,
     isNew,
     isAgotado,
@@ -135,15 +136,28 @@ export function ProductCard(props: ProductCardProps) {
               </span>
             </div>
           ) : (
-            <span
-              className="font-bold text-base sm:text-xl block"
-              style={{
-                fontFamily: "var(--font-mono)",
-                color: isLight ? "var(--color-primary-dim)" : "var(--color-primary)",
-              }}
-            >
-              {formatPrice(price)}
-            </span>
+            <div className="flex flex-wrap items-baseline justify-center sm:justify-start gap-x-2">
+              <span
+                className="font-bold text-base sm:text-xl block"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  color: isLight ? "var(--color-primary-dim)" : "var(--color-primary)",
+                }}
+              >
+                {formatPrice(price)}
+              </span>
+              {originalPrice != null && originalPrice > price && (
+                <span
+                  className="line-through text-xs sm:text-sm"
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    color: isLight ? "var(--color-text-on-light-faint)" : "var(--color-text-muted)",
+                  }}
+                >
+                  {formatPrice(originalPrice)}
+                </span>
+              )}
+            </div>
           )}
         </div>
 

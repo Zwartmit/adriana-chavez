@@ -134,14 +134,6 @@ export function ProductosGrid({
     return result;
   }, [productos, activeCategory, searchQuery, sortOrder]);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 8; // Muestra 8 por página por defecto
-
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeCategory, searchQuery, sortOrder]);
-
   useEffect(() => {
     onFilteredCountChange(productosFiltrados.length);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,77 +175,11 @@ export function ProductosGrid({
         ) : productosFiltrados.length > 0 ? (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-              {productosFiltrados.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map((p) => (
+              {productosFiltrados.map((p) => (
                 <ProductCard key={p.id} {...p} theme="light" onAddToCart={handleAddToCart} />
               ))}
             </div>
 
-            {/* Paginación visual */}
-            {productosFiltrados.length > ITEMS_PER_PAGE && (
-              <div className="flex items-center justify-center gap-2 mt-12">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                  style={{
-                    width: "auto",
-                    height: "40px",
-                    padding: "0 1rem",
-                    borderRadius: "var(--radius-full)",
-                    border: "1px solid var(--color-border-light)",
-                    backgroundColor: "transparent",
-                    color: currentPage === 1 ? "var(--color-text-on-light-faint)" : "var(--color-text-on-light)",
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "var(--text-sm)",
-                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  ← Anterior
-                </button>
-                {Array.from({ length: Math.ceil(productosFiltrados.length / ITEMS_PER_PAGE) }).map((_, i) => {
-                  const page = i + 1;
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "var(--radius-full)",
-                        border: page === currentPage ? "none" : "1px solid var(--color-border-light)",
-                        backgroundColor: page === currentPage ? "var(--color-primary)" : "transparent",
-                        color: page === currentPage ? "var(--color-text-inverse)" : "var(--color-text-on-light-muted)",
-                        fontFamily: "var(--font-mono)",
-                        fontSize: "var(--text-sm)",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      {page}
-                    </button>
-                  );
-                })}
-                <button
-                  disabled={currentPage === Math.ceil(productosFiltrados.length / ITEMS_PER_PAGE)}
-                  onClick={() => setCurrentPage((prev) => Math.min(Math.ceil(productosFiltrados.length / ITEMS_PER_PAGE), prev + 1))}
-                  style={{
-                    width: "auto",
-                    height: "40px",
-                    padding: "0 1rem",
-                    borderRadius: "var(--radius-full)",
-                    border: "1px solid var(--color-border-light)",
-                    backgroundColor: "transparent",
-                    color: currentPage === Math.ceil(productosFiltrados.length / ITEMS_PER_PAGE) ? "var(--color-text-on-light-faint)" : "var(--color-text-on-light)",
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "var(--text-sm)",
-                    cursor: currentPage === Math.ceil(productosFiltrados.length / ITEMS_PER_PAGE) ? "not-allowed" : "pointer",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  Siguiente →
-                </button>
-              </div>
-            )}
           </>
         ) : (
           <div className="flex flex-col items-center gap-4 py-20">
