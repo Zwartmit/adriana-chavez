@@ -55,65 +55,21 @@ function CheckoutPage() {
     setSubmitting(true);
 
     try {
-      const { data: orden, error: ordenError } = await supabase
-        .from("ordenes")
-        .insert({
-          estado: "pendiente",
-          subtotal: totalPrice,
-          costo_envio: 0,
-          total: totalPrice,
-          nombre_envio: nombre.trim(),
-          telefono_envio: telefono.trim(),
-          direccion_envio: direccion.trim(),
-          ciudad_envio: ciudad.trim(),
-          notas_cliente: notas.trim() || null,
-        })
-        .select("id")
-        .single();
+      // El pedido se crea en la base con una función segura: valida los datos, toma los precios
+      // de la base (no del navegador), descuenta el stock y registra el movimiento en una sola transacción.
+      const { data: ordenId, error: ordenError } = await supabase.rpc("crear_orden_tienda", {
+        p_nombre: nombre.trim(),
+        p_telefono: telefono.trim(),
+        p_direccion: direccion.trim(),
+        p_ciudad: ciudad.trim(),
+        p_notas: notas.trim() || null,
+        p_items: items.map((item) => ({ producto_id: item.id, cantidad: item.quantity })),
+      });
 
-      if (ordenError || !orden) throw new Error(ordenError?.message ?? "Error al crear la orden.");
-
-      const itemsOrden = items.map((item) => ({
-        orden_id: orden.id,
-        producto_id: item.id,
-        nombre: item.name,
-        precio: item.price,
-        cantidad: item.quantity,
-        subtotal: item.price * item.quantity,
-      }));
-
-      const { error: itemsError } = await supabase.from("items_orden").insert(itemsOrden);
-      if (itemsError) throw new Error(itemsError.message);
-
-      for (const item of items) {
-        const { data: inv } = await supabase
-          .from("inventario")
-          .select("stock_virtual")
-          .eq("producto_id", item.id)
-          .single();
-
-        const stockAntes = inv?.stock_virtual ?? 0;
-        const stockDespues = Math.max(0, stockAntes - item.quantity);
-
-        await supabase
-          .from("inventario")
-          .update({ stock_virtual: stockDespues, ultima_salida: new Date().toISOString() })
-          .eq("producto_id", item.id);
-
-        await supabase.from("movimientos_inventario").insert({
-          producto_id: item.id,
-          tipo: "salida",
-          origen: "venta_online",
-          cantidad: item.quantity,
-          stock_antes: stockAntes,
-          stock_despues: stockDespues,
-          notas: `Orden #${orden.id.slice(0, 8).toUpperCase()}`,
-          referencia_id: orden.id,
-        });
-      }
+      if (ordenError || !ordenId) throw new Error(ordenError?.message ?? "Error al crear la orden.");
 
       clearCart();
-      navigate({ to: "/tienda/orden-confirmada", search: { id: orden.id } });
+      navigate({ to: "/tienda/orden-confirmada", search: { id: ordenId as string } });
     } catch (err) {
       setFormError((err as Error).message ?? "Ocurrió un error al procesar tu pedido.");
     } finally {
