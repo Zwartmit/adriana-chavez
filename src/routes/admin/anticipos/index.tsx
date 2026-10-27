@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { duracionAviso, explicarError } from "@/lib/errores";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Save } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -87,7 +88,7 @@ function AnticiposPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const fetchData = useCallback(async () => {
@@ -147,7 +148,7 @@ function AnticiposPage() {
 
     if (error) {
       console.error("Error al guardar la configuración de anticipos:", error.message);
-      setFormError("No se pudo guardar. Intenta de nuevo.");
+      setFormError(explicarError(error, "guardar la configuración de pagos y anticipos"));
       return;
     }
     const guardado = { ...form, datos: form.datos.trim() };

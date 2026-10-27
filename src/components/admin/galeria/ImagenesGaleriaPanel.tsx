@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase/client";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { Button } from "@/components/ui/Button";
 import { Plus, Trash2, UploadCloud, X } from "lucide-react";
+import { explicarError } from "@/lib/errores";
 import { ReactCompareSlider } from "react-compare-slider";
 
 interface Categoria {
@@ -30,6 +31,7 @@ export function ImagenesGaleriaPanel() {
 
   const [isAdding, setIsAdding] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [aviso, setAviso] = useState<string | null>(null);
   const [newFile, setNewFile] = useState<File | null>(null);
   const [newTitle, setNewTitle] = useState("");
   const [newTag, setNewTag] = useState("");
@@ -81,11 +83,20 @@ export function ImagenesGaleriaPanel() {
   };
 
   const handleUpload = async () => {
-    if (!newFile || !newCatId) {
-      alert("Debes seleccionar una imagen y una categoría.");
+    if (!newFile && !newCatId) {
+      setAviso("Falta elegir la imagen y la categoría.");
+      return;
+    }
+    if (!newFile) {
+      setAviso("Falta elegir la imagen principal.");
+      return;
+    }
+    if (!newCatId) {
+      setAviso("Falta elegir la categoría de la imagen.");
       return;
     }
 
+    setAviso(null);
     setUploading(true);
 
     try {
@@ -151,7 +162,7 @@ export function ImagenesGaleriaPanel() {
       setNewCatId("");
       fetchData();
     } catch (err) {
-      alert("Error al subir la imagen: " + (err as Error).message);
+      setAviso(explicarError(err, "subir la imagen"));
     } finally {
       setUploading(false);
     }
@@ -170,7 +181,7 @@ export function ImagenesGaleriaPanel() {
     const { error } = await supabase.from("galeria").delete().eq("id", id);
       
     if (error) {
-      alert("Error al eliminar: " + error.message);
+      setAviso(explicarError(error, "eliminar la imagen"));
     } else {
       fetchData();
     }
@@ -180,7 +191,7 @@ export function ImagenesGaleriaPanel() {
     if (!currentlyDestacado) {
       const destacadosCount = imagenes.filter(i => i.destacado).length;
       if (destacadosCount >= 4) {
-        alert("Ya tienes 4 imágenes destacadas. Quita una antes de destacar otra.");
+        setAviso("Ya tienes 4 imágenes destacadas. Quita una antes de destacar otra.");
         return;
       }
     }
@@ -196,7 +207,7 @@ export function ImagenesGaleriaPanel() {
       setImagenes(imagenes.map(img => img.id === id ? { ...img, destacado: !currentlyDestacado } : img));
     } catch (e: any) {
       console.error("Error toggling destacado", e);
-      alert("Error al actualizar la imagen.");
+      setAviso(explicarError(e, "actualizar la imagen"));
     }
   };
 
@@ -205,6 +216,12 @@ export function ImagenesGaleriaPanel() {
 
   return (
     <div className="space-y-6">
+      {aviso && (
+        <p role="alert" className="text-sm rounded-lg p-3" style={{ color: "#B91C1C", backgroundColor: "#FEF2F2", border: "1px solid #FECACA" }}>
+          {aviso}
+        </p>
+      )}
+
       <div className="flex justify-between items-center">
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)" }}>
           Imágenes del Portafolio

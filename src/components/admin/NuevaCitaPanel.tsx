@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { es } from "react-day-picker/locale";
@@ -261,8 +262,15 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     e.preventDefault();
     setFormError(null);
 
-    if (!selectedCliente || !selectedServicioId || !selectedProfesionalId || !selectedDate || !selectedHora) {
-      setFormError("Completa todos los campos requeridos.");
+    const faltan = [
+      !selectedCliente && "elegir la clienta",
+      !selectedServicioId && "elegir el servicio",
+      !selectedProfesionalId && "elegir la profesional",
+      !selectedDate && "elegir la fecha",
+      !selectedHora && "elegir la hora (si no aparecen horas, esa profesional no tiene espacio libre ese día)",
+    ].filter(Boolean);
+    if (faltan.length > 0 || !selectedCliente || !selectedDate) {
+      setFormError(`Falta ${faltan.join(", ")}.`);
       return;
     }
 
@@ -298,7 +306,7 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
           ? error.message
           : error.code === "22023"
             ? "Uno de los adicionales ya no está disponible para este servicio. Revisa la selección."
-            : "No se pudo crear la cita. Intenta de nuevo.",
+            : explicarError(error, "crear la cita"),
       );
       return;
     }

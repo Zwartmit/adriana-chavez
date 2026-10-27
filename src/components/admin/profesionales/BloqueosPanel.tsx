@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, ReactNode } from "react";
+import { duracionAviso, explicarError } from "@/lib/errores";
 import { format } from "date-fns";
 import { es } from "date-fns/locale/es";
 import { TZDate } from "@date-fns/tz";
@@ -107,7 +108,7 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const handleEdit = (b: BloqueoRow) => {
@@ -225,7 +226,7 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
     setConfirmSaveData(null);
 
     if (error) {
-      showToast("Error al guardar el bloqueo", "error");
+      showToast(explicarError(error, "guardar el bloqueo"), "error");
       console.error(error);
       return;
     }
@@ -248,7 +249,7 @@ export function BloqueosPanel({ profesionalId }: BloqueosPanelProps) {
     setBloqueoToDelete(null);
 
     if (error) {
-      showToast("Error al eliminar", "error");
+      showToast(explicarError(error, "eliminar el bloqueo"), "error");
     } else {
       showToast("Bloqueo eliminado");
       fetchBloqueos();

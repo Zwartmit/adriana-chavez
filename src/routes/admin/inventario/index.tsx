@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { duracionAviso } from "@/lib/errores";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronDown, Edit, ArrowRightLeft, Package, Search, Settings } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -113,7 +114,7 @@ function InventarioPage() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   useEffect(() => {

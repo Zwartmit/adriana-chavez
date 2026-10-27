@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { explicarError } from "@/lib/errores";
+import { duracionAviso } from "@/lib/errores";
 import { useEffect, useState, useCallback } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
@@ -56,7 +58,7 @@ function EditarProfesionalPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const handleSubmit = async (data: ProfesionalFormData) => {
@@ -72,7 +74,7 @@ function EditarProfesionalPage() {
         .neq("id", profesionalId);
 
       if (errorCheck) {
-        showToast("Error al verificar duplicados", "error");
+        showToast(explicarError(errorCheck, "comprobar si el nombre ya existe"), "error");
         setIsSubmitting(false);
         return;
       }
@@ -101,7 +103,7 @@ function EditarProfesionalPage() {
 
     if (error) {
       console.error("[EditarProfesional] error:", error.message);
-      showToast(error.message, "error");
+      showToast(explicarError(error, "guardar los cambios de la profesional"), "error");
       return;
     }
 

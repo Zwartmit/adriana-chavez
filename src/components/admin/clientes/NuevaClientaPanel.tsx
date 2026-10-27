@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
@@ -67,8 +68,13 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
     setFormError(null);
     setEmailError(null);
 
-    if (!nombre.trim() || !telefono.trim()) {
-      setFormError("Completa todos los campos requeridos.");
+    const faltan = [!nombre.trim() && "el nombre", !telefono.trim() && "el teléfono"].filter(Boolean);
+    if (faltan.length > 0) {
+      setFormError(`Falta llenar ${faltan.join(" y ")}.`);
+      return;
+    }
+    if (telefono.replace(/\D/g, "").length < 10) {
+      setFormError("El teléfono parece incompleto. Escribe el celular con sus 10 dígitos (por ejemplo 300 123 4567).");
       return;
     }
 
@@ -114,8 +120,9 @@ export function NuevaClientaPanel({ isOpen, onClose, onCreated, onError }: Nueva
 
     if (error) {
       console.error("[NuevaClientaPanel] error al crear clienta:", error.message);
-      setFormError("No se pudo registrar la clienta.");
-      onError("No se pudo registrar la clienta.");
+      const mensaje = explicarError(error, "registrar la clienta");
+      setFormError(mensaje);
+      onError(mensaje);
       return;
     }
 

@@ -54,13 +54,19 @@ export function ProfesionalForm({ initialData, onSubmit, onCancel, isSubmitting,
   });
 
   const [nuevaEspecialidad, setNuevaEspecialidad] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.nombre.trim()) {
-      alert("El nombre es obligatorio");
+      setFormError("Escribe el nombre de la profesional.");
       return;
     }
+    if (!Number.isInteger(formData.anos_experiencia) || formData.anos_experiencia < 0 || formData.anos_experiencia > 70) {
+      setFormError("Los años de experiencia deben ser un número entero entre 0 y 70.");
+      return;
+    }
+    setFormError(null);
     onSubmit(formData);
   };
 
@@ -85,6 +91,11 @@ export function ProfesionalForm({ initialData, onSubmit, onCancel, isSubmitting,
 
   return (
     <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {formError && (
+        <p role="alert" className="lg:col-span-2 text-sm rounded-lg p-3" style={{ color: "#B91C1C", backgroundColor: "#FEF2F2", border: "1px solid #FECACA" }}>
+          {formError}
+        </p>
+      )}
       {/* Columna Izquierda */}
       <div className="flex flex-col gap-6">
         <section className="p-5 md:p-7" style={cardStyle}>

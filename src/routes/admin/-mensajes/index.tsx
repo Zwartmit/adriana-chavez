@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { duracionAviso } from "@/lib/errores";
 import { useCallback, useEffect, useState } from "react";
 import { Mail, MessageCircle, MessageSquare, Phone, X } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -47,7 +48,7 @@ function MensajesPage() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const fetchMensajes = useCallback(async () => {

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { duracionAviso } from "@/lib/errores";
 import {
   addMonths,
   eachDayOfInterval,
@@ -194,7 +195,7 @@ export function CalendarioCitas() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const monthStart = startOfMonth(currentMonth);

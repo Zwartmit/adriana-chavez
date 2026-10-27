@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { duracionAviso, explicarError } from "@/lib/errores";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, Edit, Trash, AlertTriangle } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -95,7 +96,7 @@ function ProfesionalesAdminPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const handleToggleEstadoRequest = async (profesional: ProfesionalRow) => {
@@ -121,7 +122,7 @@ function ProfesionalesAdminPage() {
     setCheckingCitas(false);
 
     if (error) {
-      showToast("Error al verificar citas futuras", "error");
+      showToast(explicarError(error, "comprobar las citas futuras de la profesional"), "error");
       setIsConfirmOpen(false);
       setActionProf(null);
       return;
@@ -140,7 +141,7 @@ function ProfesionalesAdminPage() {
       .eq("id", profesional.id);
 
     if (error) {
-      showToast("No se pudo cambiar el estado", "error");
+      showToast(explicarError(error, "cambiar el estado de la profesional"), "error");
     } else {
       showToast(`Profesional ${newState ? "activado" : "desactivado"} correctamente`);
       fetchData();
@@ -158,7 +159,7 @@ function ProfesionalesAdminPage() {
     setIsDeleting(false);
     
     if (error) {
-      showToast("Error al intentar borrar la profesional", "error");
+      showToast(explicarError(error, "borrar la profesional"), "error");
       setProfToDelete(null);
       return;
     }

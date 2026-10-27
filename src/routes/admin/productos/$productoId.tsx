@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { explicarError } from "@/lib/errores";
+import { duracionAviso } from "@/lib/errores";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
@@ -48,7 +50,7 @@ function EditarProductoPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const handleSubmit = async (data: ProductoFormData) => {
@@ -74,7 +76,7 @@ function EditarProductoPage() {
 
     if (error) {
       console.error("Error al actualizar producto:", error);
-      showToast("Error al actualizar el producto", "error");
+      showToast(explicarError(error, "guardar los cambios del producto"), "error");
     } else {
       showToast("Producto actualizado con éxito");
       setTimeout(() => navigate({ to: "/admin/productos" }), 1500);

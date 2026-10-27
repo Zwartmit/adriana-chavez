@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { duracionAviso, explicarError } from "@/lib/errores";
 import { useCallback, useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
@@ -116,7 +117,7 @@ function ClienteDetallePage() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const fetchCliente = useCallback(async () => {
@@ -217,7 +218,7 @@ function ClienteDetallePage() {
 
     if (error) {
       console.error("[ClienteDetalle] error al guardar ficha:", error.message);
-      showToast("No se pudo guardar la ficha clínica.", "error");
+      showToast(explicarError(error, "guardar la ficha clínica"), "error");
       return;
     }
 
@@ -232,7 +233,7 @@ function ClienteDetallePage() {
 
     if (error) {
       console.error("[ClienteDetalle] error al desactivar:", error.message);
-      showToast("No se pudo desactivar la clienta.", "error");
+      showToast(explicarError(error, "desactivar la clienta"), "error");
       return;
     }
 

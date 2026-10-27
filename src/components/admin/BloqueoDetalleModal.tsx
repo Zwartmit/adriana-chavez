@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
@@ -40,7 +41,7 @@ export function BloqueoDetalleModal({ bloqueo, onClose, onDeleted, onError }: Bl
 
     if (error) {
       console.error("[BloqueoDetalleModal] error al eliminar:", error.message);
-      onError("No se pudo eliminar el bloqueo.");
+      onError(explicarError(error, "eliminar el bloqueo"));
       return;
     }
 

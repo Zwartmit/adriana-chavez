@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X, Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
@@ -95,7 +96,7 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
 
     if (insertError) {
       console.error("Error creating servicio:", insertError);
-      setError("Ocurrió un error al guardar el servicio. Verifica los datos e intenta de nuevo.");
+      setError(explicarError(insertError, "guardar el servicio"));
     } else {
       setNombre("");
       setPrecio("");
@@ -110,7 +111,7 @@ export function CrudServiciosModal({ isOpen, onClose, onUpdated }: CrudServicios
     const { error } = await supabase.from("servicios").update({ activo: !currentActivo }).eq("id", id);
     if (error) {
       console.error("Error toggling servicio status:", error);
-      setError("No se pudo actualizar el estado del servicio.");
+      setError(explicarError(error, "cambiar el estado del servicio"));
     } else {
       fetchServicios();
       onUpdated();

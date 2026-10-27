@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { Button } from "@/components/ui/Button";
 import { LoadingState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
@@ -99,7 +100,11 @@ export function SaldoFavorCard({ clienteId, onToast }: SaldoFavorCardProps) {
   };
 
   const handleGuardar = async () => {
-    if (!modo || !valor) return;
+    if (!modo) return;
+    if (!valor || valor <= 0) {
+      onToast("Escribe un monto mayor a 0.", "error");
+      return;
+    }
     if (modo === "canje" && valor > saldo) {
       onToast("El canje supera el saldo a favor de la clienta.", "error");
       return;
@@ -121,7 +126,7 @@ export function SaldoFavorCard({ clienteId, onToast }: SaldoFavorCardProps) {
       onToast(
         error.message.includes("no alcanza")
           ? "El saldo a favor de la clienta no alcanza."
-          : "No se pudo registrar el movimiento.",
+          : explicarError(error, "registrar el movimiento"),
         "error",
       );
       return;

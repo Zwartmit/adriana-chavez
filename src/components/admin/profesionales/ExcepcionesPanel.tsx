@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { duracionAviso, explicarError } from "@/lib/errores";
 import { format } from "date-fns";
 import { es } from "date-fns/locale/es";
 import { TZDate } from "@date-fns/tz";
@@ -87,7 +88,7 @@ export function ExcepcionesPanel({ profesionalId }: ExcepcionesPanelProps) {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,7 +121,7 @@ export function ExcepcionesPanel({ profesionalId }: ExcepcionesPanelProps) {
 
     if (error) {
       console.error("Error al guardar excepción:", error.message);
-      showToast("Error al guardar la excepción", "error");
+      showToast(explicarError(error, "guardar la excepción"), "error");
       return;
     }
 
@@ -139,7 +140,7 @@ export function ExcepcionesPanel({ profesionalId }: ExcepcionesPanelProps) {
     setToDelete(null);
 
     if (error) {
-      showToast("Error al eliminar", "error");
+      showToast(explicarError(error, "eliminar la excepción"), "error");
     } else {
       showToast("Excepción eliminada");
       fetchExcepciones();

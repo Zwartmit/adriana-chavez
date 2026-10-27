@@ -55,6 +55,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, onCancel }: ProductoFormProps) {
+  const [formError, setFormError] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductoFormData>({
     nombre: initialData?.nombre ?? "",
     marca: initialData?.marca ?? "",
@@ -106,7 +107,20 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    // El navegador ya avisa de los campos vacíos; aquí se revisa lo que él no ve (espacios en blanco, números, fichas incompletas).
+    if (!formData.nombre.trim()) return setFormError("Escribe el nombre del producto (no puede quedar solo con espacios).");
+    if (!formData.marca.trim()) return setFormError("Escribe la marca del producto.");
+    if (!formData.categoria_id) return setFormError("Elige la categoría del producto.");
+    if (formData.precio == null || !Number.isFinite(Number(formData.precio)) || Number(formData.precio) < 0) {
+      return setFormError("El precio debe ser un número igual o mayor a 0.");
+    }
+    if (!formData.descripcion.trim()) return setFormError("Escribe la descripción corta del producto.");
+    const incompleta = formData.caracteristicas.findIndex((c) => !!c.label.trim() !== !!c.valor.trim());
+    if (incompleta >= 0) {
+      return setFormError(`La característica ${incompleta + 1} está incompleta: llena la propiedad y el valor, o bórrala.`);
+    }
+    setFormError(null);
+    onSubmit({ ...formData, caracteristicas: formData.caracteristicas.filter((c) => c.label.trim() && c.valor.trim()) });
   };
 
   return (
@@ -136,7 +150,12 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
           </div>
           <div>
             <label style={labelStyle}>Precio *</label>
-            <input required type="number" min={0} name="precio" value={formData.precio} onChange={handleChange} style={inputStyle} />
+            <input required type="number" min={0} name="precio" value={formData.precio ?? ""} onChange={handleChange} style={inputStyle} />
+            {Number(formData.precio) === 0 && (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "#B45309", marginTop: 6 }}>
+                Con precio $0 el producto no se puede comprar en la tienda. Pon el precio real antes de dejarlo activo.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -225,6 +244,12 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
           </label>
         </div>
       </section>
+
+      {formError && (
+        <p role="alert" className="text-sm rounded-lg p-3" style={{ color: "#B91C1C", backgroundColor: "#FEF2F2", border: "1px solid #FECACA" }}>
+          {formError}
+        </p>
+      )}
 
       <div className="flex items-center justify-end gap-3 pt-6">
         <button

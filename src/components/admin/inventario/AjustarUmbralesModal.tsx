@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
@@ -65,8 +66,17 @@ export function AjustarUmbralesModal({
     const fisicoNum = Number(fisico);
     const umbralNum = Number(umbral);
 
-    if (Number.isNaN(virtualNum) || Number.isNaN(fisicoNum) || Number.isNaN(umbralNum) || umbralNum < 1) {
-      setFormError("Verifica los valores ingresados.");
+    const entero0 = (n: number) => Number.isInteger(n) && n >= 0;
+    if (virtual.trim() === "" || !entero0(virtualNum)) {
+      setFormError("El stock virtual debe ser un número entero de 0 o más.");
+      return;
+    }
+    if (fisico.trim() === "" || !entero0(fisicoNum)) {
+      setFormError("El stock físico debe ser un número entero de 0 o más.");
+      return;
+    }
+    if (umbral.trim() === "" || !Number.isInteger(umbralNum) || umbralNum < 1) {
+      setFormError("El umbral de alerta debe ser un número entero de 1 o más.");
       return;
     }
 
@@ -79,7 +89,9 @@ export function AjustarUmbralesModal({
 
     if (error) {
       console.error("[AjustarUmbralesModal] error al guardar:", error.message);
-      onError("No se pudieron guardar los umbrales.");
+      const mensaje = explicarError(error, "guardar los cambios de inventario");
+      setFormError(mensaje);
+      onError(mensaje);
       return;
     }
 

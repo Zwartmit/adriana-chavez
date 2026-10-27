@@ -27,10 +27,21 @@ function AdminLoginPage() {
     setLoading(true);
     setError(null);
 
+    if (!email.trim() || !password) {
+      setError(!email.trim() ? "Escribe tu correo electrónico." : "Escribe tu contraseña.");
+      setLoading(false);
+      return;
+    }
+
     const { error } = await signIn(email, password);
 
     if (error) {
-      setError("Credenciales incorrectas. Verifica tu correo y contraseña.");
+      const sinConexion = /failed to fetch|network/i.test(error.message ?? "");
+      setError(
+        sinConexion
+          ? "No hay conexión con el servidor. Revisa el internet e intenta de nuevo."
+          : "Correo o contraseña incorrectos. Verifica que estén bien escritos.",
+      );
       setLoading(false);
       return;
     }
@@ -56,7 +67,11 @@ function AdminLoginPage() {
     setLoading(false);
     
     if (error) {
-      setError("Hubo un error al intentar enviar el correo. Por favor intenta más tarde.");
+      setError(
+        /rate limit|too many/i.test(error.message ?? "")
+          ? "Pediste demasiados correos seguidos. Espera unos minutos e intenta de nuevo."
+          : "No se pudo enviar el correo de recuperación. Revisa que el correo esté bien escrito e intenta más tarde.",
+      );
       return;
     }
     

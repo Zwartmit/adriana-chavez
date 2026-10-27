@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
@@ -96,8 +97,9 @@ export function NuevoProfesionalPanel({ isOpen, onClose, onCreated, onError }: N
 
     if (error) {
       console.error("[NuevoProfesionalPanel] error al crear profesional:", error.message);
-      setFormError("No se pudo registrar profesional.");
-      onError("No se pudo registrar profesional.");
+      const mensaje = explicarError(error, "registrar la profesional");
+      setFormError(mensaje);
+      onError(mensaje);
       return;
     }
 

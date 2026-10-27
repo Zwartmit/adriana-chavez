@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { duracionAviso, explicarError } from "@/lib/errores";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Edit, Eye, Search, Users, Trash2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -144,7 +145,7 @@ function ClientesPage() {
 
     if (countError) {
       console.error("Error al verificar citas:", countError);
-      showToast("Error al verificar el historial de la clienta.", "error");
+      showToast(explicarError(countError, "comprobar el historial de la clienta"), "error");
       setLoading(false);
       return;
     }
@@ -162,7 +163,7 @@ function ClientesPage() {
       if (error.code === "23503") { // Por si acaso la base de datos lo bloquea
         showToast("No se puede eliminar porque tiene citas asociadas. Desactívala en su lugar.", "error");
       } else {
-        showToast("Error al eliminar la clienta.", "error");
+        showToast(explicarError(error, "eliminar la clienta"), "error");
       }
       setLoading(false);
     } else {
@@ -179,7 +180,7 @@ function ClientesPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   return (

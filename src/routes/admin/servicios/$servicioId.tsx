@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { explicarError } from "@/lib/errores";
+import { duracionAviso } from "@/lib/errores";
 import { useEffect, useState, useCallback } from "react";
 import { Trash2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -70,7 +72,7 @@ function EditarServicioPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const handleSubmit = async (data: ServicioFormData) => {
@@ -101,7 +103,7 @@ function EditarServicioPage() {
 
     if (error) {
       console.error("Error al actualizar servicio:", error);
-      showToast("Error al guardar los cambios", "error");
+      showToast(explicarError(error, "guardar los cambios del servicio"), "error");
     } else {
       showToast("Servicio actualizado con éxito");
       setTimeout(() => navigate({ to: "/admin/servicios" }), 1500);
@@ -121,9 +123,9 @@ function EditarServicioPage() {
     if (error) {
       console.error("Error eliminando servicio:", error);
       if (error.code === "23503") {
-        showToast("No se puede eliminar porque hay citas o registros asociados. Desactívalo.", "error");
+        showToast("No se puede eliminar el servicio porque tiene citas o registros asociados. Desactívalo en su lugar.", "error");
       } else {
-        showToast("Error al eliminar el servicio", "error");
+        showToast(explicarError(error, "eliminar el servicio"), "error");
       }
       setIsDeleting(false);
     } else {

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Edit, Scissors, Search } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
+import { CategoriasServiciosModal } from "@/components/admin/servicios/CategoriasServiciosModal";
 import { Button } from "@/components/ui/Button";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
@@ -68,6 +69,7 @@ function ServiciosAdminPage() {
   const [page, setPage] = useState(1);
 
   const [toast, setToast] = useState<ToastState | null>(null);
+  const [categoriasAbierto, setCategoriasAbierto] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("admin_servicios_sort", sortOrder);
@@ -153,7 +155,10 @@ function ServiciosAdminPage() {
             {servicios.length} {servicios.length === 1 ? "servicio registrado" : "servicios registrados"}
           </p>
         </div>
-        <div className="w-full sm:w-auto">
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-3">
+          <Button className="w-full sm:w-auto" variant="outline" size="md" onClick={() => setCategoriasAbierto(true)}>
+            Categorías
+          </Button>
           <Button className="w-full sm:w-auto" variant="accent" size="md" onClick={() => navigate({ to: "/admin/servicios/nuevo" })}>
             Nuevo servicio +
           </Button>
@@ -391,6 +396,16 @@ function ServiciosAdminPage() {
           )}
         </>
       )}
+
+      <CategoriasServiciosModal
+        isOpen={categoriasAbierto}
+        onClose={() => setCategoriasAbierto(false)}
+        onUpdated={(mensaje) => {
+          setToast({ message: mensaje, type: "success" });
+          setTimeout(() => setToast(null), 3000);
+          fetchData();
+        }}
+      />
 
       <AdminToast toast={toast} />
     </AdminLayout>

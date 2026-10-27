@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { duracionAviso } from "@/lib/errores";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   eachDayOfInterval,
@@ -145,7 +146,7 @@ function ReportesPage() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const fetchReporte = useCallback(async (p: Periodo) => {

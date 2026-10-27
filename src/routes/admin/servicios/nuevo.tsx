@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { explicarError } from "@/lib/errores";
+import { duracionAviso } from "@/lib/errores";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
@@ -34,7 +36,7 @@ function NuevoServicioPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const handleSubmit = async (data: ServicioFormData) => {
@@ -68,12 +70,7 @@ function NuevoServicioPage() {
 
     if (error) {
       console.error("Error al crear servicio:", error);
-      showToast(
-        error.message.includes("slug") 
-          ? "Error: el nombre generado ya existe. Intenta con otro." 
-          : "Error al crear el servicio", 
-        "error"
-      );
+      showToast(explicarError(error, "crear el servicio"), "error");
     } else {
       showToast("Servicio creado con éxito");
       setTimeout(() => navigate({ to: "/admin/servicios" }), 1500);

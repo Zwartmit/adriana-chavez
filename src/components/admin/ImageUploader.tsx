@@ -1,6 +1,10 @@
 import { useState, useRef } from "react";
 import { UploadCloud, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
+import { motivoDeError } from "@/lib/errores";
+
+const TIPOS_PERMITIDOS = ["image/png", "image/jpeg", "image/webp"];
+const MAX_BYTES = 5 * 1024 * 1024;
 
 interface ImageUploaderProps {
   bucket: string;
@@ -11,22 +15,40 @@ interface ImageUploaderProps {
 
 export function ImageUploader({ bucket, value, onChange, maxImages = 4 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
+  const [aviso, setAviso] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    setAviso(null);
+
     if (value.length + files.length > maxImages) {
-      alert(`Solo puedes subir hasta ${maxImages} imágenes en total.`);
+      const quedan = maxImages - value.length;
+      setAviso(
+        quedan > 0
+          ? `Solo puedes subir hasta ${maxImages} imágenes en total. Elegiste ${files.length} y solo caben ${quedan}.`
+          : `Ya tienes ${maxImages} imágenes, que es el máximo. Quita una para subir otra.`,
+      );
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
     setUploading(true);
+    const problemas: string[] = [];
 
     try {
       const newUrls: string[] = [];
       for (const file of Array.from(files)) {
+        if (!TIPOS_PERMITIDOS.includes(file.type)) {
+          problemas.push(`"${file.name}": formato no permitido (usa PNG, JPG o WEBP).`);
+          continue;
+        }
+        if (file.size > MAX_BYTES) {
+          problemas.push(`"${file.name}": pesa ${(file.size / 1024 / 1024).toFixed(1)} MB y el máximo es 5 MB.`);
+          continue;
+        }
         const fileExt = file.name.split('.').pop();
         const safeName = file.name.replace(/[^a-zA-Z0-9]/g, '');
         const fileName = `${Date.now()}-${safeName}.${fileExt}`;
@@ -37,7 +59,7 @@ export function ImageUploader({ bucket, value, onChange, maxImages = 4 }: ImageU
 
         if (uploadError) {
           console.error("Error uploading image:", uploadError);
-          alert("Error al subir la imagen. Asegúrate de que el bucket exista y sea público.");
+          problemas.push(`"${file.name}": ${motivoDeError(uploadError)}`);
           continue;
         }
 
@@ -50,7 +72,9 @@ export function ImageUploader({ bucket, value, onChange, maxImages = 4 }: ImageU
       }
     } catch (error) {
       console.error("Error inesperado en upload:", error);
+      problemas.push(motivoDeError(error));
     } finally {
+      if (problemas.length > 0) setAviso(problemas.join("\n"));
       setUploading(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -119,6 +143,24 @@ export function ImageUploader({ bucket, value, onChange, maxImages = 4 }: ImageU
             disabled={uploading}
           />
         </div>
+      )}
+
+      {aviso && (
+        <p
+          role="alert"
+          style={{
+            whiteSpace: "pre-line",
+            fontFamily: "var(--font-body)",
+            fontSize: "var(--text-sm)",
+            color: "#B91C1C",
+            backgroundColor: "#FEF2F2",
+            border: "1px solid #FECACA",
+            borderRadius: "var(--radius-lg)",
+            padding: "0.75rem 1rem",
+          }}
+        >
+          {aviso}
+        </p>
       )}
 
       {/* Grid de miniaturas */}

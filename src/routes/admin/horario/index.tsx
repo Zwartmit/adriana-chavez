@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { duracionAviso, explicarError } from "@/lib/errores";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale/es";
@@ -99,7 +100,7 @@ function HorarioSalonPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   const fetchData = useCallback(async () => {
@@ -227,7 +228,7 @@ function HorarioSalonPage() {
 
     if (error) {
       console.error("Error al guardar el horario:", error.message);
-      setFormError("No se pudo guardar el horario. Intenta de nuevo.");
+      setFormError(explicarError(error, "guardar el horario"));
       return;
     }
     setOriginal(form);

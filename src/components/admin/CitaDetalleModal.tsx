@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { es } from "react-day-picker/locale";
@@ -234,7 +235,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
 
     if (error) {
       console.error("[CitaDetalleModal] error al reprogramar:", error.message);
-      setMoveError(error.code === "23P01" ? error.message : "No se pudo reprogramar la cita. Intenta de nuevo.");
+      setMoveError(error.code === "23P01" ? error.message : explicarError(error, "reprogramar la cita"));
       return;
     }
 
@@ -262,7 +263,7 @@ export function CitaDetalleModal({ cita, onClose, onUpdated, onError }: CitaDeta
     if (error) {
       setUpdating(false);
       console.error("[CitaDetalleModal] error al actualizar:", error.message);
-      onError("No se pudo actualizar la cita.");
+      onError(explicarError(error, "actualizar la cita"));
       setConfirmAction(null);
       return;
     }

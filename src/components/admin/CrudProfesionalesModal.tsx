@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X, Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
@@ -84,7 +85,7 @@ export function CrudProfesionalesModal({ isOpen, onClose, onUpdated }: CrudProfe
 
     if (insertError) {
       console.error("Error creating profesional:", insertError);
-      setError("Ocurrió un error al guardar la profesional. Verifica los datos e intenta de nuevo.");
+      setError(explicarError(insertError, "guardar la profesional"));
     } else {
       setNombre("");
       setCargo("Profesional");
@@ -99,7 +100,7 @@ export function CrudProfesionalesModal({ isOpen, onClose, onUpdated }: CrudProfe
     const { error } = await supabase.from("profesionales").update({ activo: !currentActivo }).eq("id", id);
     if (error) {
       console.error("Error toggling profesional status:", error);
-      setError("No se pudo actualizar el estado de la profesional.");
+      setError(explicarError(error, "cambiar el estado de la profesional"));
     } else {
       fetchProfesionals();
       onUpdated();

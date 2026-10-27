@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { explicarError } from "@/lib/errores";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
@@ -151,8 +152,13 @@ export function MovimientoPanel({
     e.preventDefault();
     setFormError(null);
 
-    if (!selectedProducto || !origen || cantidadNum < 1) {
-      setFormError("Completa todos los campos requeridos.");
+    const faltan = [
+      !selectedProducto && "elegir el producto",
+      !origen && "elegir el origen del movimiento",
+      !(cantidadNum >= 1) && "poner una cantidad de 1 o más",
+    ].filter(Boolean);
+    if (!selectedProducto || !origen || !(cantidadNum >= 1)) {
+      setFormError(`Falta ${faltan.join(", ")}.`);
       return;
     }
 
@@ -166,7 +172,7 @@ export function MovimientoPanel({
 
     if (fetchError || !inventarioActual) {
       console.error("[MovimientoPanel] error al leer inventario:", fetchError?.message);
-      setFormError("No se pudo leer el inventario actual.");
+      setFormError(explicarError(fetchError ?? { message: "El producto no tiene inventario registrado." }, "leer el inventario actual"));
       setSubmitting(false);
       return;
     }
@@ -191,7 +197,7 @@ export function MovimientoPanel({
 
     if (updateError) {
       console.error("[MovimientoPanel] error al actualizar inventario:", updateError.message);
-      setFormError("No se pudo actualizar el inventario.");
+      setFormError(explicarError(updateError, "actualizar el inventario"));
       setSubmitting(false);
       return;
     }

@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase/client";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { Button } from "@/components/ui/Button";
 import { Plus, Trash2, Edit2, Check, X } from "lucide-react";
+import { explicarError } from "@/lib/errores";
 
 interface Categoria {
   id: string;
@@ -15,6 +16,7 @@ export function CategoriasGaleriaPanel() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
   
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editNombre, setEditNombre] = useState("");
@@ -44,7 +46,11 @@ export function CategoriasGaleriaPanel() {
   }, []);
 
   const handleCreate = async () => {
-    if (!newNombre.trim()) return;
+    if (!newNombre.trim()) {
+      setAviso("Escribe el nombre de la categoría.");
+      return;
+    }
+    setAviso(null);
     
     // Generar slug basico
     const slug = newNombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-");
@@ -54,7 +60,7 @@ export function CategoriasGaleriaPanel() {
       .insert({ nombre: newNombre, slug, orden: newOrden });
       
     if (error) {
-      alert("Error al crear categoría: " + error.message);
+      setAviso(explicarError(error, "crear la categoría"));
     } else {
       setIsAdding(false);
       setNewNombre("");
@@ -64,7 +70,11 @@ export function CategoriasGaleriaPanel() {
   };
 
   const handleUpdate = async (id: string) => {
-    if (!editNombre.trim()) return;
+    if (!editNombre.trim()) {
+      setAviso("El nombre de la categoría no puede quedar vacío.");
+      return;
+    }
+    setAviso(null);
     
     const { error } = await supabase
       .from("categorias_galeria")
@@ -72,7 +82,7 @@ export function CategoriasGaleriaPanel() {
       .eq("id", id);
       
     if (error) {
-      alert("Error al actualizar: " + error.message);
+      setAviso(explicarError(error, "actualizar la categoría"));
     } else {
       setEditingId(null);
       fetchCategorias();
@@ -88,7 +98,7 @@ export function CategoriasGaleriaPanel() {
       .eq("id", id);
       
     if (error) {
-      alert("Error al eliminar: " + error.message);
+      setAviso(explicarError(error, "eliminar la categoría"));
     } else {
       fetchCategorias();
     }
@@ -99,6 +109,12 @@ export function CategoriasGaleriaPanel() {
 
   return (
     <div className="space-y-6">
+      {aviso && (
+        <p role="alert" className="text-sm rounded-lg p-3" style={{ color: "#B91C1C", backgroundColor: "#FEF2F2", border: "1px solid #FECACA" }}>
+          {aviso}
+        </p>
+      )}
+
       <div className="flex justify-between items-center">
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)" }}>
           Filtros de Galería

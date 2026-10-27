@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { duracionAviso } from "@/lib/errores";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Edit, Package, Search } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -121,7 +122,7 @@ function ProductosPage() {
 
   const showToast = (message: string, type: ToastState["type"] = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), duracionAviso(type));
   };
 
   return (
