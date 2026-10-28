@@ -12,12 +12,21 @@ export const Route = createFileRoute("/admin/anticipos/")({
   component: AnticiposPage,
 });
 
+type AnticipoGeneral = "nuevas" | "todas" | "nadie";
+
 interface AnticiposForm {
   porcentaje: string;
   horasPago: string;
   horasAviso: string;
   datos: string;
+  general: AnticipoGeneral;
 }
+
+const OPCIONES_GENERAL: { value: AnticipoGeneral; label: string }[] = [
+  { value: "nuevas", label: "Solo a las clientas nuevas (automático)" },
+  { value: "todas", label: "A todas las clientas" },
+  { value: "nadie", label: "A nadie" },
+];
 
 const MAX_DATOS = 1000;
 
@@ -106,6 +115,7 @@ function AnticiposPage() {
       horasPago: String(data.horas_pago),
       horasAviso: String(data.horas_aviso ?? 24),
       datos: (data.datos_transferencia as string | null) ?? "",
+      general: data.anticipo_general === "todas" || data.anticipo_general === "nadie" ? data.anticipo_general : "nuevas",
     };
     setOriginal(cargado);
     setForm(cargado);
@@ -121,7 +131,7 @@ function AnticiposPage() {
     [form, original],
   );
 
-  const setCampo = (campo: keyof AnticiposForm, valor: string) => {
+  const setCampo = (campo: Exclude<keyof AnticiposForm, "general">, valor: string) => {
     setForm((prev) => (prev ? { ...prev, [campo]: valor } : prev));
     setFormError(null);
   };
@@ -142,6 +152,7 @@ function AnticiposPage() {
         horas_pago: Number(form.horasPago),
         horas_aviso: Number(form.horasAviso),
         datos_transferencia: form.datos.trim() || null,
+        anticipo_general: form.general,
       })
       .eq("id", 1);
     setSaving(false);
@@ -175,6 +186,34 @@ function AnticiposPage() {
               padding: "2rem",
             }}
           >
+
+            <div style={{ height: "1px", backgroundColor: "var(--color-border-light)" }} />
+
+            <section>
+              <h3 style={sectionTitle}>¿A quién se le pide anticipo?</h3>
+              <p style={helpText}>
+                Aplica a las clientas que no tienen un ajuste propio. En la ficha de cada clienta puedes dejarle "siempre" o
+                "nunca" pedir anticipo, y ese ajuste manda sobre este. Si la clienta prefiere pagar en efectivo en el salón,
+                su cita se agenda sin anticipo. Cambiarlo no afecta citas ni solicitudes ya hechas. También se puede cambiar
+                por Telegram.
+              </p>
+              <label style={labelStyle} htmlFor="anticipo-general">Se le pide anticipo</label>
+              <select
+                id="anticipo-general"
+                value={form.general}
+                onChange={(e) => {
+                  setForm((prev) => (prev ? { ...prev, general: e.target.value as AnticipoGeneral } : prev));
+                  setFormError(null);
+                }}
+                style={inputStyle}
+              >
+                {OPCIONES_GENERAL.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </section>
 
             <div style={{ height: "1px", backgroundColor: "var(--color-border-light)" }} />
 

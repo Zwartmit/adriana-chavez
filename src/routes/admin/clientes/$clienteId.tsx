@@ -104,6 +104,7 @@ function ClienteDetallePage() {
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [apodo, setApodo] = useState("");
   const [anticipoModo, setAnticipoModo] = useState("");
+  const [anticipoGeneral, setAnticipoGeneral] = useState<"nuevas" | "todas" | "nadie">("nuevas");
   const [savingDatos, setSavingDatos] = useState(false);
 
   const [notas, setNotas] = useState("");
@@ -175,10 +176,21 @@ function ClienteDetallePage() {
     setCitasLoading(false);
   }, [clienteId]);
 
+  const fetchAnticipoGeneral = useCallback(async () => {
+    const { data, error } = await supabase.from("configuracion_anticipos").select("anticipo_general").eq("id", 1).single();
+    if (error) {
+      console.error("[ClienteDetalle] error al cargar el ajuste general del anticipo:", error.message);
+      return;
+    }
+    const g = data?.anticipo_general;
+    setAnticipoGeneral(g === "todas" || g === "nadie" ? g : "nuevas");
+  }, []);
+
   useEffect(() => {
     fetchCliente();
     fetchCitas();
-  }, [fetchCliente, fetchCitas]);
+    fetchAnticipoGeneral();
+  }, [fetchCliente, fetchCitas, fetchAnticipoGeneral]);
 
   const handleGuardarDatos = async () => {
     setSavingDatos(true);
@@ -349,7 +361,13 @@ function ClienteDetallePage() {
                   label="Anticipo para agendar"
                   value={anticipoModo}
                   onChange={setAnticipoModo}
-                  emptyLabel="Automático (se pide a clientas nuevas)"
+                  emptyLabel={
+                    anticipoGeneral === "todas"
+                      ? "Automático (según el ajuste general: se pide a todas)"
+                      : anticipoGeneral === "nadie"
+                        ? "Automático (según el ajuste general: no se pide a nadie)"
+                        : "Automático (se pide a clientas nuevas)"
+                  }
                   options={[
                     { value: "si", label: "Siempre pedir anticipo" },
                     { value: "no", label: "Nunca pedir anticipo" },
@@ -359,9 +377,13 @@ function ClienteDetallePage() {
                       ? "Siempre se le pide anticipo"
                       : anticipoModo === "no"
                         ? "Nunca se le pide anticipo"
-                        : citas.some((c) => c.estado === "completada")
-                          ? "Automático: no se le pide (ya fue atendida)"
-                          : "Automático: se le pide (clienta nueva)"
+                        : anticipoGeneral === "todas"
+                          ? "Automático: se le pide (el ajuste general es pedir a todas)"
+                          : anticipoGeneral === "nadie"
+                            ? "Automático: no se le pide (el ajuste general es no pedir a nadie)"
+                            : citas.some((c) => c.estado === "completada")
+                              ? "Automático: no se le pide (ya fue atendida)"
+                              : "Automático: se le pide (clienta nueva)"
                   }
                 />
               </div>
