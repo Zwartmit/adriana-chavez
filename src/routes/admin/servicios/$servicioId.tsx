@@ -62,6 +62,7 @@ function EditarServicioPage() {
       inicio_desde: recortarHora(servicioRes.data.inicio_desde),
       inicio_hasta: recortarHora(servicioRes.data.inicio_hasta),
       puede_cruzar_almuerzo: servicioRes.data.puede_cruzar_almuerzo ?? false,
+      sin_anticipo: servicioRes.data.sin_anticipo ?? false,
     });
     setLoading(false);
   }, [servicioId]);

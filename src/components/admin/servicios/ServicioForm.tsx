@@ -27,6 +27,8 @@ export interface ServicioFormData {
   inicio_desde: string; // "HH:MM"
   inicio_hasta: string; // "HH:MM"
   puede_cruzar_almuerzo: boolean;
+  /** true = a este servicio no se le pide anticipo aunque la clienta sea nueva (se agenda directo) */
+  sin_anticipo: boolean;
 }
 
 /** Columnas de horario del servicio listas para insert/update en la base. */
@@ -35,6 +37,7 @@ export function horarioServicioPayload(data: ServicioFormData) {
     inicio_desde: data.ventana_inicio ? data.inicio_desde : null,
     inicio_hasta: data.ventana_inicio ? data.inicio_hasta : null,
     puede_cruzar_almuerzo: data.puede_cruzar_almuerzo,
+    sin_anticipo: data.sin_anticipo,
   };
 }
 
@@ -90,6 +93,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     inicio_desde: initialData?.inicio_desde ?? "",
     inicio_hasta: initialData?.inicio_hasta ?? "",
     puede_cruzar_almuerzo: initialData?.puede_cruzar_almuerzo ?? false,
+    sin_anticipo: initialData?.sin_anticipo ?? false,
   });
   // Precio y duración se editan como texto para que los campos nuevos aparezcan vacíos (sin "0").
   const [precioTxt, setPrecioTxt] = useState(initialData?.precio ? String(initialData.precio) : "");
@@ -311,7 +315,14 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
             <input type="checkbox" name="destacado" checked={formData.destacado} onChange={handleChange} style={{ width: 18, height: 18, accentColor: "var(--color-primary)" }} />
             <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>Destacado (Recomendado)</span>
           </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" name="sin_anticipo" checked={formData.sin_anticipo} onChange={handleChange} style={{ width: 18, height: 18, accentColor: "var(--color-primary)" }} />
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>No pide anticipo</span>
+          </label>
         </div>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light)", opacity: 0.7, marginTop: "0.5rem" }}>
+          Márcalo para los servicios que se agendan directo, sin anticipo, aunque la clienta sea nueva (por ejemplo, la valoración).
+        </p>
       </section>
 
       {formError && (

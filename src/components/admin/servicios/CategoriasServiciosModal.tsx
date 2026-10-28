@@ -14,7 +14,7 @@ interface CategoriaServicio {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  /** Se llama después de crear, renombrar, reordenar o borrar, para que la lista de servicios se vuelva a cargar. */
+  /** Se llama después de crear, renombrar o borrar, para que la lista de servicios se vuelva a cargar. */
   onUpdated: (mensaje: string) => void;
 }
 
@@ -50,12 +50,10 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
   const [error, setError] = useState<string | null>(null);
 
   const [nuevoNombre, setNuevoNombre] = useState("");
-  const [nuevoOrden, setNuevoOrden] = useState("");
   const [guardando, setGuardando] = useState(false);
 
   const [editId, setEditId] = useState<string | null>(null);
   const [editNombre, setEditNombre] = useState("");
-  const [editOrden, setEditOrden] = useState("");
 
   const [aBorrar, setABorrar] = useState<CategoriaServicio | null>(null);
   const [borrando, setBorrando] = useState(false);
@@ -87,13 +85,12 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
     }
   }, [isOpen, cargar]);
 
-  /** Valida nombre y orden. Devuelve el mensaje de error o null si todo está bien. */
-  const validar = (nombre: string, orden: string, idActual?: string): string | null => {
+  /** Valida el nombre. Devuelve el mensaje de error o null si todo está bien. */
+  const validar = (nombre: string, idActual?: string): string | null => {
     const limpio = nombre.trim();
     if (!limpio) return "Escribe el nombre de la categoría.";
     if (limpio.length > MAX_NOMBRE) return `El nombre es muy largo (máximo ${MAX_NOMBRE} caracteres).`;
     if (!slugDe(limpio)) return "El nombre debe tener al menos una letra o un número.";
-    if (orden.trim() !== "" && (!/^\d+$/.test(orden.trim()))) return "El orden debe ser un número entero (0 o más).";
     const repetida = categorias.some((c) => c.id !== idActual && normalizar(c.nombre) === normalizar(limpio));
     if (repetida) return "Ya existe una categoría con ese nombre.";
     return null;
@@ -101,7 +98,7 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
 
   const handleCrear = async (e: React.FormEvent) => {
     e.preventDefault();
-    const problema = validar(nuevoNombre, nuevoOrden);
+    const problema = validar(nuevoNombre);
     if (problema) {
       setError(problema);
       return;
@@ -109,8 +106,9 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
     setError(null);
     setGuardando(true);
     const nombre = nuevoNombre.trim();
+    // El orden ya no se pide: la categoría nueva queda al final de las demás.
     const ultimo = categorias.reduce((m, c) => Math.max(m, c.orden ?? 0), 0);
-    const orden = nuevoOrden.trim() === "" ? ultimo + 1 : parseInt(nuevoOrden.trim(), 10);
+    const orden = ultimo + 1;
     const { error: err } = await supabase.from("categorias_servicios").insert({ nombre, slug: slugDe(nombre), orden });
     setGuardando(false);
     if (err) {
@@ -118,7 +116,6 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
       return;
     }
     setNuevoNombre("");
-    setNuevoOrden("");
     await cargar();
     onUpdated(`Categoría "${nombre}" creada`);
   };
@@ -127,11 +124,10 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
     setError(null);
     setEditId(c.id);
     setEditNombre(c.nombre);
-    setEditOrden(String(c.orden ?? 0));
   };
 
   const handleGuardarEdicion = async (c: CategoriaServicio) => {
-    const problema = validar(editNombre, editOrden, c.id);
+    const problema = validar(editNombre, c.id);
     if (problema) {
       setError(problema);
       return;
@@ -139,9 +135,8 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
     setError(null);
     setGuardando(true);
     const nombre = editNombre.trim();
-    const orden = editOrden.trim() === "" ? 0 : parseInt(editOrden.trim(), 10);
     // El slug no cambia al renombrar: así los enlaces y filtros ya publicados siguen funcionando.
-    const { error: err } = await supabase.from("categorias_servicios").update({ nombre, orden }).eq("id", c.id);
+    const { error: err } = await supabase.from("categorias_servicios").update({ nombre }).eq("id", c.id);
     setGuardando(false);
     if (err) {
       setError(mensajeDeError(err, "guardar los cambios"));
@@ -203,20 +198,15 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
 
           <form onSubmit={handleCrear} noValidate className="flex flex-col gap-3 p-4 rounded-lg bg-[#FFFFFF] border border-[#D1D5DB] shadow-sm">
             <h3 className="font-body font-semibold text-sm text-[#111827]">Nueva categoría</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-[1fr_110px_auto] gap-3 items-end">
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-end">
               <label className="flex flex-col gap-1 text-xs text-[#4B5563]">
                 Nombre *
                 <input type="text" value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} maxLength={MAX_NOMBRE} placeholder="Ej: Cejas y pestañas" style={inputStyle} />
-              </label>
-              <label className="flex flex-col gap-1 text-xs text-[#4B5563]">
-                Orden (opcional)
-                <input type="number" min={0} value={nuevoOrden} onChange={(e) => setNuevoOrden(e.target.value)} placeholder="Al final" style={inputStyle} />
               </label>
               <Button type="submit" variant="accent" disabled={guardando}>
                 <Plus size={16} className="mr-2" /> Añadir
               </Button>
             </div>
-            <p className="text-xs text-[#6B7280]">El orden define cómo se ven las categorías en el sitio y en los filtros (el número más bajo va primero).</p>
           </form>
 
           <div className="flex flex-col gap-2">
@@ -234,13 +224,12 @@ export function CategoriasServiciosModal({ isOpen, onClose, onUpdated }: Props) 
                     {editando ? (
                       <div className="flex flex-1 gap-2">
                         <input type="text" value={editNombre} onChange={(e) => setEditNombre(e.target.value)} maxLength={MAX_NOMBRE} aria-label="Nombre de la categoría" style={inputStyle} autoFocus />
-                        <input type="number" min={0} value={editOrden} onChange={(e) => setEditOrden(e.target.value)} aria-label="Orden" style={{ ...inputStyle, width: 90 }} />
                       </div>
                     ) : (
                       <div className="flex flex-col">
                         <span className="font-semibold text-sm text-[#111827]">{c.nombre}</span>
                         <span className="text-xs text-[#6B7280]">
-                          Orden {c.orden ?? 0} · {n} {n === 1 ? "servicio" : "servicios"}
+                          {n} {n === 1 ? "servicio" : "servicios"}
                         </span>
                       </div>
                     )}
