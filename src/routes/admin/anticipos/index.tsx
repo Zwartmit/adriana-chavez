@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Save } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminToast, type ToastState } from "@/components/admin/AdminToast";
+import { PagosPorValidar } from "@/components/admin/PagosPorValidar";
 import { Button } from "@/components/ui/Button";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { supabase } from "@/lib/supabase/client";
@@ -171,6 +172,7 @@ function AnticiposPage() {
   return (
     <AdminLayout pageTitle="Pagos y anticipos">
       <div style={{ maxWidth: "800px", width: "100%", margin: "0 auto" }}>
+        <PagosPorValidar />
         {loading ? (
           <LoadingState variant="light" />
         ) : error ? (
