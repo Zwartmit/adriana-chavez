@@ -18,6 +18,7 @@ import { es } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase/client";
+import { textoSobreColor } from "@/lib/utils";
 import type { EstadoCita } from "@/lib/supabase/types";
 import { NuevaCitaPanel } from "@/components/admin/NuevaCitaPanel";
 import { CitaDetalleModal } from "@/components/admin/CitaDetalleModal";
@@ -412,7 +413,7 @@ export function CalendarioCitas() {
                       title={`${format(cita.fechaHora, "hh:mm a")} · ${cita.clienteNombre}`}
                       style={{
                         backgroundColor: cita.profesionalColor,
-                        color: "var(--color-text-inverse)",
+                        color: textoSobreColor(cita.profesionalColor),
                         border: "none",
                         borderRadius: "var(--radius-sm)",
                         padding: "2px 6px",
