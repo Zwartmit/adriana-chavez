@@ -95,7 +95,7 @@ function SidebarLink({ href, label, icon: Icon, active, isCollapsed, hovered, on
           alignItems: "center",
           justifyContent: isCollapsed ? "center" : "flex-start",
           gap: isCollapsed ? 0 : "0.75rem",
-          padding: isCollapsed ? "clamp(0.375rem, 1.1vh, 0.75rem) 0.75rem" : "clamp(0.375rem, 1.1vh, 0.75rem) 1rem",
+          padding: isCollapsed ? "clamp(0.25rem, 0.8vh, 0.6rem) 0.75rem" : "clamp(0.25rem, 0.8vh, 0.6rem) 1rem",
           width: "100%",
           borderRadius: "var(--radius-lg)",
           fontFamily: "var(--font-body)",
@@ -107,7 +107,7 @@ function SidebarLink({ href, label, icon: Icon, active, isCollapsed, hovered, on
           position: "relative",
         }}
       >
-        <Icon size={22} style={{ color, flexShrink: 0 }} />
+        <Icon size={20} style={{ color, flexShrink: 0 }} />
         <span
           style={{
             opacity: isCollapsed ? 0 : 1,
@@ -195,10 +195,10 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
         {/* El scroll vive en este contenedor interno: así el botón flotante (abajo) no queda recortado */}
         <div
           className={`flex h-full flex-col ${isCollapsed ? "" : "overflow-y-auto overflow-x-hidden"}`}
-          style={{ padding: "clamp(0.75rem, 2vh, 1.75rem) 1rem" }}
+          style={{ padding: "clamp(0.5rem, 1.5vh, 1.25rem) 1rem" }}
         >
         {/* Logo */}
-        <div style={{ padding: isCollapsed ? "0" : "0 0.5rem", marginBottom: "clamp(0.75rem, 2vh, 2rem)", overflow: "hidden", flexShrink: 0 }}>
+        <div style={{ padding: isCollapsed ? "0" : "0 0.5rem", marginBottom: "clamp(0.5rem, 1.5vh, 1.25rem)", overflow: "hidden", flexShrink: 0 }}>
           {isCollapsed ? (
             <p
               style={{
@@ -246,7 +246,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
         </div>
 
         {/* Navegación */}
-        <nav style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
+        <nav style={{ display: "flex", flexDirection: "column", gap: "0.125rem", flex: 1 }}>
           {NAV_ITEMS.map((item) => {
             const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
             const badge = item.href === "/admin/ordenes" ? pendingOrders : undefined;
@@ -265,7 +265,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
             );
           })}
 
-          <div style={{ borderTop: "1px solid var(--color-border)", margin: "clamp(0.25rem, 1vh, 0.75rem) 0.25rem" }} />
+          <div style={{ borderTop: "1px solid var(--color-border)", margin: "clamp(0.125rem, 0.6vh, 0.5rem) 0.25rem" }} />
 
           <SidebarLink
             href="/"
@@ -276,8 +276,6 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
             hovered={hoveredHref === "/"}
             onHoverChange={(hovered) => setHoveredHref(hovered ? "/" : null)}
           />
-
-          <div style={{ borderTop: "1px solid var(--color-border)", margin: "clamp(0.25rem, 1vh, 0.75rem) 0.25rem" }} />
 
         </nav>
 
@@ -296,9 +294,9 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
               justifyContent: isCollapsed ? "center" : "flex-start",
               gap: isCollapsed ? 0 : "0.75rem",
               width: "100%",
-              padding: isCollapsed ? "0.75rem" : "0.75rem 1rem",
-              marginTop: "clamp(0.25rem, 1vh, 0.75rem)",
-              paddingTop: "clamp(0.5rem, 1.5vh, 1.25rem)",
+              padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
+              marginTop: "clamp(0.125rem, 0.6vh, 0.5rem)",
+              paddingTop: "clamp(0.4rem, 1vh, 0.75rem)",
               background: "transparent",
               border: "none",
               borderTop: "1px solid var(--color-border)",
@@ -312,7 +310,7 @@ export function AdminSidebar({ isCollapsed, onToggleCollapsed }: AdminSidebarPro
             }}
           >
             <LogOut
-              size={22}
+              size={20}
               style={{
                 color: hoveredHref === "logout" ? "var(--color-error)" : "rgba(245,242,235,0.6)",
                 flexShrink: 0,
