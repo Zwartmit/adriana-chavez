@@ -279,10 +279,10 @@ function AnticiposPage() {
             <div style={{ height: "1px", backgroundColor: "var(--color-border-light)" }} />
 
             <section>
-              <h3 style={sectionTitle}>Datos de la cuenta para transferir</h3>
+              <h3 style={sectionTitle}>Cuenta general para transferir (respaldo)</h3>
               <p style={helpText}>
                 Banco, tipo de cuenta, número y titular. El asistente de WhatsApp comparte este texto con las clientas que
-                deben anticipo. También se puede registrar o consultar por Telegram.
+                deben anticipo cuando la profesional de la cita no tiene cuenta propia. Cada profesional puede tener la suya en su ficha (Profesionales). También se puede registrar o consultar por Telegram.
               </p>
               <label style={labelStyle} htmlFor="anticipo-datos">Datos de la cuenta</label>
               <textarea

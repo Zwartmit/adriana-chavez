@@ -40,7 +40,18 @@ function EditarProfesionalPage() {
       return;
     }
 
+    // Cuenta propia para anticipos (tabla solo para administradoras)
+    const { data: cuenta, error: errorCuenta } = await supabase
+      .from("profesionales_cuentas")
+      .select("datos_transferencia")
+      .eq("profesional_id", profesionalId)
+      .maybeSingle();
+    if (errorCuenta) {
+      console.error("Error cargando la cuenta de la profesional:", errorCuenta.message);
+    }
+
     setInitialData({
+      cuenta_transferencia: cuenta?.datos_transferencia ?? "",
       nombre: data.nombre,
       especialidades: data.especialidades,
       bio: data.bio || "",
@@ -99,7 +110,25 @@ function EditarProfesionalPage() {
       })
       .eq("id", profesionalId);
 
+    // Cuenta para anticipos: vacío = se borra la propia y se usa la general
+    let errorCuentaGuardar: { message: string } | null = null;
+    if (!error) {
+      const texto = data.cuenta_transferencia.trim();
+      const res = texto
+        ? await supabase
+            .from("profesionales_cuentas")
+            .upsert({ profesional_id: profesionalId, datos_transferencia: texto, updated_at: new Date().toISOString() })
+        : await supabase.from("profesionales_cuentas").delete().eq("profesional_id", profesionalId);
+      errorCuentaGuardar = res.error;
+    }
+
     setIsSubmitting(false);
+
+    if (!error && errorCuentaGuardar) {
+      console.error("[EditarProfesional] error cuenta:", errorCuentaGuardar.message);
+      showToast(explicarError(errorCuentaGuardar, "guardar la cuenta para anticipos"), "error");
+      return;
+    }
 
     if (error) {
       console.error("[EditarProfesional] error:", error.message);

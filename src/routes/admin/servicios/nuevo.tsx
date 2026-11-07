@@ -55,6 +55,7 @@ function NuevoServicioPage() {
       duracion_min: data.duracion_min,
       dias_retoque: data.dias_retoque,
       descripcion: data.descripcion,
+      informacion_clientas: data.informacion_clientas.trim() || null,
       imagen_url: data.imagen_url,
       requiere_cita: data.requiere_cita,
       destacado: data.destacado,

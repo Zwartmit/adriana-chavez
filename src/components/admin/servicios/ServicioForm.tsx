@@ -18,6 +18,8 @@ export interface ServicioFormData {
   /** Días en que se recomienda el retoque; null = sin retoque */
   dias_retoque: number | null;
   descripcion: string;
+  /** Texto largo para que el asistente de WhatsApp responda dudas de la clienta (no se muestra en la web) */
+  informacion_clientas: string;
   imagen_url: string | null;
   requiere_cita: boolean;
   destacado: boolean;
@@ -85,6 +87,7 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     duracion_min: initialData?.duracion_min ?? 60,
     dias_retoque: initialData?.dias_retoque ?? null,
     descripcion: initialData?.descripcion ?? "",
+    informacion_clientas: initialData?.informacion_clientas ?? "",
     imagen_url: initialData?.imagen_url ?? null,
     requiere_cita: initialData?.requiere_cita ?? true,
     destacado: initialData?.destacado ?? false,
@@ -277,6 +280,27 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
         <div>
           <label style={labelStyle}>Descripción corta</label>
           <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} style={{ ...inputStyle, minHeight: 80 }} placeholder="En qué consiste el servicio..." />
+        </div>
+        <div style={{ marginTop: "1.25rem" }}>
+          <label style={labelStyle} htmlFor="servicio-info-clientas">Información para clientas (solo la ve el asistente de WhatsApp)</label>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)", margin: "0 0 0.5rem" }}>
+            Escribe aquí lo que una clienta suele preguntar: si duele, cuidados antes y después, cuánto dura el resultado, si
+            tiene piscina o sol, etc. El asistente responde únicamente con este texto y no inventa nada; si la pregunta no
+            está aquí, la invita a la valoración. No se publica en la página web.
+          </p>
+          <textarea
+            id="servicio-info-clientas"
+            name="informacion_clientas"
+            rows={8}
+            maxLength={3000}
+            value={formData.informacion_clientas}
+            onChange={handleChange}
+            style={{ ...inputStyle, minHeight: 160, resize: "vertical" }}
+            placeholder="Sin información registrada"
+          />
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)", margin: "0.35rem 0 0" }}>
+            {formData.informacion_clientas.length} / 3000 caracteres
+          </p>
         </div>
       </section>
 

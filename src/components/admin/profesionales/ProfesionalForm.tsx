@@ -11,7 +11,11 @@ export interface ProfesionalFormData {
   anos_experiencia: number;
   color_calendario: string;
   activo: boolean;
+  /** Cuenta para transferir el anticipo de esta profesional (vacío = se usa la cuenta general). Vive en profesionales_cuentas. */
+  cuenta_transferencia: string;
 }
+
+const MAX_CUENTA = 1000;
 
 interface ProfesionalFormProps {
   initialData?: Partial<ProfesionalFormData>;
@@ -51,6 +55,7 @@ export function ProfesionalForm({ initialData, onSubmit, onCancel, isSubmitting,
     anos_experiencia: initialData?.anos_experiencia || 0,
     color_calendario: initialData?.color_calendario || "#1C3D35",
     activo: initialData?.activo ?? true,
+    cuenta_transferencia: initialData?.cuenta_transferencia ?? "",
   });
 
   const [nuevaEspecialidad, setNuevaEspecialidad] = useState("");
@@ -176,6 +181,30 @@ export function ProfesionalForm({ initialData, onSubmit, onCancel, isSubmitting,
               )}
             </div>
           </div>
+        </section>
+
+        <section className="p-5 md:p-7" style={cardStyle}>
+          <h3 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "var(--text-xl)", color: "var(--color-text-on-light)", marginBottom: "0.75rem" }}>
+            Cuenta para anticipos
+          </h3>
+          <p className="text-sm text-[var(--color-text-on-light-muted)]" style={{ marginBottom: "1rem" }}>
+            Banco, tipo de cuenta, número y titular. Cuando una clienta debe anticipo para una cita con esta profesional, el
+            asistente de WhatsApp le comparte esta cuenta. Si lo dejas vacío, se usa la cuenta general (Anticipos). Solo la ven las
+            administradoras.
+          </p>
+          <label style={labelStyle} htmlFor="prof-cuenta">Datos de la cuenta</label>
+          <textarea
+            id="prof-cuenta"
+            rows={5}
+            maxLength={MAX_CUENTA}
+            value={formData.cuenta_transferencia}
+            onChange={(e) => setFormData((prev) => ({ ...prev, cuenta_transferencia: e.target.value }))}
+            style={{ ...inputStyle, resize: "vertical" }}
+            placeholder="Vacío: usa la cuenta general"
+          />
+          <p className="text-sm text-[var(--color-text-on-light-muted)]" style={{ marginTop: "0.35rem" }}>
+            {formData.cuenta_transferencia.length} / {MAX_CUENTA} caracteres
+          </p>
         </section>
 
         <section className="p-5 md:p-7" style={{ ...cardStyle, border: "1px solid var(--color-border-light-gold)" }}>

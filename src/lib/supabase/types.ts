@@ -46,6 +46,7 @@ export interface ServiciosRow {
           nombre: string;
           slug: string;
           descripcion: string | null;
+          informacion_clientas: string | null;
           duracion_min: number;
           precio: number;
           precio_desde: boolean;
