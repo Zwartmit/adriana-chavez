@@ -68,6 +68,7 @@ function EditarProductoPage() {
       destacado: data.destacado,
       es_nuevo: data.es_nuevo,
       activo: data.activo,
+      orden: data.orden ?? 0,
     };
 
     const { error } = await supabase.from("productos").update(updateData).eq("id", productoId);

@@ -88,7 +88,8 @@ export function ProductosGrid({
       .from("productos")
       .select("*, categorias_productos(nombre, slug), inventario(stock_virtual, stock_fisico)")
       .eq("activo", true)
-      .order("orden", { ascending: true });
+      .order("orden", { ascending: true })
+      .order("nombre", { ascending: true });
 
     if (error) {
       console.error("[ProductosGrid] error al cargar:", error.message);

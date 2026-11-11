@@ -20,6 +20,7 @@ interface ProductoRow {
   marca: string;
   categoria_id: string | null;
   precio: number;
+  orden: number;
   activo: boolean;
   destacado: boolean;
   es_nuevo: boolean;
@@ -49,11 +50,12 @@ function ProductosPage() {
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
-  const [sortOrder, setSortOrder] = useState(() => typeof window !== "undefined" ? localStorage.getItem("admin_productos_sort") || "nuevos" : "nuevos");
+  const [filtroMarca, setFiltroMarca] = useState("");
+  const [sortOrder, setSortOrder] = useState(() => typeof window !== "undefined" ? localStorage.getItem("admin_productos_sort_v2") || "orden" : "orden");
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    localStorage.setItem("admin_productos_sort", sortOrder);
+    localStorage.setItem("admin_productos_sort_v2", sortOrder);
   }, [sortOrder]);
 
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -73,7 +75,8 @@ function ProductosPage() {
     const [productosRes, categoriasRes] = await Promise.all([
       supabase
         .from("productos")
-        .select("id, nombre, marca, categoria_id, precio, activo, destacado, es_nuevo, created_at, categorias_productos(nombre)")
+        .select("id, nombre, marca, categoria_id, precio, orden, activo, destacado, es_nuevo, created_at, categorias_productos(nombre)")
+        .eq("uso_interno", false)
         .order("created_at", { ascending: false }),
       supabase
         .from("categorias_productos")
@@ -100,19 +103,26 @@ function ProductosPage() {
   const filtrado = useMemo(() => {
     const filtered = productos.filter((p) => {
       const matchCat = !filtroCategoria || p.categoria_id === filtroCategoria;
+      const matchMarca = !filtroMarca || p.marca === filtroMarca;
       const q = searchQuery.toLowerCase();
       const matchSearch = !q || p.nombre.toLowerCase().includes(q) || p.marca.toLowerCase().includes(q);
-      return matchCat && matchSearch;
+      return matchCat && matchMarca && matchSearch;
     });
 
     return filtered.sort((a, b) => {
-      if (sortOrder === "nombre_asc") return a.nombre.localeCompare(b.nombre);
+      if (sortOrder === "orden") return a.orden - b.orden || a.nombre.localeCompare(b.nombre, "es", { numeric: true });
+      if (sortOrder === "nombre_asc") return a.nombre.localeCompare(b.nombre, "es", { numeric: true });
       if (sortOrder === "nombre_desc") return b.nombre.localeCompare(a.nombre);
       if (sortOrder === "antiguos") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
       // por defecto 'nuevos'
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  }, [productos, filtroCategoria, searchQuery, sortOrder]);
+  }, [productos, filtroCategoria, filtroMarca, searchQuery, sortOrder]);
+
+  const marcas = useMemo(
+    () => Array.from(new Set(productos.map((p) => p.marca).filter(Boolean))).sort((a, b) => a.localeCompare(b, "es")),
+    [productos]
+  );
 
   const totalPages = Math.max(1, Math.ceil(filtrado.length / PAGE_SIZE));
   const productosPagina = useMemo(
@@ -149,7 +159,7 @@ function ProductosPage() {
 
       {/* Filtros y Búsqueda */}
       <div className="flex flex-col sm:flex-row flex-wrap sm:items-center gap-3" style={{ margin: "1.5rem 0" }}>
-        <select className="w-full sm:w-auto" value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} style={selectStyle}>
+        <select className="w-full sm:w-auto" value={filtroCategoria} onChange={(e) => { setFiltroCategoria(e.target.value); setPage(1); }} style={selectStyle}>
           <option value="">Todas las categorías</option>
           {categorias.map((c) => (
             <option key={c.id} value={c.id}>
@@ -157,7 +167,16 @@ function ProductosPage() {
             </option>
           ))}
         </select>
+        <select className="w-full sm:w-auto" value={filtroMarca} onChange={(e) => { setFiltroMarca(e.target.value); setPage(1); }} style={selectStyle}>
+          <option value="">Todas las marcas</option>
+          {marcas.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </select>
         <select className="w-full sm:w-auto" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} style={selectStyle}>
+          <option value="orden">Orden de la tienda</option>
           <option value="nuevos">Más nuevos primero</option>
           <option value="antiguos">Más antiguos primero</option>
           <option value="nombre_asc">Nombre (A-Z)</option>

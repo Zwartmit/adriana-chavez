@@ -17,6 +17,7 @@ interface PreselectedProducto {
 }
 
 interface MovimientoPanelProps {
+  modo?: "venta" | "insumos";
   isOpen: boolean;
   onClose: () => void;
   defaultTipo: "entrada" | "salida";
@@ -28,6 +29,16 @@ interface MovimientoPanelProps {
 const ENTRADA_ORIGENES = [
   { value: "compra", label: "Compra" },
   { value: "devolucion", label: "Devolución" },
+  { value: "ajuste_manual", label: "Ajuste manual" },
+];
+
+const ENTRADA_ORIGENES_INSUMOS = [
+  { value: "compra", label: "Compra" },
+  { value: "ajuste_manual", label: "Ajuste manual" },
+];
+
+const SALIDA_ORIGENES_INSUMOS = [
+  { value: "consumo_interno", label: "Consumo en el salón" },
   { value: "ajuste_manual", label: "Ajuste manual" },
 ];
 
@@ -66,6 +77,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function MovimientoPanel({
+  modo = "venta",
   isOpen,
   onClose,
   defaultTipo,
@@ -85,7 +97,11 @@ export function MovimientoPanel({
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const origenes = tipo === "entrada" ? ENTRADA_ORIGENES : SALIDA_ORIGENES;
+  const esInsumos = modo === "insumos";
+  const origenes =
+    tipo === "entrada"
+      ? esInsumos ? ENTRADA_ORIGENES_INSUMOS : ENTRADA_ORIGENES
+      : esInsumos ? SALIDA_ORIGENES_INSUMOS : SALIDA_ORIGENES;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -103,9 +119,10 @@ export function MovimientoPanel({
       .from("productos")
       .select("id, nombre, marca")
       .eq("activo", true)
+      .eq("uso_interno", esInsumos)
       .order("nombre", { ascending: true })
       .then(({ data }) => setProductos(data ?? []));
-  }, [isOpen]);
+  }, [isOpen, esInsumos]);
 
   useEffect(() => {
     if (!selectedProducto) {

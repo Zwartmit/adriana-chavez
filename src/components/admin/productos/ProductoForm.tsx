@@ -13,6 +13,7 @@ export interface ProductoFormData {
   marca: string;
   categoria_id: string;
   precio: number;
+  orden: number | null;
   descripcion: string;
   descripcion_larga: string;
   caracteristicas: { label: string; valor: string }[];
@@ -61,6 +62,7 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
     marca: initialData?.marca ?? "",
     categoria_id: initialData?.categoria_id ?? "",
     precio: initialData?.precio ?? 0,
+    orden: initialData?.orden ?? null,
     descripcion: initialData?.descripcion ?? "",
     descripcion_larga: initialData?.descripcion_larga ?? "",
     caracteristicas: Array.isArray(initialData?.caracteristicas) ? initialData.caracteristicas : [],
@@ -156,6 +158,13 @@ export function ProductoForm({ initialData, categorias, isSubmitting, onSubmit, 
                 Con precio $0 el producto no se puede comprar en la tienda. Pon el precio real antes de dejarlo activo.
               </p>
             )}
+          </div>
+          <div>
+            <label style={labelStyle}>Orden en la tienda y el catálogo</label>
+            <input type="number" min={0} step={1} name="orden" value={formData.orden ?? ""} onChange={handleChange} style={inputStyle} placeholder="Vacío = al final" />
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-faint)", marginTop: 6 }}>
+              Los productos salen de menor a mayor número. Usa números de 10 en 10 (10, 20, 30…) para poder intercalar uno nuevo entre dos: por ejemplo, 25 queda entre el 20 y el 30. Si lo dejas vacío, el producto nuevo va al final.
+            </p>
           </div>
         </div>
       </section>

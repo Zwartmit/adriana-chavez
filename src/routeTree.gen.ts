@@ -29,6 +29,9 @@ import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/
 import { Route as AdminClientesClienteIdRouteImport } from './routes/admin/clientes/$clienteId'
 import { Route as AdminGaleriaIndexRouteImport } from './routes/admin/galeria/index'
 import { Route as AdminHorarioIndexRouteImport } from './routes/admin/horario/index'
+import { Route as AdminInsumosIndexRouteImport } from './routes/admin/insumos/index'
+import { Route as AdminInsumosInsumoIdRouteImport } from './routes/admin/insumos/$insumoId'
+import { Route as AdminInsumosNuevoRouteImport } from './routes/admin/insumos/nuevo'
 import { Route as AdminInventarioIndexRouteImport } from './routes/admin/inventario/index'
 import { Route as AdminOrdenesIndexRouteImport } from './routes/admin/ordenes/index'
 import { Route as AdminProductosIndexRouteImport } from './routes/admin/productos/index'
@@ -141,6 +144,21 @@ const AdminHorarioIndexRoute = AdminHorarioIndexRouteImport.update({
   path: '/admin/horario/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminInsumosIndexRoute = AdminInsumosIndexRouteImport.update({
+  id: '/admin/insumos/',
+  path: '/admin/insumos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminInsumosInsumoIdRoute = AdminInsumosInsumoIdRouteImport.update({
+  id: '/admin/insumos/$insumoId',
+  path: '/admin/insumos/$insumoId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminInsumosNuevoRoute = AdminInsumosNuevoRouteImport.update({
+  id: '/admin/insumos/nuevo',
+  path: '/admin/insumos/nuevo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminInventarioIndexRoute = AdminInventarioIndexRouteImport.update({
   id: '/admin/inventario/',
   path: '/admin/inventario/',
@@ -216,6 +234,8 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
+  '/admin/insumos/$insumoId': typeof AdminInsumosInsumoIdRoute
+  '/admin/insumos/nuevo': typeof AdminInsumosNuevoRoute
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
@@ -226,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/galeria/': typeof AdminGaleriaIndexRoute
   '/admin/horario/': typeof AdminHorarioIndexRoute
+  '/admin/insumos/': typeof AdminInsumosIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
   '/admin/ordenes/': typeof AdminOrdenesIndexRoute
   '/admin/productos/': typeof AdminProductosIndexRoute
@@ -249,6 +270,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/tienda': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
+  '/admin/insumos/$insumoId': typeof AdminInsumosInsumoIdRoute
+  '/admin/insumos/nuevo': typeof AdminInsumosNuevoRoute
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
@@ -259,6 +282,7 @@ export interface FileRoutesByTo {
   '/admin/clientes': typeof AdminClientesIndexRoute
   '/admin/galeria': typeof AdminGaleriaIndexRoute
   '/admin/horario': typeof AdminHorarioIndexRoute
+  '/admin/insumos': typeof AdminInsumosIndexRoute
   '/admin/inventario': typeof AdminInventarioIndexRoute
   '/admin/ordenes': typeof AdminOrdenesIndexRoute
   '/admin/productos': typeof AdminProductosIndexRoute
@@ -283,6 +307,8 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/tienda/': typeof TiendaIndexRoute
   '/admin/clientes/$clienteId': typeof AdminClientesClienteIdRoute
+  '/admin/insumos/$insumoId': typeof AdminInsumosInsumoIdRoute
+  '/admin/insumos/nuevo': typeof AdminInsumosNuevoRoute
   '/admin/productos/$productoId': typeof AdminProductosProductoIdRoute
   '/admin/productos/nuevo': typeof AdminProductosNuevoRoute
   '/admin/profesionales/$profesionalId': typeof AdminProfesionalesProfesionalIdRoute
@@ -293,6 +319,7 @@ export interface FileRoutesById {
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/admin/galeria/': typeof AdminGaleriaIndexRoute
   '/admin/horario/': typeof AdminHorarioIndexRoute
+  '/admin/insumos/': typeof AdminInsumosIndexRoute
   '/admin/inventario/': typeof AdminInventarioIndexRoute
   '/admin/ordenes/': typeof AdminOrdenesIndexRoute
   '/admin/productos/': typeof AdminProductosIndexRoute
@@ -318,6 +345,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/tienda/'
     | '/admin/clientes/$clienteId'
+    | '/admin/insumos/$insumoId'
+    | '/admin/insumos/nuevo'
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
     | '/admin/profesionales/$profesionalId'
@@ -328,6 +357,7 @@ export interface FileRouteTypes {
     | '/admin/clientes/'
     | '/admin/galeria/'
     | '/admin/horario/'
+    | '/admin/insumos/'
     | '/admin/inventario/'
     | '/admin/ordenes/'
     | '/admin/productos/'
@@ -351,6 +381,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/tienda'
     | '/admin/clientes/$clienteId'
+    | '/admin/insumos/$insumoId'
+    | '/admin/insumos/nuevo'
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
     | '/admin/profesionales/$profesionalId'
@@ -361,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin/clientes'
     | '/admin/galeria'
     | '/admin/horario'
+    | '/admin/insumos'
     | '/admin/inventario'
     | '/admin/ordenes'
     | '/admin/productos'
@@ -384,6 +417,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/tienda/'
     | '/admin/clientes/$clienteId'
+    | '/admin/insumos/$insumoId'
+    | '/admin/insumos/nuevo'
     | '/admin/productos/$productoId'
     | '/admin/productos/nuevo'
     | '/admin/profesionales/$profesionalId'
@@ -394,6 +429,7 @@ export interface FileRouteTypes {
     | '/admin/clientes/'
     | '/admin/galeria/'
     | '/admin/horario/'
+    | '/admin/insumos/'
     | '/admin/inventario/'
     | '/admin/ordenes/'
     | '/admin/productos/'
@@ -418,6 +454,8 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   TiendaIndexRoute: typeof TiendaIndexRoute
   AdminClientesClienteIdRoute: typeof AdminClientesClienteIdRoute
+  AdminInsumosInsumoIdRoute: typeof AdminInsumosInsumoIdRoute
+  AdminInsumosNuevoRoute: typeof AdminInsumosNuevoRoute
   AdminProductosProductoIdRoute: typeof AdminProductosProductoIdRoute
   AdminProductosNuevoRoute: typeof AdminProductosNuevoRoute
   AdminProfesionalesProfesionalIdRoute: typeof AdminProfesionalesProfesionalIdRoute
@@ -428,6 +466,7 @@ export interface RootRouteChildren {
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
   AdminGaleriaIndexRoute: typeof AdminGaleriaIndexRoute
   AdminHorarioIndexRoute: typeof AdminHorarioIndexRoute
+  AdminInsumosIndexRoute: typeof AdminInsumosIndexRoute
   AdminInventarioIndexRoute: typeof AdminInventarioIndexRoute
   AdminOrdenesIndexRoute: typeof AdminOrdenesIndexRoute
   AdminProductosIndexRoute: typeof AdminProductosIndexRoute
@@ -578,6 +617,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminHorarioIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/insumos/': {
+      id: '/admin/insumos/'
+      path: '/admin/insumos'
+      fullPath: '/admin/insumos/'
+      preLoaderRoute: typeof AdminInsumosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/insumos/$insumoId': {
+      id: '/admin/insumos/$insumoId'
+      path: '/admin/insumos/$insumoId'
+      fullPath: '/admin/insumos/$insumoId'
+      preLoaderRoute: typeof AdminInsumosInsumoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/insumos/nuevo': {
+      id: '/admin/insumos/nuevo'
+      path: '/admin/insumos/nuevo'
+      fullPath: '/admin/insumos/nuevo'
+      preLoaderRoute: typeof AdminInsumosNuevoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/inventario/': {
       id: '/admin/inventario/'
       path: '/admin/inventario'
@@ -674,6 +734,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   TiendaIndexRoute: TiendaIndexRoute,
   AdminClientesClienteIdRoute: AdminClientesClienteIdRoute,
+  AdminInsumosInsumoIdRoute: AdminInsumosInsumoIdRoute,
+  AdminInsumosNuevoRoute: AdminInsumosNuevoRoute,
   AdminProductosProductoIdRoute: AdminProductosProductoIdRoute,
   AdminProductosNuevoRoute: AdminProductosNuevoRoute,
   AdminProfesionalesProfesionalIdRoute: AdminProfesionalesProfesionalIdRoute,
@@ -684,6 +746,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClientesIndexRoute: AdminClientesIndexRoute,
   AdminGaleriaIndexRoute: AdminGaleriaIndexRoute,
   AdminHorarioIndexRoute: AdminHorarioIndexRoute,
+  AdminInsumosIndexRoute: AdminInsumosIndexRoute,
   AdminInventarioIndexRoute: AdminInventarioIndexRoute,
   AdminOrdenesIndexRoute: AdminOrdenesIndexRoute,
   AdminProductosIndexRoute: AdminProductosIndexRoute,

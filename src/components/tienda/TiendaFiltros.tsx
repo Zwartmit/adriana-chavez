@@ -6,7 +6,7 @@ export interface CategoriaOption {
 }
 
 const ORDEN_OPTIONS = [
-  { value: "destacados", label: "Destacados" },
+  { value: "destacados", label: "Recomendados" },
   { value: "precio-asc", label: "Precio: menor a mayor" },
   { value: "precio-desc", label: "Precio: mayor a menor" },
   { value: "nombre-asc", label: "Nombre: A–Z" },

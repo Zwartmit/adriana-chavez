@@ -71,7 +71,7 @@ export function NuevaOrdenPanel({ isOpen, onClose, onSaved, onError }: NuevaOrde
       .order("producto_nombre");
     if (data) {
       const ids = data.map((d) => d.producto_id);
-      const { data: precios } = await supabase.from("productos").select("id, precio").in("id", ids).eq("activo", true);
+      const { data: precios } = await supabase.from("productos").select("id, precio").in("id", ids).eq("activo", true).eq("uso_interno", false);
       const precioMap = Object.fromEntries((precios ?? []).map((p) => [p.id, p.precio]));
       setProductos(data.map((d) => ({
         id: d.producto_id,

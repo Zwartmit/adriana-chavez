@@ -42,6 +42,18 @@ function NuevoProductoPage() {
   const handleSubmit = async (data: ProductoFormData) => {
     setIsSubmitting(true);
     
+    // Sin orden escrito: va al final (el mayor orden actual + 10)
+    let orden = data.orden;
+    if (orden == null) {
+      const { data: ultimo } = await supabase
+        .from("productos")
+        .select("orden")
+        .order("orden", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      orden = (ultimo?.orden ?? 0) + 10;
+    }
+
     // Generar slug base
     const baseSlug = generarSlug(data.nombre);
     const slug = `${baseSlug}-${Math.floor(Math.random() * 10000)}`;
@@ -59,7 +71,7 @@ function NuevoProductoPage() {
       es_nuevo: data.es_nuevo,
       activo: data.activo,
       slug,
-      orden: 0,
+      orden,
     };
 
     const { data: newProduct, error } = await supabase

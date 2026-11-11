@@ -162,6 +162,7 @@ export interface ProductosRow {
           es_nuevo: boolean;
           destacado: boolean;
           activo: boolean;
+          uso_interno: boolean;
           orden: number;
           created_at: string;
           updated_at: string;
