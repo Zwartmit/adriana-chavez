@@ -27,5 +27,5 @@ export const CONTACT_INFO = {
 export const SITE_CONFIG = {
   name: "Adriana Chávez",
   description: "Centro de belleza en Monterrey, Casanare.",
-  url: "https://adrianachavez.com",
+  url: "https://cb-adrianachavez.com",
 } as const;
