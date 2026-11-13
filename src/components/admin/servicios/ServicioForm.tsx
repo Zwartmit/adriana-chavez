@@ -28,6 +28,9 @@ export interface ServicioFormData {
   ventana_inicio: boolean;
   inicio_desde: string; // "HH:MM"
   inicio_hasta: string; // "HH:MM"
+  /** Horas fijas de inicio (excluyente con la franja): se guardan en horas_inicio */
+  horas_fijas: boolean;
+  horas_inicio: string[]; // ["08:00", "10:00", ...]
   puede_cruzar_almuerzo: boolean;
   /** true = a este servicio no se le pide anticipo aunque la clienta sea nueva (se agenda directo) */
   sin_anticipo: boolean;
@@ -36,8 +39,9 @@ export interface ServicioFormData {
 /** Columnas de horario del servicio listas para insert/update en la base. */
 export function horarioServicioPayload(data: ServicioFormData) {
   return {
-    inicio_desde: data.ventana_inicio ? data.inicio_desde : null,
-    inicio_hasta: data.ventana_inicio ? data.inicio_hasta : null,
+    inicio_desde: data.ventana_inicio && !data.horas_fijas ? data.inicio_desde : null,
+    inicio_hasta: data.ventana_inicio && !data.horas_fijas ? data.inicio_hasta : null,
+    horas_inicio: data.horas_fijas && data.horas_inicio.length > 0 ? [...data.horas_inicio].sort() : null,
     puede_cruzar_almuerzo: data.puede_cruzar_almuerzo,
     sin_anticipo: data.sin_anticipo,
   };
@@ -95,6 +99,8 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
     ventana_inicio: initialData?.ventana_inicio ?? false,
     inicio_desde: initialData?.inicio_desde ?? "",
     inicio_hasta: initialData?.inicio_hasta ?? "",
+    horas_fijas: initialData?.horas_fijas ?? false,
+    horas_inicio: initialData?.horas_inicio ?? [],
     puede_cruzar_almuerzo: initialData?.puede_cruzar_almuerzo ?? false,
     sin_anticipo: initialData?.sin_anticipo ?? false,
   });
@@ -144,7 +150,11 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
       setFormError("Los días de retoque deben ser un número entero entre 1 y 365 (o déjalo vacío si no tiene retoque).");
       return;
     }
-    if (formData.ventana_inicio) {
+    if (formData.horas_fijas && formData.horas_inicio.length === 0) {
+      setFormError("Agrega al menos una hora fija de inicio, o desmarca la opción.");
+      return;
+    }
+    if (formData.ventana_inicio && !formData.horas_fijas) {
       if (!formData.inicio_desde || !formData.inicio_hasta) {
         setFormError("Elige la hora desde y hasta de la franja de inicio.");
         return;
@@ -233,12 +243,12 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
         <div className="flex flex-col gap-4">
           <div>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="ventana_inicio" checked={formData.ventana_inicio} onChange={handleChange} style={{ width: 18, height: 18, accentColor: "var(--color-primary)" }} />
+              <input type="checkbox" name="ventana_inicio" checked={formData.ventana_inicio} onChange={(e) => setFormData((prev) => ({ ...prev, ventana_inicio: e.target.checked, horas_fijas: e.target.checked ? false : prev.horas_fijas }))} style={{ width: 18, height: 18, accentColor: "var(--color-primary)" }} />
               <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
                 Solo puede empezar dentro de una franja del día
               </span>
             </label>
-            {formData.ventana_inicio && (
+            {formData.ventana_inicio && !formData.horas_fijas && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3" style={{ maxWidth: 420 }}>
                 <div>
                   <label style={labelStyle}>Puede empezar desde</label>
@@ -258,6 +268,59 @@ export function ServicioForm({ initialData, categorias, isSubmitting, onSubmit, 
                     ))}
                   </select>
                 </div>
+              </div>
+            )}
+          </div>
+          <div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.horas_fijas}
+                onChange={(e) => setFormData((prev) => ({ ...prev, horas_fijas: e.target.checked, ventana_inicio: e.target.checked ? false : prev.ventana_inicio }))}
+                style={{ width: 18, height: 18, accentColor: "var(--color-primary)" }}
+              />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
+                Solo se agenda a horas fijas (por ejemplo 8:00, 10:00, 2:00 y 5:00)
+              </span>
+            </label>
+            {formData.horas_fijas && (
+              <div className="mt-3" style={{ maxWidth: 420 }}>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-on-light-muted)", marginBottom: "0.5rem" }}>
+                  Es una u otra: con horas fijas no se usa la franja del día.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {formData.horas_inicio.length === 0 && (
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light-muted)" }}>Aún no hay horas agregadas.</span>
+                  )}
+                  {[...formData.horas_inicio].sort().map((h) => (
+                    <span key={h} className="inline-flex items-center gap-2" style={{ padding: "6px 10px", border: "1px solid rgba(10, 10, 11, 0.2)", borderRadius: 999, fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-on-light)" }}>
+                      {format12h(h)}
+                      <button
+                        type="button"
+                        aria-label={`Quitar ${format12h(h)}`}
+                        onClick={() => setFormData((prev) => ({ ...prev, horas_inicio: prev.horas_inicio.filter((x) => x !== h) }))}
+                        style={{ lineHeight: 1, cursor: "pointer", background: "transparent", border: "none", color: "inherit" }}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <label style={labelStyle}>Agregar una hora</label>
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (!v) return;
+                    setFormData((prev) => (prev.horas_inicio.includes(v) || prev.horas_inicio.length >= 12 ? prev : { ...prev, horas_inicio: [...prev.horas_inicio, v].sort() }));
+                  }}
+                  style={inputStyle}
+                >
+                  <option value="">Elegir hora...</option>
+                  {SLOTS_VENTANA.filter((slot) => !formData.horas_inicio.includes(slot)).map((slot) => (
+                    <option key={slot} value={slot}>{format12h(slot)}</option>
+                  ))}
+                </select>
               </div>
             )}
           </div>

@@ -1,5 +1,5 @@
 import { Instagram, Facebook, MapPin, Phone, Mail } from "lucide-react";
-import { NAV_LINKS, SOCIAL_LINKS, CONTACT_INFO } from "@/constants";
+import { NAV_LINKS, SOCIAL_LINKS, CONTACT_INFO, SITE_CONFIG } from "@/constants";
 
 const linkStyle: React.CSSProperties = {
   fontFamily: "var(--font-body)",
@@ -49,7 +49,7 @@ export function Footer() {
               color: "var(--color-primary)",
             }}
           >
-            Adriana Chávez
+            {SITE_CONFIG.legalName}
           </div>
           <p
             style={{
@@ -159,7 +159,7 @@ export function Footer() {
             letterSpacing: "var(--tracking-wide)",
           }}
         >
-          <span>© {new Date().getFullYear()} Adriana Chávez · Todos los derechos reservados</span>
+          <span>© {new Date().getFullYear()} {SITE_CONFIG.legalName} · Todos los derechos reservados</span>
           <a
             href="/privacidad"
             className="hover:text-[var(--color-accent)] transition-colors"

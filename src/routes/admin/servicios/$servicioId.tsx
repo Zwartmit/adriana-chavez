@@ -60,6 +60,8 @@ function EditarServicioPage() {
       destacado: servicioRes.data.destacado,
       activo: servicioRes.data.activo,
       ventana_inicio: !!servicioRes.data.inicio_desde,
+      horas_fijas: (servicioRes.data.horas_inicio?.length ?? 0) > 0,
+      horas_inicio: ((servicioRes.data.horas_inicio ?? []) as string[]).map(recortarHora),
       inicio_desde: recortarHora(servicioRes.data.inicio_desde),
       inicio_hasta: recortarHora(servicioRes.data.inicio_hasta),
       puede_cruzar_almuerzo: servicioRes.data.puede_cruzar_almuerzo ?? false,

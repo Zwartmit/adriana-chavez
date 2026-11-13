@@ -56,6 +56,15 @@ function format12h(time24: string) {
   return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
+const soloDigitos = (s: string) => s.replace(/\D/g, "");
+
+// Patrón para buscar un teléfono guardado con espacios o guiones: 3%0%0%1... (se confirma después en código)
+const patronTelefono = (digitos: string) => `%${digitos.split("").join("%")}%`;
+
+// Para comparar nombres sin importar mayúsculas ni tildes
+const normalizarNombre = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 14px",
@@ -82,6 +91,11 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
   const [clienteResults, setClienteResults] = useState<ClienteResult[]>([]);
   const [selectedCliente, setSelectedCliente] = useState<ClienteResult | null>(null);
   const [showResults, setShowResults] = useState(false);
+
+  // Clienta nueva: si el nombre escrito no se eligió de la lista, se registra sola al pulsar "Crear cita"
+  const [nuevoTelefono, setNuevoTelefono] = useState("");
+  const [nuevoNacimiento, setNuevoNacimiento] = useState("");
+  const [clienteDuplicada, setClienteDuplicada] = useState<ClienteResult | null>(null);
 
   const [servicios, setServicios] = useState<ServicioOption[]>([]);
   const [selectedServicioId, setSelectedServicioId] = useState("");
@@ -172,7 +186,10 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
         .eq("activo", true);
         
       if (q.length >= 2) {
-        query = query.or(`nombre.ilike.%${q}%,apellido.ilike.%${q}%`);
+        // Cada palabra debe aparecer en el nombre o en el apellido ("Ana Pérez" encuentra nombre Ana + apellido Pérez)
+        for (const palabra of q.split(/\s+/).filter(Boolean)) {
+          query = query.or(`nombre.ilike.%${palabra}%,apellido.ilike.%${palabra}%`);
+        }
       }
       
       const { data } = await query.order("created_at", { ascending: false }).limit(8);
@@ -183,6 +200,13 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
       clearTimeout(timeout);
     };
   }, [clienteQuery]);
+
+  // Clienta nueva = hay un nombre escrito y no se eligió ninguna de la lista
+  const nombreNuevo = clienteQuery.trim().replace(/\s+/g, " ");
+  const esNueva = !selectedCliente && nombreNuevo.length >= 2;
+  const coincidenciaExacta = esNueva
+    ? clienteResults.find((c) => normalizarNombre(`${c.nombre} ${c.apellido ?? ""}`) === normalizarNombre(nombreNuevo))
+    : undefined;
 
   // Las horas ya pasadas de hoy se siguen ofreciendo (Adriana puede registrar una cita que ya empezó),
   // pero se marcan para que no se elijan por error.
@@ -239,6 +263,9 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     setClienteQuery("");
     setClienteResults([]);
     setSelectedCliente(null);
+    setNuevoTelefono("");
+    setNuevoNacimiento("");
+    setClienteDuplicada(null);
     setSelectedServicioId("");
     setServicioQuery("");
     setShowServicioResults(false);
@@ -263,15 +290,33 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     setFormError(null);
 
     const faltan = [
-      !selectedCliente && "elegir la clienta",
+      !selectedCliente && !esNueva && "elegir la clienta o escribir su nombre",
       !selectedServicioId && "elegir el servicio",
       !selectedProfesionalId && "elegir la profesional",
       !selectedDate && "elegir la fecha",
       !selectedHora && "elegir la hora (si no aparecen horas, esa profesional no tiene espacio libre ese día)",
     ].filter(Boolean);
-    if (faltan.length > 0 || !selectedCliente || !selectedDate) {
+    if (faltan.length > 0 || !selectedDate) {
       setFormError(`Falta ${faltan.join(", ")}.`);
       return;
+    }
+
+    if (!selectedCliente) {
+      const digitos = soloDigitos(nuevoTelefono);
+      if (digitos && digitos.length < 10) {
+        setFormError("El teléfono parece incompleto. Escribe el celular con sus 10 dígitos o déjalo vacío.");
+        return;
+      }
+      if (coincidenciaExacta && !digitos) {
+        setFormError(`Ya existe «${coincidenciaExacta.nombre} ${coincidenciaExacta.apellido ?? ""}». Elígela de la lista, o escribe un teléfono si es otra persona.`);
+        return;
+      }
+      const hoy = new TZDate(Date.now(), "America/Bogota");
+      const hoyISO = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
+      if (nuevoNacimiento && nuevoNacimiento > hoyISO) {
+        setFormError("La fecha de nacimiento no puede ser futura.");
+        return;
+      }
     }
 
     const servicio = servicios.find((s) => s.id === selectedServicioId);
@@ -285,9 +330,70 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
 
     setSubmitting(true);
 
+    // Clienta nueva: se registra primero. Si la cita falla después, la clienta queda elegida y no se duplica al reintentar.
+    let clienteId = selectedCliente?.id ?? null;
+    if (!clienteId) {
+      const digitos = soloDigitos(nuevoTelefono);
+      const telefonoNuevo = digitos || null;
+      if (telefonoNuevo) {
+        const ult10 = telefonoNuevo.slice(-10);
+        const { data: posibles } = await supabase
+          .from("clientes")
+          .select("id, nombre, apellido, telefono")
+          .ilike("telefono", patronTelefono(ult10))
+          .limit(10);
+        const duplicada = ((posibles ?? []) as ClienteResult[]).find(
+          (c) => soloDigitos(c.telefono ?? "").slice(-10) === ult10,
+        );
+        if (duplicada) {
+          setClienteDuplicada(duplicada);
+          setSubmitting(false);
+          setFormError("Ya hay una clienta registrada con ese teléfono. Usa esa clienta o cambia el número.");
+          return;
+        }
+      }
+
+      const { data: creada, error: errCliente } = await supabase
+        .from("clientes")
+        .insert({
+          perfil_id: null,
+          nombre: nombreNuevo,
+          apellido: null,
+          email: null,
+          telefono: telefonoNuevo,
+          fecha_nacimiento: nuevoNacimiento || null,
+          apodo: null,
+          anticipo_modo: null,
+          notas: null,
+          alergias: null,
+          preferencias: null,
+          acepta_datos: true,
+          fecha_acepta: new Date().toISOString(),
+          activo: true,
+        })
+        .select("id, nombre, apellido, telefono")
+        .single();
+
+      if (errCliente || !creada) {
+        console.error("[NuevaCitaPanel] error al registrar la clienta:", errCliente?.message);
+        setSubmitting(false);
+        setFormError(
+          errCliente?.code === "23505"
+            ? "Ya existe una clienta con ese teléfono."
+            : errCliente
+              ? explicarError(errCliente, "registrar la clienta")
+              : "No se pudo registrar la clienta. Intenta de nuevo.",
+        );
+        return;
+      }
+      clienteId = creada.id;
+      setSelectedCliente(creada as ClienteResult);
+      setClienteDuplicada(null);
+    }
+
     // Una sola operación: crea la cita con su duración total (servicio + adicionales) y guarda los adicionales
     const { error } = await supabase.rpc("crear_cita_con_adicionales", {
-      p_cliente: selectedCliente.id,
+      p_cliente: clienteId,
       p_profesional: selectedProfesionalId,
       p_servicio: selectedServicioId,
       p_inicio: fechaHora.toISOString(),
@@ -367,11 +473,12 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
             <label style={labelStyle}>Clienta *</label>
             <input
               type="text"
-              placeholder="Buscar por nombre o apellido..."
+              placeholder="Buscar o escribir el nombre de una clienta nueva..."
               value={selectedCliente ? `${selectedCliente.nombre} ${selectedCliente.apellido ?? ""}` : clienteQuery}
               onChange={(e) => {
                 setSelectedCliente(null);
                 setClienteQuery(e.target.value);
+                setClienteDuplicada(null);
                 setShowResults(true);
               }}
               onFocus={() => setShowResults(true)}
@@ -425,6 +532,112 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
                     )}
                   </button>
                 ))}
+              </div>
+            )}
+
+            {esNueva && (
+              <div
+                style={{
+                  marginTop: 10,
+                  padding: 12,
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-lg)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 10,
+                }}
+              >
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", margin: 0 }}>
+                  Clienta nueva: «{nombreNuevo}» se registrará al crear la cita. El teléfono y la fecha de nacimiento son opcionales.
+                </p>
+                {coincidenciaExacta && (
+                  <div
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-sm)",
+                      color: "var(--color-text-primary)",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <span>
+                      Ya existe una clienta con ese nombre{coincidenciaExacta.telefono ? ` (${coincidenciaExacta.telefono})` : ""}.
+                    </span>
+                    <button
+                      type="button"
+                      className="text-xs font-semibold hover:underline"
+                      style={{ color: "var(--color-primary-dim)" }}
+                      onClick={() => {
+                        setSelectedCliente(coincidenciaExacta);
+                        setShowResults(false);
+                        setNuevoTelefono("");
+                        setNuevoNacimiento("");
+                        setClienteDuplicada(null);
+                        setFormError(null);
+                      }}
+                    >
+                      Usar esta clienta
+                    </button>
+                  </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label style={labelStyle}>Teléfono</label>
+                    <input
+                      type="tel"
+                      placeholder="300 123 4567"
+                      value={nuevoTelefono}
+                      onChange={(e) => {
+                        setNuevoTelefono(e.target.value);
+                        setClienteDuplicada(null);
+                      }}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Fecha de nacimiento</label>
+                    <input
+                      type="date"
+                      value={nuevoNacimiento}
+                      onChange={(e) => setNuevoNacimiento(e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
+                {clienteDuplicada && (
+                  <div
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-sm)",
+                      color: "var(--color-text-primary)",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <span>
+                      Ya existe: {clienteDuplicada.nombre} {clienteDuplicada.apellido ?? ""}
+                      {clienteDuplicada.telefono ? ` (${clienteDuplicada.telefono})` : ""}
+                    </span>
+                    <button
+                      type="button"
+                      className="text-xs font-semibold hover:underline"
+                      style={{ color: "var(--color-primary-dim)" }}
+                      onClick={() => {
+                        setSelectedCliente(clienteDuplicada);
+                        setClienteDuplicada(null);
+                        setNuevoTelefono("");
+                        setNuevoNacimiento("");
+                        setFormError(null);
+                      }}
+                    >
+                      Usar esta clienta
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
