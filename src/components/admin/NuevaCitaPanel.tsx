@@ -123,6 +123,10 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
   const [horasLibres, setHorasLibres] = useState<string[]>([]);
   const [loadingHoras, setLoadingHoras] = useState(false);
   const [horasError, setHorasError] = useState<string | null>(null);
+  // Hora escrita a mano: si rompe una regla del salón se avisa y una administradora puede "Agendar igual"
+  const [esAdmin, setEsAdmin] = useState(false);
+  const [reglaRota, setReglaRota] = useState<string | null>(null);
+  const [confirmarForzar, setConfirmarForzar] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -252,12 +256,50 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
         }
         const horas = (data ?? []).map((r) => r.inicio_local);
         setHorasLibres(horas);
-        setSelectedHora((prev) => (horas.includes(prev) ? prev : ""));
+        // La hora escrita a mano se conserva aunque no esté en la lista de sugeridas
       });
     return () => {
       cancelled = true;
     };
   }, [isOpen, selectedServicioId, selectedProfesionalId, selectedDate, minutosExtra]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    supabase.rpc("es_admin").then(({ data }: { data: boolean | null }) => {
+      if (!cancelled) setEsAdmin(data === true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
+
+  // Revisa en vivo si la hora elegida o escrita rompe alguna regla de horario (solo informa; el servidor decide)
+  useEffect(() => {
+    setReglaRota(null);
+    setConfirmarForzar(false);
+    if (!isOpen || !selectedServicioId || !selectedProfesionalId || !selectedDate || !/^\d{1,2}:\d{2}$/.test(selectedHora)) return;
+    const servicio = servicios.find((s) => s.id === selectedServicioId);
+    if (!servicio) return;
+    let cancelled = false;
+    const [hh, mm] = selectedHora.split(":").map(Number);
+    const inicio = new TZDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), hh, mm, 0, 0, "America/Bogota");
+    const fin = new Date(inicio.getTime() + ((servicio.duracion_min ?? 60) + minutosExtra) * 60000);
+    supabase
+      .rpc("horario_violado", {
+        p_profesional: selectedProfesionalId,
+        p_servicio: selectedServicioId,
+        p_inicio: inicio.toISOString(),
+        p_fin: fin.toISOString(),
+      })
+      .then(({ data, error }: { data: string | null; error: { message: string } | null }) => {
+        if (cancelled || error) return;
+        setReglaRota(typeof data === "string" && data ? data : null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, selectedServicioId, selectedProfesionalId, selectedDate, selectedHora, minutosExtra, servicios]);
 
   const resetForm = useCallback(() => {
     setClienteQuery("");
@@ -285,9 +327,9 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     onClose();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const enviar = async (forzar: boolean) => {
     setFormError(null);
+    setConfirmarForzar(false);
 
     const faltan = [
       !selectedCliente && !esNueva && "elegir la clienta o escribir su nombre",
@@ -298,6 +340,16 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     ].filter(Boolean);
     if (faltan.length > 0 || !selectedDate) {
       setFormError(`Falta ${faltan.join(", ")}.`);
+      return;
+    }
+
+    // Hora que rompe una regla del salón: solo una administradora puede agendarla, y tras confirmar
+    if (reglaRota && !forzar) {
+      if (!esAdmin) {
+        setFormError(`Esa hora no se puede agendar: ${reglaRota}. Solo una administradora puede agendar fuera de las reglas de horario.`);
+        return;
+      }
+      setConfirmarForzar(true);
       return;
     }
 
@@ -402,14 +454,23 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
       p_canal: "presencial",
       p_estado: "confirmada",
       p_notas_cliente: notas || null,
+      p_forzar: forzar,
     });
     setSubmitting(false);
 
     if (error) {
       console.error("[NuevaCitaPanel] error al crear cita:", error.message);
+      // El servidor rechazó el horario aunque la revisión en vivo no lo detectó: se ofrece "Agendar igual" a una administradora
+      if (error.code === "23P01" && error.message.startsWith("Horario no permitido") && !forzar && esAdmin) {
+        setReglaRota(error.message.replace(/^Horario no permitido:\s*/, ""));
+        setConfirmarForzar(true);
+        return;
+      }
       setFormError(
         error.code === "23P01"
           ? error.message
+          : error.code === "42501"
+            ? "Solo una administradora puede agendar fuera de las reglas de horario."
           : error.code === "22023"
             ? "Uno de los adicionales ya no está disponible para este servicio. Revisa la selección."
             : explicarError(error, "crear la cita"),
@@ -420,6 +481,11 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
     resetForm();
     onCreated();
     onClose();
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void enviar(false);
   };
 
   return (
@@ -602,7 +668,8 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
                       type="date"
                       value={nuevoNacimiento}
                       onChange={(e) => setNuevoNacimiento(e.target.value)}
-                      style={inputStyle}
+                      className="input-hora-manual"
+                      style={{ ...inputStyle, colorScheme: "dark" }}
                     />
                   </div>
                 </div>
@@ -895,9 +962,29 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
                 </option>
               ))}
             </select>
+            <label style={{ ...labelStyle, marginTop: 12 }}>
+              O escribe la hora <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>(por ejemplo 9:20)</span>
+            </label>
+            <input
+              type="time"
+              step={60}
+              value={selectedHora}
+              onChange={(e) => setSelectedHora(e.target.value)}
+              disabled={!selectedServicioId || !selectedProfesionalId}
+              className="input-hora-manual"
+              style={{ ...inputStyle, colorScheme: "dark" }}
+            />
             {horasError && (
               <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-error)", marginTop: 6 }}>
                 {horasError}
+              </p>
+            )}
+            {reglaRota && (
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-warning)", marginTop: 8 }}>
+                Esta hora rompe una regla del salón: {reglaRota}.{" "}
+                {esAdmin
+                  ? "Al crear la cita te pediré confirmar si quieres agendarla igual."
+                  : "Solo una administradora puede agendar fuera de las reglas de horario."}
               </p>
             )}
           </div>
@@ -923,6 +1010,32 @@ export function NuevaCitaPanel({ isOpen, onClose, defaultDate, onCreated }: Nuev
             >
               {formError}
             </p>
+          )}
+
+          {confirmarForzar && reglaRota && (
+            <div
+              role="alert"
+              style={{
+                border: "1px solid var(--color-warning)",
+                borderRadius: "var(--radius-lg)",
+                padding: "1rem",
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              <p style={{ marginBottom: 12 }}>
+                Esta hora rompe una regla del salón: <strong>{reglaRota}</strong>. ¿Agendar igual? Quedará registrado en la cita. Si choca con otra cita o con un bloqueo, igual no se podrá.
+              </p>
+              <div className="flex gap-3">
+                <Button type="button" variant="accent" size="md" disabled={submitting} onClick={() => void enviar(true)}>
+                  {submitting ? "Creando cita..." : "Agendar igual"}
+                </Button>
+                <Button type="button" variant="ghost" size="md" disabled={submitting} onClick={() => setConfirmarForzar(false)}>
+                  Cambiar la hora
+                </Button>
+              </div>
+            </div>
           )}
 
           <Button type="submit" variant="accent" size="lg" className="w-full" disabled={submitting}>
